@@ -1,5 +1,6 @@
 RequirePackage("grape");
 
+# De Caen, Mathon and Moorhouse's Preparata graph Pr(t, h, e)
 dCMM := function(t, h, e)
     local q, s, F, K;
     q := 2^(2*t-1);

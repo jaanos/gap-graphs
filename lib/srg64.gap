@@ -1,6 +1,4 @@
 RequirePackage("grape");
-AdjFunGraph := function(E, F)
-    return Graph(Group(()), E, function(x, y) return x; end, F, true); end;
 
 # bilinear forms graph: vozlišča so matrike,
 # dve vozlišči sta sosednji, ko je njuna razlika ranga 1

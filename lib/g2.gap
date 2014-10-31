@@ -19,9 +19,3 @@ G2 := function(q)
         end, true);;
 end;
 
-Dual := function(G)
-    return Graph(Group(()), Cliques(G), function(x,y) return x; end,
-        function(x,y)
-            return Size(Intersection(x,y)) = 1;
-        end, true);
-end;
