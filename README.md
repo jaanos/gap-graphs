@@ -11,6 +11,7 @@ The following graphs are currently supported:
   * Dual polar graphs B<sub>d</sub>(q)
   * Dual polar graphs C<sub>d</sub>(q)
   * Dual polar graphs D<sub>d</sub>(q)
+  * Dual polar graphs <sup>2</sup>D<sub>d+1</sub>(q)
 * Other infinite families of distance-regular graphs:
   * the Brouwer "cross product" graphs Br(q) with intersection arrays {q<sup>3</sup>-1, q<sup>3</sup>-q, q<sup>3</sup>-q<sup>2</sup>+1; 1, q, q<sup>2</sup>-1}
   * de Caen, Mathon and Moorhouse's Preparata graphs Pr(t, h, e) with intersection arrays {2<sup>2t</sup>-1, 2<sup>2t</sup>-2<sup>h</sup>, 1; 1, 2<sup>h</sup>, 2<sup>2t</sup>-1}
