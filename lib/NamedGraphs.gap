@@ -1,4 +1,6 @@
-RequirePackage("grape");
+# The Petersen graph.
+BindGlobal("PetersenGraph", OddGraph(2));
+
 # The Biggs-Smith graph with intersection array {3,2,2,2,1,1,1; 1,1,1,1,1,1,3}
 # Constructed from 17 H shapes by connecting corresponding endpoints with
 # cycles in four different manners.
