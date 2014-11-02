@@ -57,9 +57,8 @@ BindGlobal("StrongProductGraph", function(arg)
         Gs := arg;
     fi;
     return ProductGraph(Gs, function(x, y)
-        local l;
-        l := List([1..Length(Gs)], i -> Distance(Gs[i], x[i], y[i]));
-        return WeightVecFFE(l) > 0 and Maximum(l) = 1;
+        return Maximum(List([1..Length(Gs)],
+            i -> Distance(Gs[i], x[i], y[i]))) = 1;
     end);
 end);
 

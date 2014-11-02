@@ -12,6 +12,11 @@ BindGlobal("OnSum", dp -> function(e, g)
     end
 );
 
+# Action of a group on its multiplication table.
+BindGlobal("OnLatinSquare", function(e, g)
+    return [e[1] * g, g^-1 * e[2]];
+end);
+
 # Action of a wreath product on vectors over a ring.
 BindGlobal("OnZmodnZVectors", function(d, e)
     local ij;

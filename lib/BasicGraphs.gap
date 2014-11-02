@@ -14,7 +14,26 @@ BindGlobal("CompleteMultipartiteGraph", function(arg)
     fi;
 end);
 
-# Cocktail party graphs
+# Cocktail party graphs.
 BindGlobal("CocktailPartyGraph",
     n -> CompleteMultipartiteGraph(n, 2)
 );
+
+# Latin square graphs.
+BindGlobal("LatinSquareGraph", function(G)
+    local dim;
+    if IsGroup(G) then
+        return Graph(G, Cartesian(G, G), OnLatinSquare,
+            function(x, y)
+                return x <> y and (x[1] = y[1] or x[2] = y[2]
+                                or x[1]*x[2] = y[1]*y[2]);
+            end, true);
+    else
+        dim := DimensionsMat(G);
+        return AdjFunGraph(Cartesian([1..dim[1]], [1..dim[2]]),
+            function(x, y)
+                return x <> y and (x[1] = y[1] or x[2] = y[2]
+                                or G[x[1]][x[2]] = G[y[1]][y[2]]);
+            end);
+    fi;
+end);
