@@ -21,3 +21,18 @@ BindGlobal("DoobGraph", function(n, d)
     fi;
     return BoxProductGraph(l);
 end);
+
+# Halved d-cube.
+BindGlobal("HalvedCubeGraph",
+    d -> HalvedGraph(HammingGraph(d, 2))
+);
+
+# Folded d-cube.
+BindGlobal("FoldedCubeGraph",
+    d -> AntipodalQuotientGraph(HammingGraph(d, 2))
+);
+
+# Folded halved 2d-cube.
+BindGlobal("FoldedHalvedCubeGraph",
+    d -> AntipodalQuotientGraph(HalvedGraph(HammingGraph(2*d, 2)))
+);

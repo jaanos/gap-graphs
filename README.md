@@ -10,6 +10,7 @@ The following graphs are currently supported:
 
 * Classical distance-regular graphs:
   * Hamming graphs H(d, e)
+  * Halved cubes 1/2 H(d, 2)
   * Doob graphs Doob(n, d)
   * Grassmann graphs J_q(n, d)
   * Dual polar graphs B<sub>d</sub>(q)
@@ -19,17 +20,20 @@ The following graphs are currently supported:
   * Hermitean forms graphs Her(d, r)
 * Other infinite families of distance-regular graphs:
   * Odd graphs O(d)
+  * Folded Johnson graphs J̃(2d, d)
+  * Folded cubes H̃(d, 2)
+  * Folded halved cubes 1/2 H̃(2d, 2)
   * the Brouwer "cross product" graphs Br(q) with intersection arrays {q<sup>3</sup>-1, q<sup>3</sup>-q, q<sup>3</sup>-q<sup>2</sup>+1; 1, q, q<sup>2</sup>-1}
   * de Caen, Mathon and Moorhouse's Preparata graphs Pr(t, h, e) with intersection arrays {2<sup>2t</sup>-1, 2<sup>2t</sup>-2<sup>h</sup>, 1; 1, 2<sup>h</sup>, 2<sup>2t</sup>-1}
 * Families of strongly regular graphs:
   * Cocktail party graphs
-  * Latin square graph
+  * Latin square graphs
 * Sporadic distance-regular graphs:
   * the Doro graph on 65 vertices with intersection array {10, 6, 4; 1, 2, 5}
   * the Doro graph on 68 vertices with intersection array {12, 10, 3; 1, 3, 8}
   * the Coxeter graph with intersection array {3, 2, 2, 1; 1, 1, 1, 2}
   * the Biggs-Smith graph with intersection array {3, 2, 2, 2, 1, 1, 1; 1, 1, 1, 1, 1, 1, 3}
-* Strongly regular graphs:
+* Named strongly regular graphs:
   * the Petersen graph with v = 10, k = 3, λ = 0, μ = 1
   * the Shrikhande graph with v = 16, k = 6, λ = 2, μ = 2
   * the Gewirtz graph with v = 56, k = 10, λ = 0, μ = 2
@@ -41,6 +45,9 @@ The following graphs are currently supported:
   * Cross (tensor) product
   * Strong product
   * Line graphs
+  * Extended bipartite double
+  * Halved graphs
+  * Antipodal quotients
 
 Some constructions, such as complete graphs, Johnson graphs and Cayley graphs
 are already available in GRAPE.
