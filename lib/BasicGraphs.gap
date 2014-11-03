@@ -21,9 +21,10 @@ BindGlobal("CocktailPartyGraph",
 
 # Latin square graphs.
 BindGlobal("LatinSquareGraph", function(G)
-    local dim;
+    local dim, dp;
     if IsGroup(G) then
-        return Graph(G, Cartesian(G, G), OnLatinSquare,
+        dp := DirectProduct(G, G);
+        return Graph(dp, Cartesian(G, G), OnLatinSquare(dp),
             function(x, y)
                 return x <> y and (x[1] = y[1] or x[2] = y[2]
                                 or x[1]*x[2] = y[1]*y[2]);
