@@ -70,12 +70,19 @@ BindGlobal("LineGraph",
 );
 
 # The extended bipartite double of a graph.
-BindGlobal("ExtendedBipartiteDoubleGraph",
-    G -> Graph(G.group, Cartesian(G.representatives, ["+", "-"]),
-        OnSignedPoints, function(x, y)
+BindGlobal("ExtendedBipartiteDoubleGraph", function(G)
+    local dp, signs, H;
+    signs := ["+", "-"];
+    dp := DirectProduct(G.group, SymmetricGroup(2));
+    H := Graph(dp, Cartesian(G.representatives, signs),
+        OnSignedPoints(dp, signs), function(x, y)
             return x[2] <> y[2] and Distance(G, x[1], y[1]) <= 1;
-        end)
-);
+        end);
+    if "names" in RecNames(G) then
+        AssignVertexNames(H, Cartesian(G.names, signs));
+    fi;
+    return H;
+end);
 
 # The first halved graph of a bipartite graph.
 BindGlobal("HalvedGraph", function(G)

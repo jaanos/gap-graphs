@@ -1,6 +1,9 @@
 # Action of a group on a signed point.
-BindGlobal("OnSignedPoints", function(e, g)
-    return [OnPoints(e[1], g), e[2]];
+BindGlobal("OnSignedPoints", function(dp, signs)
+    return function(e, g)
+        return [OnPoints(e[1], Image(Projection(dp, 1), g)),
+            Permuted(signs, Image(Projection(dp, 2), g))[Position(signs, e[2])]];
+    end;
 end);
 
 # Action of a product group on vertices of a product graph.
@@ -36,6 +39,119 @@ BindGlobal("OnZmodnZVectors", function(d, e)
         w := List(vw, x -> x[1]);
         return v{List([1..d], i -> Position(w, i))};
     end;
+end);
+
+# A bijective map from elements of F_q to integers from [0..q-1].
+BindGlobal("FFEToInt", function(x, q)
+    if IsZero(x) then
+        return 0;
+    else
+        return LogFFE(x, Z(q))+1;
+    fi;
+end);
+
+# A bijective map from integers from [0..q-1] to elements of F_q.
+BindGlobal("IntToFFE", function(x, q)
+    if x = 0 then
+        return 0*Z(q);
+    else
+        return Z(q)^(x-1);
+    fi;
+end);
+
+# The vector product of two vectors with 3 elements.
+BindGlobal("VectorProduct", function(u, v)
+    return [u[2]*v[3]-u[3]*v[2], u[3]*v[1]-u[1]*v[3], u[1]*v[2]-u[2]*v[1]];
+end);
+
+# Action of a wreath product on pairs of vectors with 3 elements.
+BindGlobal("OnVectorPairs", function(q)
+    local ij;
+    ij := Cartesian([1..2], [1..3], [0..q-1]);
+    return function(M, g)
+        local ji, v, w, vw;
+        ji := ij{OnTuples([1..6*q], g)};
+        vw := List([1..2],
+            i -> List([1..3],
+                j -> ji[FFEToInt(M[i][j], q)+(j-1)*q+(i-1)*q*3+1]));
+        v := List(vw, r -> List(r, x -> IntToFFE(x[3], q)));
+        w := List(vw, r -> List(r, x -> x[2]));
+        v := List([1..2], i -> v[i]{List([1..3], j -> Position(w[i], j))});
+        w := List([1..2], i -> M[i]{List([1..3], j -> Position(w[i], j))});
+        return [v[1] + VectorProduct(w[2], v[2]), v[2]];
+    end;
+end);
+
+# Action of a wreath product on matrices over a field.
+BindGlobal("OnMatrices", function(q, d, e)
+    local ij;
+    ij := Cartesian([1..d], [1..e], [0..q-1]);
+    return function(M, g)
+        local ji, v, w, vw;
+        ji := ij{OnTuples([1..d*e*q], g)};
+        vw := List([1..d],
+            i -> List([1..e],
+                j -> ji[FFEToInt(M[i][j], q)+(j-1)*q+(i-1)*q*e+1]));
+        v := List(vw, r -> List(r, x -> IntToFFE(x[3], q)));
+        w := List(vw, r -> List(r, x -> x[2]));
+        return List([1..d], i -> v[i]{List([1..e], j -> Position(w[i], j))});
+    end;
+end);
+
+# Action of a wreath product on Hermitean matrices over a field.
+BindGlobal("OnHermiteanMatrices", function(r, d)
+    local c, ij;
+    ij := Cartesian([1..d], [1..d], [0..r-1]);
+    c := Conjugates(GF(r^2), GF(r), Z(r^2));
+    return function(M, g)
+        local ji, vw, F;
+        ji := ij{OnTuples([1..d*d*r], g)};
+        vw := List([1..d],
+            i -> List([1..d],
+                j -> ji[(j-1)*r+(i-1)*r*d+1]));
+        F := function(i, j)
+            if i = j then
+                return IntToFFE(vw[i][j][3], r);
+            elif i < j then
+                return IntToFFE(vw[i][j][3], r) + c[1]*IntToFFE(vw[j][i][3], r);
+            else
+                return IntToFFE(vw[j][i][3], r) + c[2]*IntToFFE(vw[i][j][3], r);
+            fi;
+        end;
+        return List([1..d],
+            i -> List([1..d],
+                j -> M[vw[i][j][1]][vw[i][j][2]] + F(i, j)));
+    end;
+end);
+
+# The field addition group as a permutation group.
+BindGlobal("FieldAdditionPermutationGroup",
+    q -> Group(List(Elements(Basis(GF(q))),
+        g -> Permutation(g, GF(q), function(x, y) return x+y; end)))
+);
+
+# The group of even permutations of columns of a matrix
+# as a permutation group over matrix elements.
+BindGlobal("MatrixColumnEvenPermutationGroup", function(d, e)
+    return Action(AlternatingGroup(e), Cartesian([1..d], [1..e]),
+        function(x, g)
+            return [x[1], OnPoints(x[2], g)];
+        end);
+end);
+
+# The group of permutations of columns of a matrix
+# as a permutation group over matrix elements.
+BindGlobal("MatrixColumnPermutationGroup", function(d, e)
+    return Action(SymmetricGroup(e), Cartesian([1..d], [1..e]),
+        function(x, g)
+            return [x[1], OnPoints(x[2], g)];
+        end);
+end);
+
+# The group of simultaneous permutations of rows and columns
+# of a square matrix as a permutation group over matrix elements.
+BindGlobal("MatrixRowColumnPermutationGroup", function(d)
+    return Action(SymmetricGroup(d), Cartesian([1..d], [1..d]), OnTuples);
 end);
 
 # Checks whether a graph is an antipodal cover.
@@ -77,17 +193,18 @@ end);
 
 # Transforms a matrix over GF(r) to a Hermitean matrix over GF(r^2).
 BindGlobal("ToHermitean", function(A, r)
-    local H, c, x, y, i, j, n;
-    H := MutableCopyMat(A);
-    n := Size(H);
+    local c, n, Hermitize;
     c := Conjugates(GF(r^2), GF(r), Z(r^2));
-    for i in [1..n] do
-        for j in [i+1..n] do
-            x := H[i][j];
-            y := H[j][i];
-            H[i][j] := x + c[1]*y;
-            H[j][i] := x + c[2]*y;
-        od;
-    od;
-    return H;
+    Hermitize := function(i, j)
+        if i = j then
+            return A[i][j];
+        elif i < j then
+            return A[i][j] + c[1]*A[j][i];
+        else
+            return A[j][i] + c[2]*A[i][j];
+        fi;
+    end;
+    n := Size(A);
+    return Immutable(List([1..n],
+        i -> List([1..n], j -> Hermitize(i, j))));
 end);

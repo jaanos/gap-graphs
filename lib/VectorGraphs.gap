@@ -22,17 +22,35 @@ BindGlobal("DoobGraph", function(n, d)
     return BoxProductGraph(l);
 end);
 
-# Halved d-cube.
+# The halved d-cube.
 BindGlobal("HalvedCubeGraph",
     d -> HalvedGraph(HammingGraph(d, 2))
 );
 
-# Folded d-cube.
+# The folded d-cube.
 BindGlobal("FoldedCubeGraph",
     d -> AntipodalQuotientGraph(HammingGraph(d, 2))
 );
 
-# Folded halved 2d-cube.
+# The folded halved 2d-cube.
 BindGlobal("FoldedHalvedCubeGraph",
     d -> AntipodalQuotientGraph(HalvedGraph(HammingGraph(2*d, 2)))
+);
+
+# The Brouwer graph Br(q) of pairs of 3-dimensional vectors over F_q,
+# with two pairs being adjacent whenever the difference of the first vectors
+# equals the cross product of the second vectors.
+BindGlobal("BrouwerGraph", function(q)
+    return Graph(WreathProduct(Group(List(Elements(Basis(GF(q))),
+                g -> Permutation(g, GF(q), function(x, y) return x+y; end))),
+            MatrixColumnEvenPermutationGroup(2, 3)), Elements(GF(q)^[2,3]),
+        OnVectorPairs(q), function(x, y)
+            return x <> y and x[1] - y[1] = VectorProduct(x[2], y[2]);
+        end, true);
+end);
+
+# The Pasechnik graph Pa(q) as the extended bipartite double
+# of the Brouwer graph Br(q).
+BindGlobal("PasechnikGraph",
+    q -> ExtendedBipartiteDoubleGraph(BrouwerGraph(q))
 );
