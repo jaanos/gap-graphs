@@ -13,5 +13,3 @@ ReadPackage( "gap-graphs", "lib/VectorGraphs.gap" );
 ReadPackage( "gap-graphs", "lib/FormsGraphs.gap" );
 ReadPackage( "gap-graphs", "lib/SpacesGraphs.gap" );
 ReadPackage( "gap-graphs", "lib/NamedGraphs.gap" );
-
-

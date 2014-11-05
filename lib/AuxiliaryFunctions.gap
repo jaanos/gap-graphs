@@ -214,3 +214,14 @@ BindGlobal("ToHermitean", function(A, r)
     return Immutable(List([1..n],
         i -> List([1..n], j -> Hermitize(i, j))));
 end);
+
+BindGlobal("IsotropicSpacesQuadraticForm", function(q, Q)
+    return V -> Filtered(V, y -> Size(Filtered(Elements(y),
+            x -> x*Q*x <> 0*Z(q))) = 0);
+end);
+
+BindGlobal("IsotropicSpacesBilinearForm", function(q, Q)
+    return V -> Filtered(V,
+                y -> Size(Filtered(Cartesian(Elements(y), Elements(y)),
+                    x -> x[1]*Q*x[2] <> 0*Z(q))) = 0);
+end);

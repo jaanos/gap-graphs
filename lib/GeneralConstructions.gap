@@ -145,12 +145,13 @@ BindGlobal("AntipodalQuotientGraph", function(G)
     return H;
 end);
 
-# A graph with the set of d-dimensional subspaces P as the vertex set,
+# A graph with the set of d-dimensional subspaces of V filtered by S
+# as the vertex set, acted upon by the matrix group G,
 # with two subspaces being adjacent iff their intersection has dimension d-1.
-BindGlobal("SubspaceGraph", function(P, d)
-    return AdjFunGraph(P, function(x,y)
+BindGlobal("SubspaceGraph", function(G, S, V, d)
+    return Graph(G, S(Subspaces(V, d)), OnSubspaces(V), function(x,y)
             return Dimension(Intersection(x,y)) = d-1;
-        end);
+        end, true);
 end);
 
 # The dual geometry graph of a geometric graph.
