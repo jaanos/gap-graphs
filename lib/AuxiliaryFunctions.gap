@@ -124,6 +124,12 @@ BindGlobal("OnHermiteanMatrices", function(r, d)
     end;
 end);
 
+BindGlobal("OnSubspaces",
+    V -> function(S, g)
+        return Subspace(V, OnSubspacesByCanonicalBasis(Basis(S), g));
+    end
+);
+
 # The field addition group as a permutation group.
 BindGlobal("FieldAdditionPermutationGroup",
     q -> Group(List(Elements(Basis(GF(q))),

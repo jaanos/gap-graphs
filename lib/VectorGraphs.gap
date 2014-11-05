@@ -41,8 +41,7 @@ BindGlobal("FoldedHalvedCubeGraph",
 # with two pairs being adjacent whenever the difference of the first vectors
 # equals the cross product of the second vectors.
 BindGlobal("BrouwerGraph", function(q)
-    return Graph(WreathProduct(Group(List(Elements(Basis(GF(q))),
-                g -> Permutation(g, GF(q), function(x, y) return x+y; end))),
+    return Graph(WreathProduct(FieldAdditionPermutationGroup(q),
             MatrixColumnEvenPermutationGroup(2, 3)), Elements(GF(q)^[2,3]),
         OnVectorPairs(q), function(x, y)
             return x <> y and x[1] - y[1] = VectorProduct(x[2], y[2]);

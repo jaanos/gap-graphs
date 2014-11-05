@@ -1,6 +1,11 @@
 # The Grassmann graph J_q(n, d) of d-dimensional subspaces of F_q^n.
 BindGlobal("GrassmannGraph", function(q, n, d)
-    return SubspaceGraph(Elements(Subspaces(GF(q)^n, d)), d);
+    local V;
+    V := GF(q)^n;
+    return Graph(GL(n, q), Elements(Subspaces(V, d)), OnSubspaces(V),
+        function(x,y)
+            return Dimension(Intersection(x,y)) = d-1;
+        end, true);
 end);
 
 # The dual polar graph B_d(q) of the isotropic d-dimensional subspaces of
