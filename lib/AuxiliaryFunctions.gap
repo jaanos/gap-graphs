@@ -215,13 +215,17 @@ BindGlobal("ToHermitean", function(A, r)
         i -> List([1..n], j -> Hermitize(i, j))));
 end);
 
-BindGlobal("IsotropicSpacesQuadraticForm", function(q, Q)
-    return V -> Filtered(V, y -> Size(Filtered(Elements(y),
-            x -> x*Q*x <> 0*Z(q))) = 0);
-end);
+# The subset of isotropic spaces with respect to the quadratic form Q
+# of the collection V.
+BindGlobal("IsotropicSpacesQuadraticForm",
+    Q -> V -> Filtered(V, y -> Size(Filtered(Elements(y),
+            x -> not IsZero(x*Q*x))) = 0)
+);
 
-BindGlobal("IsotropicSpacesBilinearForm", function(q, Q)
-    return V -> Filtered(V,
+# The subset of isotropic spaces with respect to the bilinear form Q
+# of the collection V.
+BindGlobal("IsotropicSpacesBilinearForm",
+    Q -> V -> Filtered(V,
                 y -> Size(Filtered(Cartesian(Elements(y), Elements(y)),
-                    x -> x[1]*Q*x[2] <> 0*Z(q))) = 0);
-end);
+                    x -> not IsZero(x[1]*Q*x[2]))) = 0)
+);

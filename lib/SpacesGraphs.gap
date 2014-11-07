@@ -11,8 +11,8 @@ BindGlobal("DualPolarGraphB", function(d, q)
     local G, V;
     V := GF(q)^(2*d+1);
     G := GO(2*d+1, q);
-    return SubspaceGraph(G, IsotropicSpacesQuadraticForm(q,
-        InvariantQuadraticForm(G).matrix), V, d);
+    return SubspaceGraph(G,
+        IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix), V, d);
 end);
 
 # The dual polar graph C_d(q) of the isotropic d-dimensional subspaces of
@@ -21,8 +21,8 @@ BindGlobal("DualPolarGraphC", function(d, q)
     local G, V;
     V := GF(q)^(2*d);
     G := Sp(2*d, q);
-    return SubspaceGraph(G, IsotropicSpacesBilinearForm(q,
-        InvariantBilinearForm(G).matrix), V, d);
+    return SubspaceGraph(G,
+        IsotropicSpacesBilinearForm(InvariantBilinearForm(G).matrix), V, d);
 end);
 
 # The dual polar graph D_d(q) of the isotropic d-dimensional subspaces of
@@ -31,8 +31,8 @@ BindGlobal("DualPolarGraphD", function(d, q)
     local G, V;
     V := GF(q)^(2*d);
     G := GO(1, 2*d, q);
-    return SubspaceGraph(G, IsotropicSpacesQuadraticForm(q,
-        InvariantQuadraticForm(G).matrix), V, d);
+    return SubspaceGraph(G,
+        IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix), V, d);
 end);
 
 # The dual polar graph ^2D_{d+1}(q) of the isotropic d-dimensional subspaces of
@@ -41,6 +41,6 @@ BindGlobal("DualPolarGraph2D", function(d, q)
     local G, V;
     V := GF(q)^(2*d+2);
     G := GO(-1, 2*d+2, q);
-    return SubspaceGraph(G, IsotropicSpacesQuadraticForm(q,
-        InvariantQuadraticForm(G).matrix), V, d);
+    return SubspaceGraph(G,
+        IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix), V, d);
 end);
