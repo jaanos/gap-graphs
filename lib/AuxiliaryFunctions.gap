@@ -229,3 +229,13 @@ BindGlobal("IsotropicSpacesBilinearForm",
                 y -> Size(Filtered(Cartesian(Elements(y), Elements(y)),
                     x -> not IsZero(x[1]*Q*x[2]))) = 0)
 );
+
+# The subset of isotropic spaces with respect to the scalar product with
+# conjugation map f of the collection V.
+BindGlobal("IsotropicSpacesSesquilinearForm", function(Q, r)
+    local F;
+    F := x -> List(x, y -> y^r);
+    return V -> Filtered(V,
+                y -> Size(Filtered(Cartesian(Elements(y), Elements(y)),
+                    x -> not IsZero(x[1]*Q*F(x[2])))) = 0);
+end);

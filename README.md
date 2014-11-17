@@ -11,7 +11,7 @@ The following graphs are currently supported:
 * Classical distance-regular graphs:
   * Hamming graphs H(d, e)
   * Halved cubes 1/2 H(d, 2)
-  * Doob graphs Doob(n, d)
+  * Doob graphs Doob(n, d) of diameter 2n+d
   * Bilinear forms graphs H<sub>q</sub>(d, e)
   * Hermitean forms graphs Her(d, r)
   * Grassmann graphs J<sub>q</sub>(n, d)
@@ -19,6 +19,7 @@ The following graphs are currently supported:
   * Dual polar graphs C<sub>d</sub>(q)
   * Dual polar graphs D<sub>d</sub>(q)
   * Dual polar graphs <sup>2</sup>D<sub>d+1</sub>(q)
+  * Dual polar graphs <sup>2</sup>A<sub>e</sub>(q) of diameter [e/2]
 * Other infinite families of distance-regular graphs:
   * Odd graphs O(d)
   * Folded Johnson graphs J̃(2d, d)
