@@ -148,10 +148,29 @@ end);
 # A graph with the set of d-dimensional subspaces of V filtered by S
 # as the vertex set, acted upon by the matrix group G,
 # with two subspaces being adjacent iff their intersection has dimension d-1.
-BindGlobal("SubspaceGraph", function(G, S, V, d)
-    return Graph(G, S(Subspaces(V, d)), OnSubspaces(V), function(x,y)
+BindGlobal("SubspaceGraph", function(arg)
+    local G, S, V, d, invt, vcs;
+    if Length(arg) < 4 then
+        Error("at least four arguments expected");
+        return fail;
+    fi;
+    G := arg[1];
+    S := arg[2];
+    V := arg[3];
+    d := arg[4];
+    if Length(arg) > 4 then
+        invt := arg[5];
+    else
+        invt := true;
+    fi;
+    if IsList(S) then
+        vcs := S;
+    else
+        vcs := S(Subspaces(V, d));
+    fi;
+    return Graph(G, vcs, OnSubspaces(V), function(x,y)
             return Dimension(Intersection(x,y)) = d-1;
-        end, true);
+        end, invt);
 end);
 
 # The dual geometry graph of a geometric graph.

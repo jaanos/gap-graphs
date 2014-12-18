@@ -2,7 +2,10 @@
 BindGlobal("CompleteMultipartiteGraph", function(arg)
     local sizes, dp, F, G;
     F := function(x, y) return x[1] <> y[1]; end;
-    if Length(arg) = 1 then
+    if Length(arg) = 0 then
+        Error("at least one argument expected");
+        return fail;
+    elif Length(arg) = 1 then
         sizes := arg[1];
         dp := DirectProduct(List(sizes, i -> SymmetricGroup(i)));
         return Graph(dp, Union(List([1..Length(sizes)],
@@ -20,15 +23,30 @@ BindGlobal("CocktailPartyGraph",
 );
 
 # Latin square graphs.
-BindGlobal("LatinSquareGraph", function(G)
-    local dim, dp;
+BindGlobal("LatinSquareGraph", function(arg)
+    local dim, dp, G, invt, vcs;
+    if Length(arg) = 0 then
+        Error("at least one argument expected");
+        return fail;
+    fi;
+    G := arg[1];
+    if Length(arg) > 1 then
+        invt := arg[2];
+    else
+        invt := true;
+    fi;
     if IsGroup(G) then
         dp := DirectProduct(G, G);
-        return Graph(dp, Cartesian(G, G), OnLatinSquare(dp),
+        if invt then
+            vcs := Cartesian(G, G);
+        else
+            vcs := [[One(G), One(G)]];
+        fi;
+        return Graph(dp, vcs, OnLatinSquare(dp),
             function(x, y)
                 return x <> y and (x[1] = y[1] or x[2] = y[2]
                                 or x[1]*x[2] = y[1]*y[2]);
-            end, true);
+            end, invt);
     else
         dim := DimensionsMat(G);
         return AdjFunGraph(Cartesian([1..dim[1]], [1..dim[2]]),
