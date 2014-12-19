@@ -15,6 +15,7 @@ The following graphs are currently supported:
   * Bilinear forms graphs H<sub>q</sub>(d, e)
   * Hermitean forms graphs Her(d, r)
   * Grassmann graphs J<sub>q</sub>(n, d)
+  * Twisted Grassmann graphs TG<sub>d</sub>(q)
   * Dual polar graphs B<sub>d</sub>(q)
   * Dual polar graphs C<sub>d</sub>(q)
   * Dual polar graphs D<sub>d</sub>(q)

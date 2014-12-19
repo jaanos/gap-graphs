@@ -3,6 +3,31 @@ BindGlobal("GrassmannGraph", function(q, n, d)
     return SubspaceGraph(GL(n, q), Elements, GF(q)^n, d, true);
 end);
 
+# The twisted Grassmann graph TG_d(q) of (d+1)-dimensional subspaces of
+# F_q^{2d+1} which are not subspaces of a hyperplane H, and (d-1)-dimensional
+# subspaces of H.
+BindGlobal("TwistedGrassmannGraph", function(d, q)
+    local F, H, S, V, n;
+    n := 2*d+1;
+    F := GF(q)^n;
+    H := Subspace(F, CanonicalBasis(F){[1..n-1]}, "basis");
+    V := Union(Filtered(Subspaces(F, d+1), x -> not IsSubset(H, x)),
+            Subspaces(H, d-1));
+    S := OnSubspaces(F);
+    return Graph(Stabilizer(GL(n, q), H, S), V, S, function(x, y)
+        local d1, d2;
+        d1 := Dimension(x);
+        d2 := Dimension(y);
+        if d1 < d2 then
+            return IsSubset(y, x);
+        elif d1 > d2 then
+            return IsSubset(x, y);
+        else
+            return Dimension(Intersection(x, y)) = d1-1;
+        fi;
+    end, true);
+end);
+
 # The dual polar graph B_d(q) of the isotropic d-dimensional subspaces of
 # F_q^{2d+1} with respect to a nondegenerate quadratic form.
 BindGlobal("DualPolarGraphB", function(d, q)
@@ -19,10 +44,10 @@ end);
 BindGlobal("DualPolarGraphC", function(d, q)
     local F, e;
     e := 2*d;
-    F := GF(q);
+    F := GF(q)^e;
     return SubspaceGraph(Sp(e, q),
-        [VectorSpace(F, Elements(CanonicalBasis(F^e)){[1..d]})],
-        F^e, d, false);
+        [Subspace(F, Elements(CanonicalBasis(F)){[1..d]}, "basis")],
+        F, d, false);
 end);
 
 # The dual polar graph D_d(q) of the isotropic d-dimensional subspaces of
@@ -51,11 +76,11 @@ end);
 # subspaces of F_{r^2}^e with respect to a nondegenerate Hermitean form.
 BindGlobal("DualPolarGraph2A", function(e, r)
     local B, F, c, d;
-    F := GF(r^2);
-    B := Elements(CanonicalBasis(F^e));
-    c := Conjugates(F, GF(r), Z(r^2));
+    F := GF(r^2)^e;
+    B := Elements(CanonicalBasis(F));
+    c := Conjugates(GF(r^2), GF(r), Z(r^2));
     d := Int(e/2);
     return SubspaceGraph(GU(e, r),
-        [VectorSpace(F, B{[1..d]} + (c[1]-c[2])*B{e+1-[1..d]})],
-        F^e, d, false);
+        [Subspace(F, B{[1..d]} + (c[1]-c[2])*B{e+1-[1..d]}, "basis")],
+        F, d, false);
 end);
