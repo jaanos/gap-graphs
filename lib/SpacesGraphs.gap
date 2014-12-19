@@ -6,23 +6,23 @@ end);
 # The dual polar graph B_d(q) of the isotropic d-dimensional subspaces of
 # F_q^{2d+1} with respect to a nondegenerate quadratic form.
 BindGlobal("DualPolarGraphB", function(d, q)
-    local F, e;
+    local G, e;
     e := 2*d+1;
-    F := GF(q);
-    return SubspaceGraph(GO(e, q),
-        [VectorSpace(F, Elements(CanonicalBasis(F^e)){[1..d]})],
-        F^e, d, false);
+    G := GO(e, q);
+    return SubspaceGraph(G,
+        IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix),
+        GF(q)^e, d);
 end);
 
 # The dual polar graph C_d(q) of the isotropic d-dimensional subspaces of
 # F_q^{2d} with respect to a nondegenerate symplectic form.
 BindGlobal("DualPolarGraphC", function(d, q)
-    local F, e;
-    e := 2*d;
-    F := GF(q);
-    return SubspaceGraph(Sp(e, q),
-        [VectorSpace(F, Elements(CanonicalBasis(F^e)){[1..d]})],
-        F^e, d, false);
+    local G, e;
+    e := 2*d
+    G := Sp(e, q);
+    return SubspaceGraph(G,
+        IsotropicSpacesBilinearForm(InvariantBilinearForm(G).matrix),
+        GF(q)^e, d);
 end);
 
 # The dual polar graph D_d(q) of the isotropic d-dimensional subspaces of
