@@ -130,10 +130,36 @@ BindGlobal("OnSubspaces",
     end
 );
 
+BindGlobal("OnPreparata", function(q, s, dp)
+    local F, N;
+    F := Elements(GF(q));
+    N := Position(F, 0*Z(q));
+    return function(t, g)
+        local g1, g2, g3, g4, w, z;
+        g1 := Image(Projection(dp, 1), g);
+        g2 := Image(Projection(dp, 2), g);
+        g3 := Image(Projection(dp, 3), g);
+        g4 := Image(Projection(dp, 4), g);
+        z := Z(q)^((q-1)^g1);
+        w := [z*t[1], t[2] + 2^g2, t[3]*z^(s+1) + F[N^g3]];
+        return List(w, x -> F[Position(F, x)^g4]);
+    end;
+end);
+
 # The field addition group as a permutation group.
 BindGlobal("FieldAdditionPermutationGroup",
     q -> Group(List(Elements(Basis(GF(q))),
         g -> Permutation(g, GF(q), function(x, y) return x+y; end)))
+);
+
+# The field multiplication group as a permutation group.
+BindGlobal("FieldMultiplicationPermutationGroup",
+    q -> CyclicGroup(IsPermGroup, q-1)
+);
+
+# The field exponentiation group as a permutation group.
+BindGlobal("FieldExponentiationPermutationGroup",
+    q -> Action(Group(FrobeniusAutomorphism(GF(q))), GF(q))
 );
 
 # The group of even permutations of columns of a matrix
