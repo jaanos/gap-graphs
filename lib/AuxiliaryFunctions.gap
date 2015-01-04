@@ -124,12 +124,14 @@ BindGlobal("OnHermiteanMatrices", function(r, d)
     end;
 end);
 
+# Action of a matrix group on subspaces of a vector space over a finite field.
 BindGlobal("OnSubspaces",
     V -> function(S, g)
         return Subspace(V, OnSubspacesByCanonicalBasis(Basis(S), g));
     end
 );
 
+# Action on the vertices of the Preparata graph.
 BindGlobal("OnPreparata", function(q, s, dp)
     local F, N;
     F := Elements(GF(q));
