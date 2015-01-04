@@ -27,7 +27,7 @@ end);
 
 # Quotient graph of the Preparata graph
 BindGlobal("PreparataQuotientGraph", function(arg)
-    local h, t, e, G, H, K, T, V;
+    local h, s, t, e, B, G, H, K, T, V;
     if Length(arg) < 2 then
         Error("at least two arguments expected");
         return fail;
@@ -35,7 +35,12 @@ BindGlobal("PreparataQuotientGraph", function(arg)
     h := arg[1];
     if IsGraph(arg[2]) then
         G := arg[2];
-        t := Log2Int(2*G.order)/4;
+        if IsFFE(G.names[1][3]) then
+            s := 1;
+        else
+            s := Size(G.names[1][3]);
+        fi;
+        t := Log2Int(2*s*G.order)/4;
     else
         t := arg[2];
         if Length(arg) > 2 then
@@ -45,8 +50,14 @@ BindGlobal("PreparataQuotientGraph", function(arg)
         fi;
         G := PreparataGraph(t, e);
     fi;
-    K := AdditiveGroup(BasisVectors(Basis(GF(2^(2*t-1)))){[1..h]});
-    V := List(G.names, x -> [x[1], x[2], x[3]+K]);
+    B := BasisVectors(Basis(GF(2^(2*t-1))));
+    if IsFFE(G.names[1][3]) then
+        K := AdditiveGroup(B{[1..h]});
+        V := List(G.names, x -> [x[1], x[2], x[3]+K]);
+    else
+        K := AdditiveGroup(B{[1..h+Log2Int(s)]});
+        V := List(G.names, x -> [x[1], x[2], Elements(x[3])[1]+K]);
+    fi;
     T := Set(List(V, x -> Positions(V, x)));
     H := Graph(Stabilizer(G.group, T, OnSetsSets), T, OnSets, function(x,y)
         return IsSubset(DistanceSet(G, 1, x), y);
