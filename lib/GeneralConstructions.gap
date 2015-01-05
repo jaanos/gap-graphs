@@ -62,13 +62,6 @@ BindGlobal("StrongProductGraph", function(arg)
     end);
 end);
 
-# The line graph of a graph.
-BindGlobal("LineGraph",
-    G -> Graph(G.group, Union(List([1..Length(G.representatives)],
-        i -> List(G.adjacencies[i], y -> Set([G.representatives[i], y])))),
-        OnSets, function(x, y) return Size(Intersection(x, y)) = 1; end)
-);
-
 # The extended bipartite double of a graph.
 BindGlobal("ExtendedBipartiteDoubleGraph", function(G)
     local dp, signs, H;

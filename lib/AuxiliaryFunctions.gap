@@ -148,6 +148,11 @@ BindGlobal("OnPreparata", function(q, s, dp)
     end;
 end);
 
+# Action on the roots of E_8
+BindGlobal("OnRoots", function(v, g)
+    return (-1)^(10^g) * v{OnTuples([1..Length(v)], g)};
+end);
+
 # The field addition group as a permutation group.
 BindGlobal("FieldAdditionPermutationGroup",
     q -> Group(List(Elements(Basis(GF(q))),
@@ -286,4 +291,9 @@ end);
 # Adjacency function for Kneser-type graphs
 BindGlobal("DisjointSets", function(x, y)
     return Intersection(x, y) = [];
+end);
+
+# Adjacency function for roots of E_8
+BindGlobal("RootAdjacency", function(x, y)
+    return x*y = 8;
 end);

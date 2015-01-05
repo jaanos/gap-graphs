@@ -21,6 +21,7 @@ The following graphs are currently supported:
   * Dual polar graphs D<sub>d</sub>(q)
   * Dual polar graphs <sup>2</sup>D<sub>d+1</sub>(q)
   * Dual polar graphs <sup>2</sup>A<sub>e</sub>(q) of diameter [e/2]
+  * The Gosset graph with intersection array {27, 10, 1; 1, 10, 27}
 * Other infinite families of distance-regular graphs:
   * Odd graphs O(d)
   * Folded Johnson graphs J̃(2d, d)
@@ -40,6 +41,9 @@ The following graphs are currently supported:
 * Named strongly regular graphs:
   * the Petersen graph with v = 10, k = 3, λ = 0, μ = 1
   * the Shrikhande graph with v = 16, k = 6, λ = 2, μ = 2
+  * the Clebsch graph with v = 16, k = 10, λ = 6, μ = 6
+  * the Schläfli graph with v = 27, k = 16, λ = 10, μ = 8
+  * the three Chang graphs with v = 28, k = 12, λ = 6, μ = 4
   * the Gewirtz graph with v = 56, k = 10, λ = 0, μ = 2
 * Other graphs:
   * Complete multipartite graphs
@@ -48,7 +52,6 @@ The following graphs are currently supported:
   * Box (Cartesian) product
   * Cross (tensor) product
   * Strong product
-  * Line graphs
   * Extended bipartite double
   * Halved graphs
   * Antipodal quotients

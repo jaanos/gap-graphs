@@ -28,3 +28,15 @@ BindGlobal("OddGraph", d -> KneserGraph(2*d+1, d, false));
 BindGlobal("FoldedJohnsonGraph",
     d -> AntipodalQuotientGraph(JohnsonGraph(2*d, d))
 );
+
+# The three Chang graphs with v=28, k=12, lm=6, mu=4
+BindGlobal("ChangGraph", function(j)
+    local J, S, Ss;
+    Ss := [List([1..4], i -> [i, i+4]),
+           Set(List([1..8], i -> Set([i, (i mod 8)+1]))),
+           Union(List([1..3], i -> Set([i, (i mod 3)+1])),
+                 List([1..5], i -> Set([i+3, (i mod 5)+4])))];
+    J := JohnsonGraph(8, 2);
+    S := List(Ss[j], x -> Position(J.names, x));
+    return SwitchedGraph(J, S, Stabilizer(J.group, S, OnSets));
+end);
