@@ -18,8 +18,7 @@ BindGlobal("KneserGraph", function(arg)
     else
         vcs := [[1..k]];
     fi;
-    return Graph(SymmetricGroup(n), vcs, OnSets,
-        function(x,y) return Intersection(x,y)=[]; end);
+    return Graph(SymmetricGroup(n), vcs, OnSets, DisjointSets);
 end);
 
 # The Odd graph of diameter d on 2*d+1 points.

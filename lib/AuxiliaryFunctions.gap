@@ -267,3 +267,8 @@ BindGlobal("IsotropicSpacesSesquilinearForm", function(Q, r)
                 y -> Size(Filtered(Cartesian(Elements(y), Elements(y)),
                     x -> not IsZero(x[1]*Q*F(x[2])))) = 0);
 end);
+
+# Adjacency function for Kneser-type graphs
+BindGlobal("DisjointSets", function(x, y)
+    return Intersection(x, y) = [];
+end);
