@@ -268,6 +268,21 @@ BindGlobal("IsotropicSpacesSesquilinearForm", function(Q, r)
                     x -> not IsZero(x[1]*Q*F(x[2])))) = 0);
 end);
 
+# Checks whether the sum of two subspaces are hyperbolic
+# given a quadratic form.
+BindGlobal("IsHyperbolic", function(Q)
+    local s;
+    s := (Size(BaseField(Q)) - 1)^2;
+    return function(x, y)
+        return Size(Filtered(x+y, z -> not IsZero(z*Q*z))) = s;
+    end;
+end);
+
+# Checks whether two subspaces are orthogonal given a bilinear form.
+BindGlobal("IsOrthogonal", Q -> function(x, y)
+    return Size(Filtered(Cartesian(x, y), z -> not IsZero(z[1]*Q*z[2]))) = 0;
+end);
+
 # Adjacency function for Kneser-type graphs
 BindGlobal("DisjointSets", function(x, y)
     return Intersection(x, y) = [];

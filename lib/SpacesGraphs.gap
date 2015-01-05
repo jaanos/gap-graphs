@@ -28,7 +28,7 @@ BindGlobal("TwistedGrassmannGraph", function(d, q)
     end, true);
 end);
 
-# The dual polar graph B_d(q) of the isotropic d-dimensional subspaces of
+# The dual polar graph B_d(q) of isotropic d-dimensional subspaces of
 # F_q^{2d+1} with respect to a nondegenerate quadratic form.
 BindGlobal("DualPolarGraphB", function(d, q)
     local G, e;
@@ -39,7 +39,7 @@ BindGlobal("DualPolarGraphB", function(d, q)
         GF(q)^e, d);
 end);
 
-# The dual polar graph C_d(q) of the isotropic d-dimensional subspaces of
+# The dual polar graph C_d(q) of isotropic d-dimensional subspaces of
 # F_q^{2d} with respect to a nondegenerate symplectic form.
 BindGlobal("DualPolarGraphC", function(d, q)
     local F, e;
@@ -50,7 +50,7 @@ BindGlobal("DualPolarGraphC", function(d, q)
         F, d, false);
 end);
 
-# The dual polar graph D_d(q) of the isotropic d-dimensional subspaces of
+# The dual polar graph D_d(q) of isotropic d-dimensional subspaces of
 # F_q^{2d} with respect to a nondegenerate quadratic form of Witt index d.
 BindGlobal("DualPolarGraphD", function(d, q)
     local G, e;
@@ -61,7 +61,7 @@ BindGlobal("DualPolarGraphD", function(d, q)
         GF(q)^e, d);
 end);
 
-# The dual polar graph ^2D_{d+1}(q) of the isotropic d-dimensional subspaces of
+# The dual polar graph ^2D_{d+1}(q) of isotropic d-dimensional subspaces of
 # F_q^{2d+2} with respect to a nondegenerate quadratic form of Witt index d.
 BindGlobal("DualPolarGraph2D", function(d, q)
     local G, e;
@@ -72,7 +72,7 @@ BindGlobal("DualPolarGraph2D", function(d, q)
         GF(q)^e, d);
 end);
 
-# The dual polar graph ^2A_{e-1}(r) of the isotropic [e/2]-dimensional
+# The dual polar graph ^2A_{e-1}(r) of isotropic [e/2]-dimensional
 # subspaces of F_{r^2}^e with respect to a nondegenerate Hermitean form.
 BindGlobal("DualPolarGraph2A", function(e, r)
     local B, F, c, d;
@@ -84,3 +84,14 @@ BindGlobal("DualPolarGraph2A", function(e, r)
         [Subspace(F, B{[1..d]} + (c[1]-c[2])*B{e+1-[1..d]}, "basis")],
         F, d, false);
 end);
+
+# The Doro graph of nonisotropic 1-dimensional subspaces of F_q^4 with respect
+# to a nondegenerate quadratic form. It is distance-regular for q = 4, 5.
+BindGlobal("DoroGraph", function(q)
+    local G, V;
+    V := GF(q)^4;
+    G := GO(-1, 4, q);
+    return Graph(G, [Subspace(V, BasisVectors(Basis(V)){[4]}, "basis")],
+        OnSubspaces(V), IsHyperbolic(InvariantQuadraticForm(G).matrix));
+end);
+
