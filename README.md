@@ -35,6 +35,7 @@ The following graphs are currently supported:
   * Cocktail party graphs
   * Latin square graphs
 * Sporadic distance-regular graphs:
+  * the Perkel graph with intersection array {6, 5, 2; 1, 1, 3}
   * the Doro graph on 65 vertices with intersection array {10, 6, 4; 1, 2, 5}
   * the Doro graph on 68 vertices with intersection array {12, 10, 3; 1, 3, 8}
   * the Coxeter graph with intersection array {3, 2, 2, 1; 1, 1, 1, 2}
