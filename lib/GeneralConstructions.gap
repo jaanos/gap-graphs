@@ -14,7 +14,8 @@ BindGlobal("ProductGraph", function(Gs, F)
             GG.names := [1..GG.order];
         fi;
     od;
-    AssignVertexNames(G, Cartesian(List(Gs, H -> H.names)));
+    AssignVertexNames(G, List(G.names,
+        f -> List([[1..Length(f)], i -> Gs[i].names[f[i]]])));
     return G;
 end);
 
@@ -72,7 +73,7 @@ BindGlobal("ExtendedBipartiteDoubleGraph", function(G)
             return x[2] <> y[2] and Distance(G, x[1], y[1]) <= 1;
         end);
     if "names" in RecNames(G) then
-        AssignVertexNames(H, Cartesian(G.names, signs));
+        AssignVertexNames(H, List(H.names, x -> [G.names[x[1]], x[2]]));
     fi;
     return H;
 end);

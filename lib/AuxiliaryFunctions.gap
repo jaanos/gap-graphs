@@ -131,20 +131,32 @@ BindGlobal("OnSubspaces",
     end
 );
 
-# Action on the vertices of the Preparata graph.
+# Action on the vertices of Preparata graphs.
 BindGlobal("OnPreparata", function(q, s, dp)
     local F, N;
     F := Elements(GF(q));
     N := Position(F, 0*Z(q));
     return function(t, g)
-        local g1, g2, g3, g4, w, z;
-        g1 := Image(Projection(dp, 1), g);
-        g2 := Image(Projection(dp, 2), g);
-        g3 := Image(Projection(dp, 3), g);
-        g4 := Image(Projection(dp, 4), g);
-        z := Z(q)^((q-1)^g1);
-        w := [z*t[1], t[2] + 2^g2, t[3]*z^(s+1) + F[N^g3]];
-        return List(w, x -> F[Position(F, x)^g4]);
+        local w, z;
+        z := Z(q)^((q-1)^Image(Projection(dp, 1), g));
+        w := [z*t[1], t[2] + 2^Image(Projection(dp, 2), g),
+              t[3]*z^(s+1) + F[N^Image(Projection(dp, 3), g)]];
+        return List(w, x -> F[Position(F, x)^Image(Projection(dp, 4), g)]);
+    end;
+end);
+
+# Action on the vertices of Kasami graphs.
+BindGlobal("OnKasami", function(q, s, dp)
+    local Fq, Fs, Nq, Ns;
+    Fq := Elements(GF(q));
+    Nq := Position(Fq, 0*Z(q));
+    Fs := Elements(GF(s));
+    Ns := Position(Fs, 0*Z(s));
+    return function(v, g)
+        local w;
+        w := [v[1] + Fq[Nq^Image(Projection(dp, 1), g)],
+              v[2] + Fs[Ns^Image(Projection(dp, 2), g)]];
+        return List(w, x -> Fs[Position(Fs, x)^Image(Projection(dp, 3), g)]);
     end;
 end);
 

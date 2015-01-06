@@ -21,7 +21,7 @@ The following graphs are currently supported:
   * Dual polar graphs D<sub>d</sub>(q)
   * Dual polar graphs <sup>2</sup>D<sub>d+1</sub>(q)
   * Dual polar graphs <sup>2</sup>A<sub>e</sub>(q) of diameter [e/2]
-  * The Gosset graph with intersection array {27, 10, 1; 1, 10, 27}
+  * the Gosset graph with intersection array {27, 10, 1; 1, 10, 27}
 * Other infinite families of distance-regular graphs:
   * Odd graphs O(d)
   * Folded Johnson graphs J̃(2d, d)
@@ -29,6 +29,7 @@ The following graphs are currently supported:
   * Folded halved cubes 1/2 H̃(2d, 2)
   * the Brouwer "vector product" graphs Br(q) with intersection arrays {q<sup>3</sup>-1, q<sup>3</sup>-q, q<sup>3</sup>-q<sup>2</sup>+1; 1, q, q<sup>2</sup>-1}
   * the Pasechnik graphs Pa(q) with intersection arrays {q<sup>3</sup>, q<sup>3</sup>-1, q<sup>3</sup>-q, q<sup>3</sup>-q<sup>2</sup>+1; 1, q, q<sup>2</sup>-1, q<sup>3</sup>}
+  * coset graphs of Kasami codes
   * de Caen, Mathon and Moorhouse's Preparata graphs Pr(t, e) (h = 1) and their quotients (h > 1) with intersection arrays {2<sup>2t</sup>-1, 2<sup>2t</sup>-2<sup>h</sup>, 1; 1, 2<sup>h</sup>, 2<sup>2t</sup>-1}
 * Families of strongly regular graphs:
   * Cocktail party graphs
