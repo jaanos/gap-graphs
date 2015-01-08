@@ -53,3 +53,35 @@ end);
 BindGlobal("PasechnikGraph",
     q -> ExtendedBipartiteDoubleGraph(BrouwerGraph(q))
 );
+
+# The additive symplectic cover of the complete graph on q^{2n} vertices.
+BindGlobal("AdditiveSymplecticCoverGraph", function(arg)
+    local B, F, G, K, V, h, m, q, dp;
+    if Length(arg) < 2 then
+        Error("at least two arguments expected");
+        return fail;
+    fi;
+    if Length(arg) > 2 then
+        h := arg[3];
+    else
+        h := 0;
+    fi;
+    q := arg[1];
+    F := GF(q);
+    m := 2*arg[2];
+    G := Sp(m, q);
+    V := F^m;
+    B := InvariantBilinearForm(G).matrix;
+    dp := DirectProduct(Concatenation([G],
+        ListWithIdenticalEntries(m+1, FieldAdditionPermutationGroup(q))));
+    if h = 0 then
+        K := AdditiveGroup(0*Z(q));
+    else
+        K := AdditiveGroup(BasisVectors(Basis(F)){[1..h]});
+    fi;
+    return Graph(dp, Cartesian(Unique(List(F, x -> x+K)), V),
+        OnAdditiveSymplecticCover(q, m, B, dp),
+        function(x, y)
+            return x <> y and x[2]*B*y[2]+y[1]-Elements(x[1])[1] = K;
+        end, true);
+end);

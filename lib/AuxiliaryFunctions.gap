@@ -160,6 +160,20 @@ BindGlobal("OnKasami", function(q, s, dp)
     end;
 end);
 
+# Action on the vertices of additive symplectic covers of complete graphs.
+BindGlobal("OnAdditiveSymplecticCover", function(q, m, B, dp)
+    local F, N;
+    F := Elements(GF(q));
+    N := Position(F, 0*Z(q));
+    return function(p, g)
+        local z;
+        z := List([1..m], i -> F[N^Image(Projection(dp, i+2), g)]);
+        return [p[1] + F[N^Image(Projection(dp, 2), g)] + p[2]*B*z,
+                p[2]*Image(Projection(dp, 1), g) + z];
+    end;
+end);
+
+
 # Action on the roots of E_8
 BindGlobal("OnRoots", function(v, g)
     return (-1)^(10^g) * v{OnTuples([1..Length(v)], g)};

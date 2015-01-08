@@ -4,7 +4,7 @@ AdditiveSympCover := function(q, n, h)
     local B, F, K, V, i, j;
     F := GF(q);
     V := F^n;
-    B := List([1..n], i -> List([1..n], j -> SignInt(i-j)))*Z(q)^0;
+    B := InvariantBilinearForm(Sp(n, q)).matrix;
     if h = 0 then
         return Graph(Group(()), Cartesian(F, V),
             function(x, y) return x; end,

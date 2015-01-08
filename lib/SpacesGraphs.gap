@@ -94,4 +94,3 @@ BindGlobal("DoroGraph", function(q)
     return Graph(G, [Subspace(V, BasisVectors(Basis(V)){[4]}, "basis")],
         OnSubspaces(V), IsHyperbolic(InvariantQuadraticForm(G).matrix));
 end);
-
