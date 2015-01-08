@@ -47,6 +47,7 @@ The following graphs are currently supported:
   * the Schläfli graph with v = 27, k = 16, λ = 10, μ = 8
   * the three Chang graphs with v = 28, k = 12, λ = 6, μ = 4
   * the Gewirtz graph with v = 56, k = 10, λ = 0, μ = 2
+  * the graph with v = 210, k = 99, λ = 48, μ = 45 constructed by M. Klin
 * Other graphs:
   * Complete multipartite graphs
   * Kneser graphs Kn(n, k)

@@ -14,6 +14,20 @@ BindGlobal("SchlaefliGraph",
 BindGlobal("GewirtzGraph", Graph(MathieuGroup(21), [[1,2,3,7,10,20]],
                                     OnSets, DisjointSets));
 
+# The graph with v=210, k=99, lm=48, mu=45 constructed by M. Klin
+BindGlobal("KlinGraph", List([function()
+        local G, H, N, V;
+        H := Group([(1,2,3,4,5,6), (1,4)]);
+        V := Set(List(SymmetricGroup(7), g -> H*g));
+        N := Position(V, H*());
+        G := EdgeOrbitsGraph(Action(SymmetricGroup(7), V, OnRight),
+            List([(3,4,5,6,7), (2,4,6,3,5,7), (3,5,6,7), (2,4,5,6,7,3),
+                        (2,3,5,6,7), (2,4,5,6), (2,3,5,6)],
+                    g -> [N, Position(V, H*g)]));
+        AssignVertexNames(G, V);
+        return G;
+    end])[1]());
+
 # The Perkel graph with intersection array {6, 5, 2; 1, 1, 3}.
 BindGlobal("PerkelGraph", Graph(PSL(2, 19),
                     Elements(Filtered(ConjugacyClassesSubgroups(PSL(2, 19)),

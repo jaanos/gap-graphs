@@ -15,7 +15,7 @@ GZ8 := AdjFunGraph(Elements(ZmodnZ(8)^2), function(x,y) return x <> y and
 A := Elements(AbelianGroup([2, 4]));;
 A2 := Cartesian(A, A);;
 GZ24 := AdjFunGraph(A2, function(x,y) return x <> y and
-        lGx[1]*x[2] = y[1]*y[2]); end);;
+        (x[1] = y[1] or x[2] = y[2] or x[1]*x[2] = y[1]*y[2]); end);;
 
 # OA(8, 3) za latinski kvadrat (Dih(8))^2
 D := Elements(DihedralGroup(8));;
