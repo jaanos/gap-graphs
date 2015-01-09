@@ -28,6 +28,9 @@ BindGlobal("KlinGraph", List([function()
         return G;
     end])[1]());
 
+# The icosahedron.
+BindGlobal("IcosahedronGraph", MultiplicativeSymplecticCoverGraph(5, 2));
+
 # The Perkel graph with intersection array {6, 5, 2; 1, 1, 3}.
 BindGlobal("PerkelGraph", Graph(PSL(2, 19),
                     Elements(Filtered(ConjugacyClassesSubgroups(PSL(2, 19)),

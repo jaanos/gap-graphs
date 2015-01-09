@@ -23,6 +23,7 @@ The following graphs are currently supported:
   * Dual polar graphs <sup>2</sup>A<sub>e</sub>(q) of diameter [e/2]
   * the Gosset graph with intersection array {27, 10, 1; 1, 10, 27}
 * Other infinite families of distance-regular graphs:
+  * Cycles C(n)
   * Odd graphs O(d)
   * Folded Johnson graphs J̃(2d, d)
   * Folded cubes H̃(d, 2)
@@ -32,10 +33,12 @@ The following graphs are currently supported:
   * coset graphs of Kasami codes
   * de Caen, Mathon and Moorhouse's Preparata graphs Pr(t, e) (h = 1) and their quotients (h > 1) with intersection arrays {2<sup>2t</sup>-1, 2<sup>2t</sup>-2<sup>h</sup>, 1; 1, 2<sup>h</sup>, 2<sup>2t</sup>-1}
   * additive symplectic covers of complete graphs (j = i) and their quotients (j < i) with intersection arrays {p<sup>ni</sup>-1, p<sup>ni</sup>-p<sup>ni-j</sup>, 1; 1, p<sup>ni-j</sup>, p<sup>ni</sup>-1}
+  * multiplicative symplectic covers of complete graphs with intersection arrays {q, q-m-1, 1; 1, m, q} (q or m even, m divides q-1)
 * Families of strongly regular graphs:
   * Cocktail party graphs
   * Latin square graphs
-* Sporadic distance-regular graphs:
+* Sporadic and other named distance-regular graphs:
+  * the skeleton of the icosahedron with intersection array {5, 2, 1; 1, 2, 5}
   * the Perkel graph with intersection array {6, 5, 2; 1, 1, 3}
   * the Doro graph on 65 vertices with intersection array {10, 6, 4; 1, 2, 5}
   * the Doro graph on 68 vertices with intersection array {12, 10, 3; 1, 3, 8}

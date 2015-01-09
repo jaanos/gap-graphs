@@ -17,6 +17,12 @@ BindGlobal("CompleteMultipartiteGraph", function(arg)
     fi;
 end);
 
+# Cycle graphs
+BindGlobal("CycleGraph", n -> Graph(CyclicGroup(IsPermGroup, n), [1..n],
+    OnPoints, function(x, y)
+        return (x-y) mod n in [1,n-1];
+    end, true));
+
 # Cocktail party graphs.
 BindGlobal("CocktailPartyGraph",
     n -> CompleteMultipartiteGraph(n, 2)
