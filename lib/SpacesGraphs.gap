@@ -94,3 +94,13 @@ BindGlobal("DoroGraph", function(q)
     return Graph(G, [Subspace(V, BasisVectors(Basis(V)){[4]}, "basis")],
         OnSubspaces(V), IsHyperbolic(InvariantQuadraticForm(G).matrix));
 end);
+
+# The unitary nonisotropics graph of 1-dimensional subspaces of F_(r^2)^3 with
+# respect to a nondegenerate sesquilinear form.
+BindGlobal("UnitaryNonisotropicsGraph", function(r)
+    local G, V;
+    V := GF(r^2)^3;
+    G := GU(3, r);
+    return Graph(G, [Subspace(V, BasisVectors(Basis(V)){[2]}, "basis")],
+        OnSubspaces(V), IsOrthogonal(InvariantSesquilinearForm(G).matrix, r));
+end);

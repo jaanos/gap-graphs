@@ -274,6 +274,27 @@ BindGlobal("ToHermitean", function(A, r)
         i -> List([1..n], j -> Hermitize(i, j))));
 end);
 
+# Checks whether the sum of two subspaces are hyperbolic
+# given a quadratic form.
+BindGlobal("IsHyperbolic", function(Q)
+    local s;
+    s := (Size(BaseField(Q)) - 1)^2;
+    return function(x, y)
+        return Size(Filtered(x+y, z -> not IsZero(z*Q*z))) = s;
+    end;
+end);
+
+# Checks whether two subspaces of F_{r^2} are orthogonal
+# given a sesquilinear form.
+BindGlobal("IsOrthogonal", function(Q, r)
+    local F;
+    F := x -> List(x, y -> y^r);
+    return function(x, y)
+        return Size(Filtered(Cartesian(x, y),
+            z -> not IsZero(z[1]*Q*F(z[2])))) = 0;
+    end;
+end);
+
 # The subset of isotropic spaces with respect to the quadratic form Q
 # of the collection V.
 BindGlobal("IsotropicSpacesQuadraticForm",
@@ -292,26 +313,9 @@ BindGlobal("IsotropicSpacesBilinearForm",
 # The subset of isotropic spaces with respect to the scalar product with
 # conjugation map f of the collection V.
 BindGlobal("IsotropicSpacesSesquilinearForm", function(Q, r)
-    local F;
-    F := x -> List(x, y -> y^r);
-    return V -> Filtered(V,
-                y -> Size(Filtered(Cartesian(Elements(y), Elements(y)),
-                    x -> not IsZero(x[1]*Q*F(x[2])))) = 0);
-end);
-
-# Checks whether the sum of two subspaces are hyperbolic
-# given a quadratic form.
-BindGlobal("IsHyperbolic", function(Q)
-    local s;
-    s := (Size(BaseField(Q)) - 1)^2;
-    return function(x, y)
-        return Size(Filtered(x+y, z -> not IsZero(z*Q*z))) = s;
-    end;
-end);
-
-# Checks whether two subspaces are orthogonal given a bilinear form.
-BindGlobal("IsOrthogonal", Q -> function(x, y)
-    return Size(Filtered(Cartesian(x, y), z -> not IsZero(z[1]*Q*z[2]))) = 0;
+    local O;
+    O := IsOrthogonal(Q, r);
+    return V -> Filtered(V, y -> O(y, y));
 end);
 
 # Adjacency function for Kneser-type graphs

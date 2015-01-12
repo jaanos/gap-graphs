@@ -28,6 +28,7 @@ The following graphs are currently supported:
   * Folded Johnson graphs J̃(2d, d)
   * Folded cubes H̃(d, 2)
   * Folded halved cubes 1/2 H̃(2d, 2)
+  * unitary nonisotropics graphs with intersection arrays {q^2-q, q^2-q-2, q+1; 1, 1, q^2-2q}
   * the Brouwer "vector product" graphs Br(q) with intersection arrays {q<sup>3</sup>-1, q<sup>3</sup>-q, q<sup>3</sup>-q<sup>2</sup>+1; 1, q, q<sup>2</sup>-1}
   * the Pasechnik graphs Pa(q) with intersection arrays {q<sup>3</sup>, q<sup>3</sup>-1, q<sup>3</sup>-q, q<sup>3</sup>-q<sup>2</sup>+1; 1, q, q<sup>2</sup>-1, q<sup>3</sup>}
   * coset graphs of Kasami codes
