@@ -14,6 +14,10 @@ BindGlobal("SchlaefliGraph",
 BindGlobal("GewirtzGraph", Graph(MathieuGroup(21), [[1,2,3,7,10,20]],
                                     OnSets, DisjointSets));
 
+# The strongly regular Witt graph with v=77, k=16, lm=0, mu=4.
+BindGlobal("WittStronglyRegularGraph", Graph(MathieuGroup(22),
+                                    [[1,2,3,7,10,20]], OnSets, DisjointSets));
+
 # The graph with v=210, k=99, lm=48, mu=45 constructed by M. Klin
 BindGlobal("KlinGraph", List([function()
         local G, H, N, V;
@@ -45,9 +49,30 @@ BindGlobal("GossetGraph",
     Graph(DirectProduct(SymmetricGroup(8), SymmetricGroup(2)),
         [[-3,-3,1,1,1,1,1,1]], OnRoots, RootAdjacency));
 
+# The truncated Witt graph with intersection array {15, 14, 12; 1, 1, 9}.
+BindGlobal("Witt23Graph", Graph(MathieuGroup(23), [[1,4,8,12,13,19,21,23]],
+                                OnSets, DisjointSets));
+
+# The large Witt graph with intersection array {30, 28, 24; 1, 3, 15}.
+BindGlobal("Witt24Graph", Graph(MathieuGroup(24), [[1,4,8,12,13,19,21,23]],
+                                OnSets, DisjointSets));
+
+# The bipartite graph associated to Higman's design
+# with intersection array {50, 49, 36; 1, 14, 50}.
+BindGlobal("HigmanGraph", Graph(Stabilizer(MathieuGroup(24), [23, 24], OnSets),
+                            [[1,4,8,12,13,19,21,23]], OnSets,
+                            function (x, y)
+                                return Length(Difference(Intersection(x, y),
+                                                         [23, 24])) in [0, 4];
+                            end));
+
 # The Coxeter graph with intersection array {3,2,2,1; 1,1,1,2}.
 BindGlobal("CoxeterGraph", Graph(PGL(3, 2), [[1, 2, 4]],
-                                    OnSets, DisjointSets));
+                                 OnSets, DisjointSets));
+
+# The doubly truncated Witt graph with intersection array {7,6,4,4; 1,1,1,6}.
+BindGlobal("Witt22Graph", Graph(MathieuGroup(22), [[1,2,3,4,5,10,18,21]],
+                                OnSets, DisjointSets));
 
 # The Biggs-Smith graph with intersection array {3,2,2,2,1,1,1; 1,1,1,1,1,1,3}.
 BindGlobal("BiggsSmithGraph", Graph(PSL(2, 17),

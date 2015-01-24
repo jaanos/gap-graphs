@@ -22,6 +22,8 @@ The following graphs are currently supported:
   * Dual polar graphs <sup>2</sup>D<sub>d+1</sub>(q)
   * Dual polar graphs <sup>2</sup>A<sub>e</sub>(q) of diameter [e/2]
   * the Gosset graph with intersection array {27, 10, 1; 1, 10, 27}
+  * the large Witt graph with intersection array {30, 28, 24; 1, 3, 15}
+  * the truncated Witt graph with intersection array {15, 14, 12; 1, 1, 9}
 * Other infinite families of distance-regular graphs:
   * Cycles C(n)
   * Odd graphs O(d)
@@ -43,7 +45,9 @@ The following graphs are currently supported:
   * the Perkel graph with intersection array {6, 5, 2; 1, 1, 3}
   * the Doro graph on 65 vertices with intersection array {10, 6, 4; 1, 2, 5}
   * the Doro graph on 68 vertices with intersection array {12, 10, 3; 1, 3, 8}
+  * the bipartite graph associated to Higman's design with intersection array {50, 49, 36; 1, 14, 50}
   * the Coxeter graph with intersection array {3, 2, 2, 1; 1, 1, 1, 2}
+  * the doubly truncated Witt graph with intersection array {7, 6, 4, 4; 1, 1, 1, 6}
   * the Biggs-Smith graph with intersection array {3, 2, 2, 2, 1, 1, 1; 1, 1, 1, 1, 1, 1, 3}
 * Named strongly regular graphs:
   * the Petersen graph with v = 10, k = 3, λ = 0, μ = 1
@@ -52,6 +56,7 @@ The following graphs are currently supported:
   * the Schläfli graph with v = 27, k = 16, λ = 10, μ = 8
   * the three Chang graphs with v = 28, k = 12, λ = 6, μ = 4
   * the Gewirtz graph with v = 56, k = 10, λ = 0, μ = 2
+  * the graph with v = 77, k = 16, λ = 0, μ = 4 associated to S(3, 6, 22)
   * the graph with v = 210, k = 99, λ = 48, μ = 45 constructed by M. Klin
 * Other graphs:
   * Complete multipartite graphs
