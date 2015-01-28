@@ -32,7 +32,10 @@ BindGlobal("KlinGraph", List([function()
         return G;
     end])[1]());
 
-# The icosahedron.
+# The Heawood graph with intersection array {3, 2, 2; 1, 1, 3}.
+BindGlobal("HeawoodGraph", DesarguesianPlaneIncidenceGraph(2));
+
+# The icosahedron with intersection array {5, 2, 1; 1, 2, 5}.
 BindGlobal("IcosahedronGraph", MultiplicativeSymplecticCoverGraph(5, 2));
 
 # The Perkel graph with intersection array {6, 5, 2; 1, 1, 3}.

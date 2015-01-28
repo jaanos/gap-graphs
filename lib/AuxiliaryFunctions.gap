@@ -1,16 +1,21 @@
 # Action of a group on a signed point.
 BindGlobal("OnSignedPoints", function(dp, signs)
+    local p1, p2;
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
     return function(e, g)
-        return [OnPoints(e[1], Image(Projection(dp, 1), g)),
-            Permuted(signs, Image(Projection(dp, 2), g))[Position(signs, e[2])]];
+        return [OnPoints(e[1], Image(p1, g)),
+                Permuted(signs, Image(p2, g))[Position(signs, e[2])]];
     end;
 end);
 
 # Action of a product group on vertices of a product graph.
 BindGlobal("OnProduct", function(n, dp)
+    local pr;
+    pr := List([1..n], i -> Projection(dp, i));
     return function(e, g)
         return List([1..n],
-            i -> OnPoints(e[i], Image(Projection(dp, i), g)));
+            i -> OnPoints(e[i], Image(pr[i], g)));
     end;
 end);
 
@@ -21,11 +26,14 @@ BindGlobal("OnSum", dp -> function(e, g)
 );
 
 # Action of a product group on the multiplication table of its factors.
-BindGlobal("OnLatinSquare", dp -> function(e, g)
-        return [Image(Projection(dp, 1), g) * e[1],
-            e[2] * Image(Projection(dp, 2), g)];
-    end
-);
+BindGlobal("OnLatinSquare", function(dp)
+    local p1, p2;
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    return function(e, g)
+        return [Image(p1, g) * e[1], e[2] * Image(p2, g)];
+    end;
+end);
 
 # Action of a wreath product on vectors over a ring.
 BindGlobal("OnZmodnZVectors", function(d, e)
@@ -128,48 +136,91 @@ end);
 BindGlobal("OnSubspaces",
     V -> function(S, g)
         return Subspace(V, OnSubspacesByCanonicalBasis(Basis(S), g));
-    end
-);
+    end);
+
+BindGlobal("OnProjectivePlane", function(V, dp)
+    local F, P, p1, p2;
+    F := OnSubspaces(V);
+    P := [x -> x, OrthogonalSpaceInFullRowSpace];
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    return function(S, g)
+        return P[2^Image(p2, g)](F(S, Image(p1, g)));
+    end;
+end);
+
+BindGlobal("OnHallPlane", function(q, dp)
+    local p5, pr, A, F, N;
+    pr := List([0,1], i -> List([1,2], j -> Projection(dp, 2*i+j)));
+    p5 := Projection(dp, 5);
+    F := Elements(GF(q));
+    N := Position(F, 0*Z(q));
+    A := function(p, g)
+        if Length(p) < 2 then
+            return p;
+        else
+            return p*(Z(q)^((q-1)^Image(p5, g)))
+                    + List(pr, r -> List(r, e -> F[N^Image(e, g)]));
+        fi;
+    end;
+    return function(x, g)
+        if Length(x) > 2 then
+            return Set(List(x, p -> A(p, g)));
+        else
+            return A(x, g);
+        fi;
+    end;
+end);
 
 # Action on the vertices of Preparata graphs.
 BindGlobal("OnPreparata", function(q, s, dp)
-    local F, N;
+    local F, N, p1, p2, p3, p4;
     F := Elements(GF(q));
     N := Position(F, 0*Z(q));
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    p3 := Projection(dp, 3);
+    p4 := Projection(dp, 4);
     return function(t, g)
         local w, z;
-        z := Z(q)^((q-1)^Image(Projection(dp, 1), g));
-        w := [z*t[1], t[2] + 2^Image(Projection(dp, 2), g),
-              t[3]*z^(s+1) + F[N^Image(Projection(dp, 3), g)]];
-        return List(w, x -> F[Position(F, x)^Image(Projection(dp, 4), g)]);
+        z := Z(q)^((q-1)^Image(p1, g));
+        w := [z*t[1], t[2] + 2^Image(p2, g),
+              t[3]*z^(s+1) + F[N^Image(p3, g)]];
+        return List(w, x -> F[Position(F, x)^Image(p4, g)]);
     end;
 end);
 
 # Action on the vertices of Kasami graphs.
 BindGlobal("OnKasami", function(q, s, dp)
-    local Fq, Fs, Nq, Ns;
+    local Fq, Fs, Nq, Ns, p1, p2, p3;
     Fq := Elements(GF(q));
     Nq := Position(Fq, 0*Z(q));
     Fs := Elements(GF(s));
     Ns := Position(Fs, 0*Z(s));
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    p3 := Projection(dp, 3);
     return function(v, g)
         local w;
-        w := [v[1] + Fq[Nq^Image(Projection(dp, 1), g)],
-              v[2] + Fs[Ns^Image(Projection(dp, 2), g)]];
-        return List(w, x -> Fs[Position(Fs, x)^Image(Projection(dp, 3), g)]);
+        w := [v[1] + Fq[Nq^Image(p1, g)],
+              v[2] + Fs[Ns^Image(p2, g)]];
+        return List(w, x -> Fs[Position(Fs, x)^Image(p3, g)]);
     end;
 end);
 
 # Action on the vertices of additive symplectic covers of complete graphs.
 BindGlobal("OnAdditiveSymplecticCover", function(q, m, B, dp)
-    local F, N;
+    local F, N, p1, p2, pr;
     F := Elements(GF(q));
     N := Position(F, 0*Z(q));
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    pr := List([1..m], i -> Projection(dp, i+2));
     return function(p, g)
         local z;
-        z := List([1..m], i -> F[N^Image(Projection(dp, i+2), g)]);
-        return [p[1] + F[N^Image(Projection(dp, 2), g)] + p[2]*B*z,
-                p[2]*Image(Projection(dp, 1), g) + z];
+        z := List([1..m], i -> F[N^Image(pr[i], g)]);
+        return [p[1] + F[N^Image(p2, g)] + p[2]*B*z,
+                p[2]*Image(p1, g) + z];
     end;
 end);
 
@@ -326,4 +377,19 @@ end);
 # Adjacency function for roots of E_8
 BindGlobal("RootAdjacency", function(x, y)
     return x*y = 8;
+end);
+
+# Multiplication in Hall algebras
+BindGlobal("HallMultiplication", function(q)
+    local p, r;
+    p := DefiningPolynomial(GF(GF(q), 2));
+    r := CoefficientsOfUnivariatePolynomial(p)[2];
+    return function(x, y)
+        if IsZero(y[2]) then
+            return x*y[1];
+        else
+            return [x[1]*y[1] - x[2]/y[2]*Value(p, y[1]),
+                    x[1]*y[2] - x[2]*(y[1] + r)];
+        fi;
+    end;
 end);

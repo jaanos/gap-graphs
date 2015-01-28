@@ -24,6 +24,8 @@ The following graphs are currently supported:
   * the Gosset graph with intersection array {27, 10, 1; 1, 10, 27}
   * the large Witt graph with intersection array {30, 28, 24; 1, 3, 15}
   * the truncated Witt graph with intersection array {15, 14, 12; 1, 1, 9}
+* Distance-regular graphs associated to finite geometries:
+  * incidence graphs of Desarguesian projective planes
 * Other infinite families of distance-regular graphs:
   * Cycles C(n)
   * Odd graphs O(d)
@@ -41,6 +43,7 @@ The following graphs are currently supported:
   * Cocktail party graphs
   * Latin square graphs
 * Sporadic and other named distance-regular graphs:
+  * the Heawood graph with intersection array {3, 2, 2; 1, 1, 3}
   * the skeleton of the icosahedron with intersection array {5, 2, 1; 1, 2, 5}
   * the Perkel graph with intersection array {6, 5, 2; 1, 1, 3}
   * the Doro graph on 65 vertices with intersection array {10, 6, 4; 1, 2, 5}
