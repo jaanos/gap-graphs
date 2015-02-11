@@ -150,16 +150,20 @@ BindGlobal("OnProjectivePlane", function(V, dp)
 end);
 
 BindGlobal("OnHallPlane", function(q, dp)
-    local p5, pr, A, F, N;
+    local p5, p6, p7, pr, A, F, N;
     pr := List([0,1], i -> List([1,2], j -> Projection(dp, 2*i+j)));
     p5 := Projection(dp, 5);
+    p6 := Projection(dp, 6);
+    p7 := Projection(dp, 7);
     F := Elements(GF(q));
     N := Position(F, 0*Z(q));
     A := function(p, g)
+        p := List(p, z -> [z[1] + F[N^Image(p5, g)]*z[2],
+                            z[2]*(Z(q)^((q-1)^Image(p6, g)))]);
         if Length(p) < 2 then
             return p;
         else
-            return p*(Z(q)^((q-1)^Image(p5, g)))
+            return p*(Z(q)^((q-1)^Image(p7, g)))
                     + List(pr, r -> List(r, e -> F[N^Image(e, g)]));
         fi;
     end;
