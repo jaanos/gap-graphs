@@ -155,12 +155,11 @@ BindGlobal("OnHallPlane", function(q, dp)
     p5 := Projection(dp, 5);
     p6 := Projection(dp, 6);
     p7 := Projection(dp, 7);
-    p8 := Projection(dp, 8);
     F := Elements(GF(q));
     N := Position(F, 0*Z(q));
     A := function(p, g)
         local r, M;
-        M := Image(p8, g);
+        M := Image(p7, g);
         p := List(p, z -> [z[1] + F[N^Image(p5, g)]*z[2],
                             z[2]*(Z(q)^((q-1)^Image(p6, g)))]);
         if p = [] then
@@ -180,8 +179,7 @@ BindGlobal("OnHallPlane", function(q, dp)
                 return [[(M[2][1] + p[1][1]*M[2][2])/r, 0*Z(q)]];
             fi;
         else
-            return M*p*(Z(q)^((q-1)^Image(p7, g)))
-                    + List(pr, r -> List(r, e -> F[N^Image(e, g)]));
+            return M*p + List(pr, r -> List(r, e -> F[N^Image(e, g)]));
         fi;
     end;
     return function(x, g)

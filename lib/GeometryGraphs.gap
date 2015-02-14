@@ -23,8 +23,9 @@ BindGlobal("HallPlaneIncidenceGraph", function(q)
                     List(H, z -> [z, mul(z, w[1]) + w[2]]))));
     dp := DirectProduct(Concatenation(ListWithIdenticalEntries(5,
                                         FieldAdditionPermutationGroup(q)),
-        ListWithIdenticalEntries(2, FieldMultiplicationPermutationGroup(q)),
-                                [Group([[c[2], Z(q)^0], [-c[1], 0*Z(q)]])]));
+                        [FieldMultiplicationPermutationGroup(q),
+                         Group([[[c[2], Z(q)^0], [-c[1], 0*Z(q)]],
+                                IdentityMat(2, GF(q))*Z(q)])]));
     return Graph(dp, Union(P, L), OnHallPlane(q, dp),
                     function (x,y)
                         return x in y or y in x;
