@@ -150,20 +150,37 @@ BindGlobal("OnProjectivePlane", function(V, dp)
 end);
 
 BindGlobal("OnHallPlane", function(q, dp)
-    local p5, p6, p7, pr, A, F, N;
+    local p5, p6, p7, p8, pr, A, F, N;
     pr := List([0,1], i -> List([1,2], j -> Projection(dp, 2*i+j)));
     p5 := Projection(dp, 5);
     p6 := Projection(dp, 6);
     p7 := Projection(dp, 7);
+    p8 := Projection(dp, 8);
     F := Elements(GF(q));
     N := Position(F, 0*Z(q));
     A := function(p, g)
+        local r, M;
+        M := Image(p8, g);
         p := List(p, z -> [z[1] + F[N^Image(p5, g)]*z[2],
                             z[2]*(Z(q)^((q-1)^Image(p6, g)))]);
-        if Length(p) < 2 then
-            return p;
+        if p = [] then
+            if IsZero(M[2][1]) then
+                return [];
+            else
+                return [[M[2][2]/M[2][1], 0*Z(q)]];
+            fi;
+        elif Length(p) = 1 then
+            if not IsZero(p[1][2]) then
+                return p;
+            fi;
+            r := M[1][1] + p[1][1]*M[1][2];
+            if IsZero(r) then
+                return [];
+            else
+                return [[(M[2][1] + p[1][1]*M[2][2])/r, 0*Z(q)]];
+            fi;
         else
-            return p*(Z(q)^((q-1)^Image(p7, g)))
+            return M*p*(Z(q)^((q-1)^Image(p7, g)))
                     + List(pr, r -> List(r, e -> F[N^Image(e, g)]));
         fi;
     end;
@@ -384,9 +401,8 @@ BindGlobal("RootAdjacency", function(x, y)
 end);
 
 # Multiplication in Hall algebras
-BindGlobal("HallMultiplication", function(q)
-    local p, r;
-    p := DefiningPolynomial(GF(GF(q), 2));
+BindGlobal("HallMultiplication", function(p)
+    local r;
     r := CoefficientsOfUnivariatePolynomial(p)[2];
     return function(x, y)
         if IsZero(y[2]) then
