@@ -360,24 +360,21 @@ BindGlobal("IsOrthogonal", function(Q, r)
     local F;
     F := x -> List(x, y -> y^r);
     return function(x, y)
-        return Size(Filtered(Cartesian(x, y),
-            z -> not IsZero(z[1]*Q*F(z[2])))) = 0;
+        return ForAll(Cartesian(x, y), z -> IsZero(z[1]*Q*F(z[2])));
     end;
 end);
 
 # The subset of isotropic spaces with respect to the quadratic form Q
 # of the collection V.
 BindGlobal("IsotropicSpacesQuadraticForm",
-    Q -> V -> Filtered(V, y -> Size(Filtered(Elements(y),
-            x -> not IsZero(x*Q*x))) = 0)
+    Q -> V -> Filtered(V, y -> ForAll(y, x -> IsZero(x*Q*x)))
 );
 
 # The subset of isotropic spaces with respect to the bilinear form Q
 # of the collection V.
 BindGlobal("IsotropicSpacesBilinearForm",
     Q -> V -> Filtered(V,
-                y -> Size(Filtered(Cartesian(Elements(y), Elements(y)),
-                    x -> not IsZero(x[1]*Q*x[2]))) = 0)
+                y -> ForAll(Cartesian(y, y), x -> IsZero(x[1]*Q*x[2])))
 );
 
 # The subset of isotropic spaces with respect to the scalar product with
