@@ -138,6 +138,16 @@ BindGlobal("OnSubspaces",
         return Subspace(V, OnSubspacesByCanonicalBasis(Basis(S), g));
     end);
 
+# Action of a matrix group on subspaces of a vector space over a finite field.
+BindGlobal("OnSetsSubspaces", function(V)
+    local F;
+    F := OnSubspaces(V);
+    return function(S, g)
+        return Set(List(S, s -> F(s, g)));
+    end;
+end);
+
+# Action on points and lines of Desarguesian projective planes.
 BindGlobal("OnProjectivePlane", function(V, dp)
     local F, P, p1, p2;
     F := OnSubspaces(V);
@@ -149,6 +159,7 @@ BindGlobal("OnProjectivePlane", function(V, dp)
     end;
 end);
 
+# Action on points and lines of Hall planes.
 BindGlobal("OnHallPlane", function(q, dp)
     local p5, p6, p7, p8, pr, A, F, N;
     pr := List([0,1], i -> List([1,2], j -> Projection(dp, 2*i+j)));
