@@ -26,6 +26,7 @@ The following graphs are currently supported:
   * the truncated Witt graph with intersection array {15, 14, 12; 1, 1, 9}
 * Distance-regular graphs associated to finite geometries:
   * incidence graphs of Desarguesian projective planes
+  * incidence graphs of Hall projective planes
 * Other infinite families of distance-regular graphs:
   * Cycles C(n)
   * Odd graphs O(d)

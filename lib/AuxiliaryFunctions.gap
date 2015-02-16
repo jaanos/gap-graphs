@@ -158,7 +158,7 @@ BindGlobal("OnHallPlane", function(q, dp)
     F := Elements(GF(q));
     N := Position(F, 0*Z(q));
     A := function(p, g)
-        local r, M;
+        local s, M;
         M := Image(p7, g);
         p := List(p, z -> [z[1] + F[N^Image(p5, g)]*z[2],
                             z[2]*(Z(q)^((q-1)^Image(p6, g)))]);
@@ -172,11 +172,11 @@ BindGlobal("OnHallPlane", function(q, dp)
             if not IsZero(p[1][2]) then
                 return p;
             fi;
-            r := M[1][1] + p[1][1]*M[1][2];
-            if IsZero(r) then
+            s := M[1][1] + p[1][1]*M[1][2];
+            if IsZero(s) then
                 return [];
             else
-                return [[(M[2][1] + p[1][1]*M[2][2])/r, 0*Z(q)]];
+                return [[(M[2][1] + p[1][1]*M[2][2])/s, 0*Z(q)]];
             fi;
         else
             return M*p + List(pr, r -> List(r, e -> F[N^Image(e, g)]));
