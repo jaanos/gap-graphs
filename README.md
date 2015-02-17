@@ -27,6 +27,7 @@ The following graphs are currently supported:
 * Distance-regular graphs associated to finite geometries:
   * incidence graphs of Desarguesian projective planes
   * incidence graphs of Hall projective planes
+  * incidence graphs of (ordinary) Hughes projective planes
 * Other infinite families of distance-regular graphs:
   * Cycles C(n)
   * Odd graphs O(d)

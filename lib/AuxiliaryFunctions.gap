@@ -138,12 +138,16 @@ BindGlobal("OnSubspaces",
         return Subspace(V, OnSubspacesByCanonicalBasis(Basis(S), g));
     end);
 
-# Action of a matrix group on subspaces of a vector space over a finite field.
-BindGlobal("OnSetsSubspaces", function(V)
-    local F;
-    F := OnSubspaces(V);
+# Action of a matrix group on normalized vectors over a semifield.
+BindGlobal("OnSemifieldVectors", function(div)
+    local norm;
+    norm := function(v)
+        local n;
+        n := Filtered(v, x -> not IsZero(x))[1];
+        return List(v, x -> div(x, n));
+    end;
     return function(S, g)
-        return Set(List(S, s -> F(s, g)));
+        return Set(List(S*g, norm));
     end;
 end);
 
@@ -253,7 +257,6 @@ BindGlobal("OnAdditiveSymplecticCover", function(q, m, B, dp)
                 p[2]*Image(p1, g) + z];
     end;
 end);
-
 
 # Action on the roots of E_8
 BindGlobal("OnRoots", function(v, g)
@@ -419,3 +422,23 @@ BindGlobal("HallMultiplication", function(p)
         fi;
     end;
 end);
+
+# Multiplication in Dickson near-fields
+BindGlobal("DicksonMultiplication",
+    q -> function(x, y)
+            if IsZero(y) then
+                return 0*Z(q);
+            else
+                return x^(q^LogFFE(y, Z(q^2))) * y;
+            fi;
+        end);
+
+# Right division in Dickson near-fields
+BindGlobal("DicksonRightDivision",
+    q -> function(x, y)
+            if IsZero(x) then
+                return 0*Z(q);
+            else
+                return (x / y)^(-q^LogFFE(y, Z(q^2)));
+            fi;
+        end);
