@@ -138,14 +138,27 @@ BindGlobal("OnSubspaces",
         return Subspace(V, OnSubspacesByCanonicalBasis(Basis(S), g));
     end);
 
-# Action of a matrix group on normalized vectors over a semifield.
-BindGlobal("OnSemifieldVectors", function(div)
-    local norm;
-    norm := function(v)
+# Normalize a vector over a semifield given the semifield right division.
+BindGlobal("NormalizeSemifieldVector",
+    div -> function(v)
         local n;
         n := Filtered(v, x -> not IsZero(x))[1];
         return List(v, x -> div(x, n));
+    end);
+
+# Action of a matrix group on normalized vectors over a semifield.
+BindGlobal("OnSemifieldVectors", function(div)
+    local norm;
+    norm := NormalizeSemifieldVector(div);
+    return function(s, g)
+        return norm(s*g);
     end;
+end);
+
+# Action of a matrix group on sets of normalized vectors over a semifield.
+BindGlobal("OnSetsSemifieldVectors", function(div)
+    local norm;
+    norm := NormalizeSemifieldVector(div);
     return function(S, g)
         return Set(List(S*g, norm));
     end;
@@ -160,6 +173,17 @@ BindGlobal("OnProjectivePlane", function(V, dp)
     p2 := Projection(dp, 2);
     return function(S, g)
         return P[2^Image(p2, g)](F(S, Image(p1, g)));
+    end;
+end);
+
+# Action on points or lines of a point-line geometry.
+BindGlobal("OnPointsOrLines", function(act, line)
+    return function(x, g)
+        if line(x) then
+            return Set(List(x, p -> act(p, g)));
+        else
+            return act(x, g);
+        fi;
     end;
 end);
 
@@ -197,13 +221,19 @@ BindGlobal("OnHallPlane", function(q, dp)
             return M*p + List(pr, r -> List(r, e -> F[N^Image(e, g)]));
         fi;
     end;
-    return function(x, g)
-        if Length(x) > 2 then
-            return Set(List(x, p -> A(p, g)));
-        else
-            return A(x, g);
-        fi;
+    return OnPointsOrLines(A, x -> Length(x) > 2);
+end);
+
+# Action on points and lines of Hughes planes.
+BindGlobal("OnHughesPlane", function(q, div, dp)
+    local p1, p2, A, act;
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    act := OnSemifieldVectors(div);
+    A := function(p, g)
+        return act(List(p, x -> x^(q^(2^Image(p2, g)))), Image(p1, g));
     end;
+    return OnPointsOrLines(A, x -> Length(x) > 3);
 end);
 
 # Action on the vertices of Preparata graphs.
@@ -409,6 +439,11 @@ BindGlobal("RootAdjacency", function(x, y)
     return x*y = 8;
 end);
 
+# Point-line incidence
+BindGlobal("PointLineIncidence", function(x, y)
+    return x in y or y in x;
+end);
+
 # Multiplication in Hall algebras
 BindGlobal("HallMultiplication", function(p)
     local r;
@@ -439,6 +474,6 @@ BindGlobal("DicksonRightDivision",
             if IsZero(x) then
                 return 0*Z(q);
             else
-                return (x / y)^(-q^LogFFE(y, Z(q^2)));
+                return (x / y)^(q^LogFFE(y, Z(q^2)));
             fi;
         end);
