@@ -32,7 +32,7 @@ end);
 # The incidence graph of a Hughes plane.
 # It is distance-regular when q is an odd prime power.
 BindGlobal("HughesPlaneIncidenceGraph", function(q)
-    local c, A, G, L, P, V, act, dp, mul, rdiv;
+    local c, A, B, P, V, dp, th, mul, rdiv;
     c := CoefficientsOfUnivariatePolynomial(DefiningPolynomial(GF(GF(q), 3)));
     A := [[-c[3], Z(q)^0, 0*Z(q)],
           [-c[2], 0*Z(q), Z(q)^0],
@@ -42,12 +42,13 @@ BindGlobal("HughesPlaneIncidenceGraph", function(q)
     rdiv := DicksonRightDivision(q);
     P := Filtered(V,
             x -> not IsZero(x) and IsOne(Filtered(x, y -> not IsZero(y))[1]));
-    L := List(Filtered(GF(q^2), w -> IsOne(w) or not w in GF(q)),
-            t -> Set(Filtered(P, x -> IsZero(x[1] + mul(t, x[2]) + x[3]))));
-    G := Group(A);
-    act := OnSetsSemifieldVectors(rdiv);
-    dp := DirectProduct(G, Group((1, 2)));
-    return Graph(dp, Concatenation(P, Union(List(L,
-                                        l -> Set(List(G, g -> act(l, g)))))),
-                OnHughesPlane(q, rdiv, dp), PointLineIncidence, true);
+    th := Z(q^2)^((q+1)/2);
+    B := Basis(GF(q^2), [Z(q)^0, th]);
+    return Graph(Group(()), Cartesian(GF(2), P),
+            function(x,y) return x; end,
+            function(x, y)
+                local z;
+                z := TransposedMat(List(y[2], w -> Coefficients(B, w)));
+                return x[1] <> y[1] and IsZero(x[2]*z[1] + mul(th, x[2]*z[2]));
+            end, true);;
 end);
