@@ -205,7 +205,7 @@ BindGlobal("OnHallPlane", function(q, dp)
             if IsZero(M[2][1]) then
                 return [];
             else
-                return [[M[2][2]/M[2][1], 0*Z(q)]];
+                return [[M[2][2]/M[1][2], 0*Z(q)]];
             fi;
         elif Length(p) = 1 then
             if not IsZero(p[1][2]) then
