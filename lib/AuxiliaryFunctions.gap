@@ -138,104 +138,6 @@ BindGlobal("OnSubspaces",
         return Subspace(V, OnSubspacesByCanonicalBasis(Basis(S), g));
     end);
 
-# Normalize a vector over a semifield given the semifield right division.
-BindGlobal("NormalizeSemifieldVector",
-    div -> function(v)
-        local n;
-        n := Filtered(v, x -> not IsZero(x))[1];
-        return List(v, x -> div(x, n));
-    end);
-
-# Action of a matrix group on normalized vectors over a semifield.
-BindGlobal("OnSemifieldVectors", function(div)
-    local norm;
-    norm := NormalizeSemifieldVector(div);
-    return function(s, g)
-        return norm(s*g);
-    end;
-end);
-
-# Action of a matrix group on sets of normalized vectors over a semifield.
-BindGlobal("OnSetsSemifieldVectors", function(div)
-    local norm;
-    norm := NormalizeSemifieldVector(div);
-    return function(S, g)
-        return Set(List(S*g, norm));
-    end;
-end);
-
-# Action on points and lines of Desarguesian projective planes.
-BindGlobal("OnProjectivePlane", function(V, dp)
-    local F, P, p1, p2;
-    F := OnSubspaces(V);
-    P := [x -> x, OrthogonalSpaceInFullRowSpace];
-    p1 := Projection(dp, 1);
-    p2 := Projection(dp, 2);
-    return function(S, g)
-        return P[2^Image(p2, g)](F(S, Image(p1, g)));
-    end;
-end);
-
-# Action on points or lines of a point-line geometry.
-BindGlobal("OnPointsOrLines", function(act, line)
-    return function(x, g)
-        if line(x) then
-            return Set(List(x, p -> act(p, g)));
-        else
-            return act(x, g);
-        fi;
-    end;
-end);
-
-# Action on points and lines of Hall planes.
-BindGlobal("OnHallPlane", function(q, dp)
-    local p5, p6, p7, p8, pr, A, F, N;
-    pr := List([0,1], i -> List([1,2], j -> Projection(dp, 2*i+j)));
-    p5 := Projection(dp, 5);
-    p6 := Projection(dp, 6);
-    p7 := Projection(dp, 7);
-    F := Elements(GF(q));
-    N := Position(F, 0*Z(q));
-    A := function(p, g)
-        local s, M;
-        M := Image(p7, g);
-        p := List(p, z -> [z[1] + F[N^Image(p5, g)]*z[2],
-                            z[2]*(Z(q)^((q-1)^Image(p6, g)))]);
-        if p = [] then
-            if IsZero(M[2][1]) then
-                return [];
-            else
-                return [[M[2][2]/M[1][2], 0*Z(q)]];
-            fi;
-        elif Length(p) = 1 then
-            if not IsZero(p[1][2]) then
-                return p;
-            fi;
-            s := M[1][1] + p[1][1]*M[1][2];
-            if IsZero(s) then
-                return [];
-            else
-                return [[(M[2][1] + p[1][1]*M[2][2])/s, 0*Z(q)]];
-            fi;
-        else
-            return M*p + List(pr, r -> List(r, e -> F[N^Image(e, g)]));
-        fi;
-    end;
-    return OnPointsOrLines(A, x -> Length(x) > 2);
-end);
-
-# Action on points and lines of Hughes planes.
-BindGlobal("OnHughesPlane", function(q, div, dp)
-    local p1, p2, A, act;
-    p1 := Projection(dp, 1);
-    p2 := Projection(dp, 2);
-    act := OnSemifieldVectors(div);
-    A := function(p, g)
-        return act(List(p, x -> x^(q^(2^Image(p2, g)))), Image(p1, g));
-    end;
-    return OnPointsOrLines(A, x -> Length(x) > 3);
-end);
-
 # Action on the vertices of Preparata graphs.
 BindGlobal("OnPreparata", function(q, s, dp)
     local F, N, p1, p2, p3, p4;
@@ -477,3 +379,101 @@ BindGlobal("DicksonRightDivision",
                 return (x / y)^(q^LogFFE(y, Z(q^2)));
             fi;
         end);
+
+# Normalize a vector over a semifield given the semifield right division.
+BindGlobal("NormalizeSemifieldVector",
+    div -> function(v)
+        local n;
+        n := Filtered(v, x -> not IsZero(x))[1];
+        return List(v, x -> div(x, n));
+    end);
+
+# Action of a matrix group on normalized vectors over a semifield.
+BindGlobal("OnSemifieldVectors", function(div)
+    local norm;
+    norm := NormalizeSemifieldVector(div);
+    return function(s, g)
+        return norm(s*g);
+    end;
+end);
+
+# Action of a matrix group on sets of normalized vectors over a semifield.
+BindGlobal("OnSetsSemifieldVectors", function(div)
+    local norm;
+    norm := NormalizeSemifieldVector(div);
+    return function(S, g)
+        return Set(List(S*g, norm));
+    end;
+end);
+
+# Action on points and lines of Desarguesian projective planes.
+BindGlobal("OnProjectivePlane", function(V, dp)
+    local F, P, p1, p2;
+    F := OnSubspaces(V);
+    P := [x -> x, OrthogonalSpaceInFullRowSpace];
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    return function(S, g)
+        return P[2^Image(p2, g)](F(S, Image(p1, g)));
+    end;
+end);
+
+# Action on points or lines of a point-line geometry.
+BindGlobal("OnPointsOrLines", function(act, line)
+    return function(x, g)
+        if line(x) then
+            return Set(List(x, p -> act(p, g)));
+        else
+            return act(x, g);
+        fi;
+    end;
+end);
+
+# Action on points and lines of Hall planes.
+BindGlobal("OnHallPlane", function(q, dp)
+    local p5, p6, p7, p8, pr, A, F, N;
+    pr := List([0,1], i -> List([1,2], j -> Projection(dp, 2*i+j)));
+    p5 := Projection(dp, 5);
+    p6 := Projection(dp, 6);
+    p7 := Projection(dp, 7);
+    F := Elements(GF(q));
+    N := Position(F, 0*Z(q));
+    A := function(p, g)
+        local s, M;
+        M := Image(p7, g);
+        p := List(p, z -> [z[1] + F[N^Image(p5, g)]*z[2],
+                            z[2]*(Z(q)^((q-1)^Image(p6, g)))]);
+        if p = [] then
+            if IsZero(M[2][1]) then
+                return [];
+            else
+                return [[M[2][2]/M[1][2], 0*Z(q)]];
+            fi;
+        elif Length(p) = 1 then
+            if not IsZero(p[1][2]) then
+                return p;
+            fi;
+            s := M[1][1] + p[1][1]*M[1][2];
+            if IsZero(s) then
+                return [];
+            else
+                return [[(M[2][1] + p[1][1]*M[2][2])/s, 0*Z(q)]];
+            fi;
+        else
+            return M*p + List(pr, r -> List(r, e -> F[N^Image(e, g)]));
+        fi;
+    end;
+    return OnPointsOrLines(A, x -> Length(x) > 2);
+end);
+
+# Action on points and lines of Hughes planes.
+BindGlobal("OnHughesPlane", function(q, dp)
+    local p1, p2, act, F;
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    act := OnSemifieldVectors(DicksonRightDivision(q));
+    F := [Inverse, TransposedMat];
+    return function(p, g)
+        return [p[1]^Image(p2, g), act(p[2], F[p[1]](Image(p1, g)))];
+    end;
+end);
