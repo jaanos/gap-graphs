@@ -44,8 +44,8 @@ BindGlobal("HughesPlaneIncidenceGraph", function(q)
             x -> not IsZero(x) and IsOne(Filtered(x, y -> not IsZero(y))[1]));
     th := Z(q^2)^((q+1)/2);
     B := Basis(GF(q^2), [Z(q)^0, th]);
-    return Graph(Group(()), Cartesian(GF(2), P),
-            function(x,y) return x; end,
+    return Graph(SymmetricGroup(2), Cartesian(GF(2), P),
+            function(x, g) return [x[1]+Z(2)^(2^g), x[2]]; end,
             function(x, y)
                 local z;
                 z := TransposedMat(List(y[2], w -> Coefficients(B, w)));
