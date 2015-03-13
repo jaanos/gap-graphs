@@ -468,12 +468,14 @@ end);
 
 # Action on points and lines of Hughes planes.
 BindGlobal("OnHughesPlane", function(q, dp)
-    local p1, p2, act, F;
+    local p1, p2, p3, act, F;
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
+    p3 := Projection(dp, 3);
     act := OnSemifieldVectors(DicksonRightDivision(q));
     F := [Inverse, TransposedMat];
     return function(p, g)
-        return [p[1]^Image(p2, g), act(p[2], F[p[1]](Image(p1, g)))];
+        return [p[1]^Image(p2, g), act(List(p[2],
+                        x -> x^(q^(2^Image(p3, g)))), F[p[1]](Image(p1, g)))];
     end;
 end);

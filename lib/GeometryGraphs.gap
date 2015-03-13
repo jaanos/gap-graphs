@@ -29,21 +29,20 @@ BindGlobal("HallPlaneIncidenceGraph", function(q)
                 PointLineIncidence, true);
 end);
 
-# The incidence graph of a Hughes plane.
+# The incidence graph of an ordinary Hughes plane.
 # It is distance-regular when q is an odd prime power.
 BindGlobal("HughesPlaneIncidenceGraph", function(q)
-    local c, A, B, P, V, dp, th, mul;
+    local c, A, B, P, dp, th, mul;
     c := CoefficientsOfUnivariatePolynomial(DefiningPolynomial(GF(GF(q), 3)));
     A := [[-c[3], Z(q)^0, 0*Z(q)],
           [-c[2], 0*Z(q), Z(q)^0],
           [-c[1], 0*Z(q), 0*Z(q)]];
-    V := GF(q^2)^3;
     mul := DicksonMultiplication(q);
-    P := Filtered(V,
+    P := Filtered(GF(q^2)^3,
             x -> not IsZero(x) and IsOne(Filtered(x, y -> not IsZero(y))[1]));
     th := Z(q^2)^((q+1)/2);
     B := Basis(GF(q^2), [Z(q)^0, th]);
-    dp := DirectProduct(Group(A), SymmetricGroup(2));
+    dp := DirectProduct(Group(A), SymmetricGroup(2), SymmetricGroup(2));
     return Graph(dp, Cartesian([1, 2], P),
             OnHughesPlane(q, dp),
             function(x, y)
