@@ -511,7 +511,7 @@ BindGlobal("ReadLines", function(file)
     lns := [];
     ln := ReadLine(f);
     while ln <> fail do
-        NormalizeWhitespace(ln);
+        RemoveCharacters(ln, "\r\n");
         Add(lns, ln);
         ln := ReadLine(f);
     od;

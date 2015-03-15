@@ -28,6 +28,7 @@ The following graphs are currently supported:
   * incidence graphs of Desarguesian projective planes
   * incidence graphs of Hall projective planes
   * incidence graphs of Hughes projective planes (both ordinary and exceptional)
+  * incidence graphs of projective planes from files as listed on [E. Moorhouse's webpage](http://www.uwyo.edu/moorhouse/pub/planes/)
 * Other infinite families of distance-regular graphs:
   * Cycles C(n)
   * Odd graphs O(d)

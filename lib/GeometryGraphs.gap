@@ -98,8 +98,12 @@ BindGlobal("HughesPlaneIncidenceGraph", function(arg)
             end, true);;
 end);
 
+# The incidence graph of a projective plane read from a file as on
+#   http://www.uwyo.edu/moorhouse/pub/planes/
+# The optional second parameter is a file containing generators of the
+# automorphism group.
 BindGlobal("ProjectivePlaneIncidenceGraphFromFile", function(arg)
-    local n, G, L, lns;
+    local l, m, n, G, L, fst, lst, lns, dual, gens;
     if Length(arg) < 1 then
         Error("at least one argument expected");
         return fail;
@@ -107,7 +111,29 @@ BindGlobal("ProjectivePlaneIncidenceGraphFromFile", function(arg)
     lns := ReadLines(arg[1]);
     n := Length(lns);
     L := List(lns, l -> List(SplitString(l, " "), x -> Int(x)+n+1));
-    G := Group(());
+    if Length(arg) > 1 then
+        lns := ReadLines(arg[2]);
+        if Length(arg) > 2 then
+            dual := arg[3];
+        else
+            dual := false;
+        fi;
+        m := Length(lns);
+        fst := Filtered([1..m], i -> IntChar(lns[i][1]) <> 32);
+        l := Length(fst);
+        lst := List(fst{[2..l]}, i -> i-1);
+        Add(lst, m);
+        lns := List([1..l],
+                    i -> JoinStringsWithSeparator(lns{[fst[i]..lst[i]]}, ""));
+        gens := List(lns, l -> List(SplitString(l, " "), x -> Int(x)+1));
+        if dual then
+            gens := List(gens,
+                         l -> Concatenation(l{[n+1..2*n]}-n, l{[1..n]}+n));
+        fi;
+        G := Group(List(gens, PermList));
+    else
+        G := Group(());
+    fi;
     return Graph(G, [1..2*n], OnPoints, function(x, y)
             return (x <= n and y in L[x]) or (y <= n and x in L[y]);
         end, true);
