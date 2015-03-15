@@ -103,7 +103,7 @@ end);
 # The optional second parameter is a file containing generators of the
 # automorphism group.
 BindGlobal("ProjectivePlaneIncidenceGraphFromFile", function(arg)
-    local l, m, n, G, L, fst, lst, lns, dual, gens;
+    local l, m, n, G, L, fst, lst, lns;
     if Length(arg) < 1 then
         Error("at least one argument expected");
         return fail;
@@ -113,24 +113,14 @@ BindGlobal("ProjectivePlaneIncidenceGraphFromFile", function(arg)
     L := List(lns, l -> List(SplitString(l, " "), x -> Int(x)+n+1));
     if Length(arg) > 1 then
         lns := ReadLines(arg[2]);
-        if Length(arg) > 2 then
-            dual := arg[3];
-        else
-            dual := false;
-        fi;
         m := Length(lns);
         fst := Filtered([1..m], i -> IntChar(lns[i][1]) <> 32);
         l := Length(fst);
         lst := List(fst{[2..l]}, i -> i-1);
         Add(lst, m);
-        lns := List([1..l],
-                    i -> JoinStringsWithSeparator(lns{[fst[i]..lst[i]]}, ""));
-        gens := List(lns, l -> List(SplitString(l, " "), x -> Int(x)+1));
-        if dual then
-            gens := List(gens,
-                         l -> Concatenation(l{[n+1..2*n]}-n, l{[1..n]}+n));
-        fi;
-        G := Group(List(gens, PermList));
+        G := Group(List([1..l], i -> PermList(List(SplitString(
+                    JoinStringsWithSeparator(lns{[fst[i]..lst[i]]}, ""),
+                    " "), x -> Int(x)+1))));
     else
         G := Group(());
     fi;
