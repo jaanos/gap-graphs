@@ -380,6 +380,32 @@ BindGlobal("DicksonRightDivision",
             fi;
         end);
 
+BindGlobal("ToExceptionalMatrix", function(q, F, B)
+    return x -> F[IntVecFFE(Coefficients(B, x))*[q, 1] + 1];
+end);
+
+# Multiplication in exceptional near-fields
+BindGlobal("ExceptionalMultiplication", function(q, F, B)
+    local mat;
+    mat := ToExceptionalMatrix(q, F, B);
+    return function(x, y)
+        local M;
+        M := mat(x) * mat(y);
+        return M[1]*B;
+    end;
+end);
+
+# Right division in exceptional near-fields
+BindGlobal("ExceptionalRightDivision", function(q, F, B)
+    local mat;
+    mat := ToExceptionalMatrix(q, F, B);
+    return function(x, y)
+        local M;
+        M := mat(x) * mat(y)^-1;
+        return M[1]*B;
+    end;
+end);
+
 # Normalize a vector over a semifield given the semifield right division.
 BindGlobal("NormalizeSemifieldVector",
     div -> function(v)
@@ -467,12 +493,12 @@ BindGlobal("OnHallPlane", function(q, dp)
 end);
 
 # Action on points and lines of Hughes planes.
-BindGlobal("OnHughesPlane", function(q, dp)
+BindGlobal("OnHughesPlane", function(q, div, dp)
     local p1, p2, p3, act, F;
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     p3 := Projection(dp, 3);
-    act := OnSemifieldVectors(DicksonRightDivision(q));
+    act := OnSemifieldVectors(div);
     F := [Inverse, TransposedMat];
     return function(p, g)
         return [p[1]^Image(p2, g), act(List(p[2],
