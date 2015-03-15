@@ -104,7 +104,7 @@ BindGlobal("ExceptionalHughesPlaneIncidenceGraph", function(arg)
     B := Basis(GF(q^2), [Z(q)^0, th]);
     mul := ExceptionalMultiplication(q, F, B);
     rdiv := ExceptionalRightDivision(q, F, B);
-    dp := DirectProduct(Group(A), SymmetricGroup(2), SymmetricGroup(2));
+    dp := DirectProduct(Group(A), SymmetricGroup(2), SymmetricGroup(1));
     return Graph(dp, Cartesian([1, 2], P),
             OnHughesPlane(q, rdiv, dp),
             function(x, y)
