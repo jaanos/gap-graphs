@@ -97,3 +97,18 @@ BindGlobal("HughesPlaneIncidenceGraph", function(arg)
                 return x[1] <> y[1] and IsZero(x[2]*z[1] + mul(th, x[2]*z[2]));
             end, true);;
 end);
+
+BindGlobal("ProjectivePlaneIncidenceGraphFromFile", function(arg)
+    local n, G, L, lns;
+    if Length(arg) < 1 then
+        Error("at least one argument expected");
+        return fail;
+    fi;
+    lns := ReadLines(arg[1]);
+    n := Length(lns);
+    L := List(lns, l -> List(SplitString(l, " "), x -> Int(x)+n+1));
+    G := Group(());
+    return Graph(G, [1..2*n], OnPoints, function(x, y)
+            return (x <= n and y in L[x]) or (y <= n and x in L[y]);
+        end, true);
+end);

@@ -503,3 +503,18 @@ BindGlobal("OnHughesPlane", function(q, div, dp)
         return [p[1]^Image(p2, g), act(p[2], F[p[1]](Image(p1, g)))];
     end;
 end);
+
+# Read a file into a list of lines.
+BindGlobal("ReadLines", function(file)
+    local f, ln, lns;
+    f := InputTextFile(file);
+    lns := [];
+    ln := ReadLine(f);
+    while ln <> fail do
+        NormalizeWhitespace(ln);
+        Add(lns, ln);
+        ln := ReadLine(f);
+    od;
+    CloseStream(f);
+    return lns;
+end);
