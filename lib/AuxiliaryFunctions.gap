@@ -303,6 +303,7 @@ BindGlobal("IsRegularPair", function(G, x, y, t)
             z -> Adjacency(G, z)))) = t+1;
 end);
 
+# Find regular points in a generalized quadrangle.
 BindGlobal("RegularPoints", function(G)
     local l, t, P, orb, par;
     par := GeneralizedPolygonParameters(G);

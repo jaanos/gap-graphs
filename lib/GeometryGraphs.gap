@@ -111,9 +111,27 @@ BindGlobal("GeneralizedQuadrangleH", function(d, r)
 end);
 
 # The collinearity graph of the generalized quadrangle W(q) of order (q, q).
-BindGlobal("GeneralizedQuadrangleW", function(q)
-    return PolarGraphSp(4, q);
+BindGlobal("GeneralizedQuadrangleW", q -> PolarGraphSp(4, q));
+
+# The collinearity graph of the generalized quadrangle P(G, z) of
+# order (s-1, s+1) derived by removing the neighbourhood of a regular point z
+# of a generalized quadrangle G of order (s, s).
+BindGlobal("GeneralizedQuadrangleP", function(G, z)
+    local H;
+    H := Graph(Stabilizer(G.group, z), DistanceSet(G, 2, z), OnPoints,
+            function(x, y)
+                local c;
+                c := Intersection(Adjacency(G, x), Adjacency(G, y));
+                return not z in c and (y in Adjacency(G, x)
+                                    or ForAll(c, w -> z in Adjacency(G, w)));
+            end, true);
+    return H;
 end);
+
+# The collinearity graph of the generalized quadrangle AS(q)
+# of order (q-1, q+1).
+BindGlobal("GeneralizedQuadrangleAS",
+    q -> GeneralizedQuadrangleP(GeneralizedQuadrangleW(q), 1));
 
 # The incidence graph of a projective plane read from a file as on
 #   http://www.uwyo.edu/moorhouse/pub/planes/       or
