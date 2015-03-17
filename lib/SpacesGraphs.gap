@@ -54,6 +54,18 @@ BindGlobal("PolarGraphO", function(arg)
         end, true);
 end);
 
+# The polar graph Sp(d, q) of isotropic lines of F_q^d
+# with respect to a nondegenerate symplectic form.
+BindGlobal("PolarGraphSp", function(d, q)
+    local G, Q, V;
+    G := Sp(d, q);
+    Q := InvariantBilinearForm(G).matrix;
+    V := GF(q)^d;
+    return Graph(G, IsotropicSpacesBilinearForm(Q)(Subspaces(V, 1)),
+        OnSubspaces(V), function(x, y)
+            return x <> y and IsZero(Elements(x)[2]*Q*Elements(y)[2]);
+        end, true);
+end);
 
 # The dual polar graph B_d(q) of isotropic d-dimensional subspaces of
 # F_q^{2d+1} with respect to a nondegenerate quadratic form.
