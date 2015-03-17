@@ -99,10 +99,11 @@ BindGlobal("HughesPlaneIncidenceGraph", function(arg)
 end);
 
 # The incidence graph of a projective plane read from a file as on
-#   http://www.uwyo.edu/moorhouse/pub/planes/
+#   http://www.uwyo.edu/moorhouse/pub/planes/       or
+#   http://www.uwyo.edu/moorhouse/pub/genpoly/
 # The optional second parameter is a file containing generators of the
 # automorphism group.
-BindGlobal("ProjectivePlaneIncidenceGraphFromFile", function(arg)
+BindGlobal("IncidenceGraphFromFile", function(arg)
     local l, m, n, G, L, fst, lst, lns;
     if Length(arg) < 1 then
         Error("at least one argument expected");
@@ -128,3 +129,35 @@ BindGlobal("ProjectivePlaneIncidenceGraphFromFile", function(arg)
             return (x <= n and y in L[x]) or (y <= n and x in L[y]);
         end, true);
 end);
+
+# The collinearity graph of a projective plane read from a file as on
+#   http://www.uwyo.edu/moorhouse/pub/genpoly/
+# The optional second parameter is a file containing generators of the
+# automorphism group.
+BindGlobal("CollinearityGraphFromFile", function(arg)
+    local l, m, n, G, L, fst, lst, lns;
+    if Length(arg) < 1 then
+        Error("at least one argument expected");
+        return fail;
+    fi;
+    lns := ReadLines(arg[1]);
+    n := Length(lns);
+    L := List(lns, l -> List(SplitString(l, " "), x -> Int(x)));
+    if Length(arg) > 1 then
+        lns := ReadLines(arg[2]);
+        m := Length(lns);
+        fst := Filtered([1..m], i -> IntChar(lns[i][1]) <> 32);
+        l := Length(fst);
+        lst := List(fst{[2..l]}, i -> i-1);
+        Add(lst, m);
+        G := Group(List([1..l], i -> PermList(Filtered(List(SplitString(
+                    JoinStringsWithSeparator(lns{[fst[i]..lst[i]]}, ""),
+                    " "), x -> Int(x)+1), y -> y <= n))));
+    else
+        G := Group(());
+    fi;
+    return Graph(G, [1..n], OnPoints, function(x, y)
+            return Length(Intersection(L[x], L[y])) = 1;
+        end, true);
+end);
+
