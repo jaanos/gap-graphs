@@ -61,10 +61,10 @@ BindGlobal("PolarGraphSp", function(d, q)
     G := Sp(d, q);
     Q := InvariantBilinearForm(G).matrix;
     V := GF(q)^d;
-    return Graph(G, IsotropicSpacesBilinearForm(Q)(Subspaces(V, 1)),
+    return Graph(G, [Subspace(V, Elements(CanonicalBasis(V)){[1]}, "basis")],
         OnSubspaces(V), function(x, y)
             return x <> y and IsZero(Elements(x)[2]*Q*Elements(y)[2]);
-        end, true);
+        end);
 end);
 
 # The dual polar graph B_d(q) of isotropic d-dimensional subspaces of

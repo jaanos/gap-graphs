@@ -105,7 +105,7 @@ BindGlobal("GeneralizedQuadrangleQ", function(d, q)
 end);
 
 # The collinearity graph of the generalized quadrangle W(q) of order (q, q).
-BindGlobal("GeneralizedQuadrangleW", function(d, q)
+BindGlobal("GeneralizedQuadrangleW", function(q)
     return PolarGraphSp(4, q);
 end);
 
