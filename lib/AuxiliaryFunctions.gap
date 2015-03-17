@@ -295,6 +295,29 @@ BindGlobal("GeneralizedPolygonParameters", function(G)
     return [2*d, s, t];
 end);
 
+# Check whether two vertices of a generalized quadrangle with parameter t
+# are either equal, or make a regular pair.
+BindGlobal("IsRegularPair", function(G, x, y, t)
+    return x = y or y in Adjacency(G, x) or
+        Size(Intersection(List(Intersection(Adjacency(G, x), Adjacency(G, y)),
+            z -> Adjacency(G, z)))) = t+1;
+end);
+
+BindGlobal("RegularPoints", function(G)
+    local l, t, P, orb, par;
+    par := GeneralizedPolygonParameters(G);
+    if par = fail then
+        return fail;
+    fi;
+    t := par[3];
+    l := [1..Length(G.representatives)];
+    P := [1..G.order];
+    orb := List(l, i -> OrbitRepresentatives(Stabilizer(G.group,
+                                                    G.representatives[i]), P));
+    return G.representatives{Filtered(l, i -> ForAll(orb[i],
+                        x -> IsRegularPair(G, G.representatives[i], x, t)))};
+end);
+
 # Transforms a matrix over GF(r) to a Hermitean matrix over GF(r^2).
 BindGlobal("ToHermitean", function(A, r)
     local c, n, Hermitize;
