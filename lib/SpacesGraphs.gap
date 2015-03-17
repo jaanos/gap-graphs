@@ -28,6 +28,33 @@ BindGlobal("TwistedGrassmannGraph", function(d, q)
     end, true);
 end);
 
+# The polar graph O^{(+/-)}(d, q) of isotropic lines of F_q^d
+# with respect to a nondegenerate quadratic form.
+BindGlobal("PolarGraphO", function(arg)
+    local d, e, q, B, G, Q, V;
+    if Length(arg) < 2 then
+        Error("at least two arguments expected");
+        return fail;
+    elif Length(arg) = 2 then
+        e := 0;
+        d := arg[1];
+        q := arg[2];
+    else
+        e := arg[1];
+        d := arg[2];
+        q := arg[3];
+    fi;
+    G := GO(e, d, q);
+    Q := InvariantQuadraticForm(G).matrix;
+    B := Q + TransposedMat(Q);
+    V := GF(q)^d;
+    return Graph(G, IsotropicSpacesQuadraticForm(Q)(Subspaces(V, 1)),
+        OnSubspaces(V), function(x, y)
+            return x <> y and IsZero(Elements(x)[2]*B*Elements(y)[2]);
+        end, true);
+end);
+
+
 # The dual polar graph B_d(q) of isotropic d-dimensional subspaces of
 # F_q^{2d+1} with respect to a nondegenerate quadratic form.
 BindGlobal("DualPolarGraphB", function(d, q)

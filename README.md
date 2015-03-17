@@ -28,6 +28,7 @@ The following graphs are currently supported:
   * incidence graphs of Desarguesian projective planes
   * incidence graphs of Hall projective planes
   * incidence graphs of Hughes projective planes (both ordinary and exceptional)
+  * collinearity graphs of generalized quadrangles Q(d, q) for d = 3, 4, 5
   * incidence graphs from files as listed on E. Moorhouse's webpage on [projective planes](http://www.uwyo.edu/moorhouse/pub/planes/) or [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
   * collinearity graphs from files as listed on E. Moorhouse's webpage on [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
 * Other infinite families of distance-regular graphs:
@@ -46,6 +47,7 @@ The following graphs are currently supported:
 * Families of strongly regular graphs:
   * Cocktail party graphs
   * Latin square graphs
+  * polar graphs O<sup>(±)</sup>(d, q)
 * Sporadic and other named distance-regular graphs:
   * the Heawood graph with intersection array {3, 2, 2; 1, 1, 3}
   * the skeleton of the icosahedron with intersection array {5, 2, 1; 1, 2, 5}

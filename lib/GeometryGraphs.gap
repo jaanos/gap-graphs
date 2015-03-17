@@ -98,6 +98,11 @@ BindGlobal("HughesPlaneIncidenceGraph", function(arg)
             end, true);;
 end);
 
+# The collinearity graph of the generalized quadrangle Q(d, q).
+BindGlobal("GeneralizedQuadrangleQ", function(d, q)
+    return PolarGraphO(4-d, d+1, q);
+end);
+
 # The incidence graph of a projective plane read from a file as on
 #   http://www.uwyo.edu/moorhouse/pub/planes/       or
 #   http://www.uwyo.edu/moorhouse/pub/genpoly/
