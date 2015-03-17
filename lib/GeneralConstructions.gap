@@ -160,15 +160,35 @@ BindGlobal("SubspaceGraph", function(arg)
         end, invt);
 end);
 
-# The clique (dual geometry) graph of a geometric graph.
+# The clique (dual geometry) graph of a collinearity graph.
 BindGlobal("CliqueGraph", function(G)
     local H;
     H := Graph(G.group, Cliques(G), OnSets,
-                function(x,y)
+                function(x, y)
                     return Size(Intersection(x,y)) = 1;
                 end);
     if "names" in RecNames(G) then
         AssignVertexNames(H, List(H.names, f -> G.names{f}));
+    fi;
+    return H;
+end);
+
+# The incidence graph of a collinearity graph.
+BindGlobal("IncidenceGraph", function(G)
+    local H;
+    H := Graph(G.group, Union(G.representatives, Cliques(G)),
+                OnPointsOrLines(OnPoints, IsList),
+                function(x, y)
+                    return (IsList(y) and x in y) or (IsList(x) and y in x);
+                end);
+    if "names" in RecNames(G) then
+        AssignVertexNames(H, List(H.names, function(f)
+                                                if IsList(f) then
+                                                    return G.names{f};
+                                                else
+                                                    return G.names[f];
+                                                fi;
+        end));
     fi;
     return H;
 end);

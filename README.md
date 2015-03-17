@@ -79,6 +79,8 @@ The following graphs are currently supported:
   * Extended bipartite double
   * Halved graphs
   * Antipodal quotients
+  * Clique graphs
+  * Vertex-clique incidence graphs
 
 Some constructions, such as complete graphs, Johnson graphs and Cayley graphs
 are already available in GRAPE.
