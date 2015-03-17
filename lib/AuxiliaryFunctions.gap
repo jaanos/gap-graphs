@@ -272,6 +272,29 @@ BindGlobal("AntipodalCoveringIndex", function(G)
     return Length(DistanceSet(G, [0, Diameter(G)], 1));
 end);
 
+# Parameters of a generalized polygon.
+# Does not check whether G actually is a generalized polygon
+# (for d = 2 this is not guaranteed).
+BindGlobal("GeneralizedPolygonParameters", function(G)
+    local d, s, t, ia;
+    if not IsSimpleGraph(G) then
+        Error("not a simple graph");
+        return fail;
+    fi;
+    if not IsConnectedGraph(G) then
+        Error("not a connected graph");
+        return fail;
+    fi;
+    d := Diameter(G);
+    ia := GlobalParameters(G);
+    t := ia[d+1][1] - 1;
+    s := ia[1][3] / ia[d+1][1];
+    if not IsInt(s) or ForAny(ia{[2..d]}, x -> x[1] <> 1 or x[3] <> s*t) then
+        return fail;
+    fi;
+    return [2*d, s, t];
+end);
+
 # Transforms a matrix over GF(r) to a Hermitean matrix over GF(r^2).
 BindGlobal("ToHermitean", function(A, r)
     local c, n, Hermitize;
