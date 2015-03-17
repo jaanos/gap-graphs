@@ -67,6 +67,22 @@ BindGlobal("PolarGraphSp", function(d, q)
         end);
 end);
 
+# The polar graph U(d, r) of isotropic lines of F_{r^2}^d
+# with respect to a nondegenerate Hermitean form.
+BindGlobal("PolarGraphU", function(d, r)
+    local c, B, F, G, Q, V;
+    G := GU(d, r);
+    Q := InvariantSesquilinearForm(G).matrix;
+    V := GF(r^2)^d;
+    B := Elements(CanonicalBasis(V));
+    c := Conjugates(GF(r^2), GF(r), Z(r^2));
+    F := x -> List(x, y -> y^r);
+    return Graph(G, [Subspace(V, [B[1] + (c[1]-c[2])*B[d]], "basis")],
+        OnSubspaces(V), function(x, y)
+            return x <> y and IsZero(Elements(x)[2]*Q*F(Elements(y)[2]));
+        end);
+end);
+
 # The dual polar graph B_d(q) of isotropic d-dimensional subspaces of
 # F_q^{2d+1} with respect to a nondegenerate quadratic form.
 BindGlobal("DualPolarGraphB", function(d, q)

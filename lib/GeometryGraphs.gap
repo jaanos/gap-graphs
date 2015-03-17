@@ -104,6 +104,12 @@ BindGlobal("GeneralizedQuadrangleQ", function(d, q)
     return PolarGraphO(4-d, d+1, q);
 end);
 
+# The collinearity graph of the generalized quadrangle H(d, r^2)
+# of order (r^2, r^{d-5/2}).
+BindGlobal("GeneralizedQuadrangleH", function(d, r)
+    return PolarGraphU(d+1, r);
+end);
+
 # The collinearity graph of the generalized quadrangle W(q) of order (q, q).
 BindGlobal("GeneralizedQuadrangleW", function(q)
     return PolarGraphSp(4, q);

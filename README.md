@@ -29,6 +29,7 @@ The following graphs are currently supported:
   * incidence graphs of Hall projective planes
   * incidence graphs of Hughes projective planes (both ordinary and exceptional)
   * collinearity graphs of generalized quadrangles Q(d, q) of order (q, q<sup>d-3</sup>) for d = 3, 4, 5
+  * collinearity graphs of generalized quadrangles H(d, r) of order (r<sup>2</sup>, r<sup>d-5/2</sup>) for d = 3, 4
   * collinearity graphs of generalized quadrangles W(q) of order (q, q)
   * incidence graphs from files as listed on E. Moorhouse's webpage on [projective planes](http://www.uwyo.edu/moorhouse/pub/planes/) or [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
   * collinearity graphs from files as listed on E. Moorhouse's webpage on [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
@@ -50,6 +51,7 @@ The following graphs are currently supported:
   * Latin square graphs
   * polar graphs O<sup>(±)</sup>(d, q)
   * polar graphs Sp(d, q)
+  * polar graphs U(d, r)
 * Sporadic and other named distance-regular graphs:
   * the Heawood graph with intersection array {3, 2, 2; 1, 1, 3}
   * the skeleton of the icosahedron with intersection array {5, 2, 1; 1, 2, 5}
