@@ -10,6 +10,32 @@ BindGlobal("SchlaefliGraph",
         [[-3,-3,1,1,1,1,1,1], [3,-1,-1,-1,-1,-1,-1,3]],
         OnRoots, RootAdjacency));
 
+# The Hoffman-Singleton graph with v=50, k=7, lm=0, mu=1.
+BindGlobal("HoffmanSingletonGraph", List([function()
+        local G, dp, p1, p2, p3, p4;
+        G := Group((1, 2, 3, 4, 5));
+        dp := DirectProduct(G, G, G, Group((1, 2)));
+        p1 := Projection(dp, 1);
+        p2 := Projection(dp, 2);
+        p3 := Projection(dp, 3);
+        p4 := Projection(dp, 4);
+        return Graph(dp, Cartesian(GF(5), GF(5), [1, 2]),
+            function(x, g)
+                local g4, j, s, u, v;
+                u := 5^Image(p2, g) * Z(5)^0;
+                v := 5^Image(p3, g) * Z(5)^0;
+                g4 := Image(p4, g);
+                s := x[3]^2;
+                j := [1, 2*x[3]];
+                return [1^g4*(x[1]+x[2]*(u-s*v)+s*(u^2-v^2)/2)+5^Image(p1, g),
+                    j[1^g4]*(x[2]+s*u+v), x[3]^g4];
+            end, function(x, y)
+                return (x{[2,3]} = y{[2,3]} and y[1] in [x[1]-x[3], x[1]+x[3]])
+                    or x[3] <> y[3] and y[1] = x[1] + x[2]*y[2]*x[3]^2;
+            end, true);
+    end])[1]());
+
+
 # The Gewirtz graph with v=56, k=10, lm=0, mu=2.
 BindGlobal("GewirtzGraph", Graph(MathieuGroup(21), [[1,2,3,7,10,20]],
                                     OnSets, DisjointSets));

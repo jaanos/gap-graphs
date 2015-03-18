@@ -71,6 +71,7 @@ The following graphs are currently supported:
   * the Clebsch graph with v = 16, k = 10, λ = 6, μ = 6
   * the Schläfli graph with v = 27, k = 16, λ = 10, μ = 8
   * the three Chang graphs with v = 28, k = 12, λ = 6, μ = 4
+  * the Hoffman-Singleton graph with v = 50, k = 7, λ = 0, μ = 1
   * the Gewirtz graph with v = 56, k = 10, λ = 0, μ = 2
   * the graph with v = 77, k = 16, λ = 0, μ = 4 associated to S(3, 6, 22)
   * the graph with v = 210, k = 99, λ = 48, μ = 45 constructed by M. Klin
