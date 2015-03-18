@@ -38,6 +38,21 @@ BindGlobal("HeawoodGraph", DesarguesianPlaneIncidenceGraph(2));
 # The icosahedron with intersection array {5, 2, 1; 1, 2, 5}.
 BindGlobal("IcosahedronGraph", MultiplicativeSymplecticCoverGraph(5, 2));
 
+# The Sylvester graph with intersection array {5, 4, 2; 1, 1, 4}
+BindGlobal("SylvesterGraph", Graph(SymmetricGroup(6),
+                    [[1, [[[1,2], [3,4], [5,6]],
+                          [[1,3], [2,5], [4,6]],
+                          [[1,4], [2,6], [3,5]],
+                          [[1,5], [2,4], [3,6]],
+                          [[1,6], [2,3], [4,5]]]]],
+                    function(x, g)
+                        return [x[1]^g,
+                            Set(List(x[2], l -> OnSetsSets(l, g)))];
+                    end, function(x, y)
+                        return x[1] <> y[1] and x[2] <> y[2] and
+                            Set([x[1], y[1]]) in Intersection(x[2], y[2])[1];
+                    end));
+
 # The Perkel graph with intersection array {6, 5, 2; 1, 1, 3}.
 BindGlobal("PerkelGraph", Graph(PSL(2, 19),
                     Elements(Filtered(ConjugacyClassesSubgroups(PSL(2, 19)),

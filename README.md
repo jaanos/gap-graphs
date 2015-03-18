@@ -57,6 +57,7 @@ The following graphs are currently supported:
 * Sporadic and other named distance-regular graphs:
   * the Heawood graph with intersection array {3, 2, 2; 1, 1, 3}
   * the skeleton of the icosahedron with intersection array {5, 2, 1; 1, 2, 5}
+  * the Sylvester graph with intersection array {5, 4, 2; 1, 1, 4}
   * the Perkel graph with intersection array {6, 5, 2; 1, 1, 3}
   * the Doro graph on 65 vertices with intersection array {10, 6, 4; 1, 2, 5}
   * the Doro graph on 68 vertices with intersection array {12, 10, 3; 1, 3, 8}
