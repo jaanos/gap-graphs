@@ -138,6 +138,16 @@ BindGlobal("OnSubspaces",
         return Subspace(V, OnSubspacesByCanonicalBasis(Basis(S), g));
     end);
 
+# Action of a matrix group on a set of subspaces of a vector space over a
+# finite field.
+BindGlobal("OnSetsSubspaces", function(V)
+    local A;
+    A := OnSubspaces(V);
+    return function(L, g)
+        return Set(List(L, S -> A(S, g)));
+    end;
+end);
+
 # Action on the vertices of Preparata graphs.
 BindGlobal("OnPreparata", function(q, s, dp)
     local F, N, p1, p2, p3, p4;
@@ -550,6 +560,18 @@ BindGlobal("OnHughesPlane", function(q, div, dp)
         return [p[1]^Image(p2, g), act(p[2], F[p[1]](Image(p1, g)))];
     end;
 end);
+
+# A classical conic in a Desarguesian projective plane.
+BindGlobal("ClassicalConicProjectivePlane",
+    q -> List(Union([[0,1,0]*Z(q)^0], List(GF(q), t -> [t, t^2, 1]*Z(q)^0)),
+        x -> Subspace(GF(q)^3, [x], "basis"))
+);
+
+# A nonclassical conic in a Desarguesian projective plane.
+BindGlobal("NonclassicalConicProjectivePlane",
+    q -> List(Union([[1,0,0]*Z(q)^0], List(GF(q), t -> [t, t^2, 1]*Z(q)^0)),
+        x -> Subspace(GF(q)^3, [x], "basis"))
+);
 
 # Read a file into a list of lines.
 BindGlobal("ReadLines", function(file)

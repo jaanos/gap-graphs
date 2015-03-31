@@ -113,6 +113,47 @@ end);
 # The collinearity graph of the generalized quadrangle W(q) of order (q, q).
 BindGlobal("GeneralizedQuadrangleW", q -> PolarGraphSp(4, q));
 
+# The collinearity graph of the generalized quadrangle T_d(O) of order
+# (q, q^{d-1}) derived from the projective space PG(d+1, q) containing the
+# oval or ovoid O in a hyperplane.
+BindGlobal("GeneralizedQuadrangleT", function(arg)
+    local d, o, q, G, H, L, O, P, V, dp;
+    if Length(arg) < 3 then
+        Error("at least three arguments expected");
+        return fail;
+    fi;
+    d := arg[1];
+    q := arg[2];
+    o := arg[3];
+    if Length(arg) > 3 then
+        G := arg[4];
+    else
+        G := Group(());
+    fi;
+    V := GF(q)^(d+2);
+    H := Subspace(V, BasisVectors(CanonicalBasis(V)){[2..d+2]}, "basis");
+    O := List(o, x -> Subspace(V,
+            [Concatenation([0*Z(q)], BasisVectors(Basis(x))[1])], "basis"));
+    P := Union(Filtered(Subspaces(V, 1), x -> not IsSubset(H, x)),
+                Filtered(Subspaces(V, d+1),
+                    x -> Length(Filtered(O, y -> IsSubset(x, y))) = 1),
+                [Subspace(V, [], "basis")]);
+    return Graph(Group(()), P, function(x, y) return x; end,
+        function(x, y)
+            local dx, dy, xy, yx;
+            dx := Dimension(x);
+            dy := Dimension(y);
+            xy := x+y;
+            yx := Intersection(x, y);
+            return (dx = 0 and dy = d+1) or (dx = d+1 and dy = 0) or
+                (dx = 1 and dy = 1 and ForAny(O, z -> IsSubset(xy, z))) or
+                (dx = 1 and dy = d+1 and ForAny(O, z -> IsSubset(y, x+z))) or
+                (dx = d+1 and dy = 1 and ForAny(O, z -> IsSubset(x, y+z))) or
+                (dx = d+1 and dy = d+1 and x <> y and
+                                            ForAny(O, z -> IsSubset(yx, z)));
+        end, true);
+end);
+
 # The collinearity graph of the generalized quadrangle P(G, z) of
 # order (s-1, s+1) derived by removing the neighbourhood of a regular point z
 # of a generalized quadrangle G of order (s, s).
