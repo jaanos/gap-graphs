@@ -563,14 +563,14 @@ end);
 
 # A classical conic in a Desarguesian projective plane.
 BindGlobal("ClassicalConicProjectivePlane",
-    q -> List(Union([[0,1,0]*Z(q)^0], List(GF(q), t -> [t, t^2, 1]*Z(q)^0)),
-        x -> Subspace(GF(q)^3, [x], "basis"))
+    q -> Set(List(Union([[0,1,0]*Z(q)^0], List(GF(q),
+            t -> [t, t^2, 1]*Z(q)^0)), x -> Subspace(GF(q)^3, [x], "basis")))
 );
 
 # A nonclassical conic in a Desarguesian projective plane.
 BindGlobal("NonclassicalConicProjectivePlane",
-    q -> List(Union([[1,0,0]*Z(q)^0], List(GF(q), t -> [t, t^2, 1]*Z(q)^0)),
-        x -> Subspace(GF(q)^3, [x], "basis"))
+    q -> Set(List(Union([[1,0,0]*Z(q)^0], List(GF(q),
+            t -> [t, t^2, 1]*Z(q)^0)), x -> Subspace(GF(q)^3, [x], "basis")))
 );
 
 # Read a file into a list of lines.
