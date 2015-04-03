@@ -112,16 +112,16 @@ BindGlobal("HalvedGraph", function(arg)
     fi;
     if "halfDuality" in RecNames(G) then
         if n = 2 then
-            H.primality = G.halfDuality;
+            H.primality := G.halfDuality;
         else
-            H.duality = G.halfDuality;
+            H.duality := G.halfDuality;
         fi;
     fi;
     if "halfPrimality" in RecNames(G) then
         if n = 2 then
-            H.duality = G.halfPrimality;
+            H.duality := G.halfPrimality;
         else
-            H.primality = G.halfPrimality;
+            H.primality := G.halfPrimality;
         fi;
     fi;
     return H;
