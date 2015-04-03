@@ -117,26 +117,26 @@ BindGlobal("GeneralizedQuadrangleW", q -> PolarGraphSp(4, q));
 # (q, q^{d-1}) derived from the projective space PG(d+1, q) containing the
 # oval or ovoid O in a hyperplane.
 BindGlobal("GeneralizedQuadrangleT", function(arg)
-    local d, o, q, F, G, H, L, O, P, V, dp;
-    if Length(arg) < 3 then
-        Error("at least three arguments expected");
+    local d, o, q, G, H, L, O, P, V, dp;
+    if Length(arg) < 1 then
+        Error("at least one argument expected");
         return fail;
-    fi;
-    d := arg[1];
-    q := arg[2];
-    F := GF(q);
-    if IsRecord(arg[3]) then
-        o := arg[3].ovoid;
-        G := arg[3].group;
+    elif Length(arg) < 3 then
+        d := arg[1].d;
+        q := arg[1].q;
+        o := arg[1].points;
+        G := arg[1].group;
     else
+        d := arg[1];
+        q := arg[2];
         o := arg[3];
         if Length(arg) > 3 then
             G := arg[4];
         else
-            G := Group(IdentityMat(d+1, F));
+            G := Group(IdentityMat(d+1, GF(q)));
         fi;
     fi;
-    V := F^(d+2);
+    V := GF(q)^(d+2);
     H := Subspace(V, BasisVectors(CanonicalBasis(V)){[2..d+2]}, "basis");
     O := List(o, x -> Subspace(V,
             [Concatenation([0*Z(q)], BasisVectors(Basis(x))[1])], "basis"));

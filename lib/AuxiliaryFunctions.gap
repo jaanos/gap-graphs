@@ -563,7 +563,7 @@ end);
 
 # A classical conic in a Desarguesian projective plane.
 BindGlobal("ClassicalConicProjectivePlane",
-    q -> rec(ovoid := Set(List(Union([[0,1,0]*Z(q)^0], List(GF(q),
+    q -> rec(points := Set(List(Union([[0,1,0]*Z(q)^0], List(GF(q),
             t -> [t, t^2, 1]*Z(q)^0)), x -> Subspace(GF(q)^3, [x], "basis"))),
             group := Group([
                 [[-Z(q)^0, 0*Z(q), 0*Z(q)],
@@ -576,16 +576,16 @@ BindGlobal("ClassicalConicProjectivePlane",
                  [ Z(q),   Z(q)^2,   Z(q)^0],
                  [ 0*Z(q), 0*Z(q),   Z(q)^0]],
                 Z(q)*IdentityMat(3, GF(q))
-            ])
-        )
+            ]), d := 2, q := q)
 );
 
 # A nonclassical conic in a Desarguesian projective plane.
 BindGlobal("NonclassicalConicProjectivePlane",
-    q -> rec(ovoid := Set(List(Union([[1,0,0]*Z(q)^0], List(GF(q),
+    q -> rec(points := Set(List(Union([[1,0,0]*Z(q)^0], List(GF(q),
             t -> [t, t^2, 1]*Z(q)^0)), x -> Subspace(GF(q)^3, [x], "basis"))),
             group := Group([DiagonalMat([Z(q), Z(q)^2, Z(q)^0]),
-                            Z(q)*IdentityMat(3, GF(q))]))
+                            Z(q)*IdentityMat(3, GF(q))]),
+            d := 2, q := q)
 );
 
 # Read a file into a list of lines.
