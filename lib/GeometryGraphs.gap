@@ -1,12 +1,15 @@
 # The incidence graph of a Desarguesian projective plane.
 BindGlobal("DesarguesianPlaneIncidenceGraph", function(q)
-    local V, dp;
+    local G, V, dp;
     V := GF(q)^3;
     dp := DirectProduct(GL(3, q), SymmetricGroup(2));
-    return Graph(dp, Union(List([1,2], d -> Subspaces(V, d))),
-                 OnProjectivePlane(V, dp), function(x, y)
+    G := Graph(dp, Union(List([1,2], d -> Subspaces(V, d))),
+                OnProjectivePlane(V, dp), function(x, y)
                     return x <> y and Intersection(x, y) in [x, y];
-                 end, true);
+                end, true);
+    G.halfDuality := Sum;
+    G.halfPrimality := Intersection;
+    return G;
 end);
 
 # The incidence graph of a Hall plane.
@@ -195,4 +198,3 @@ BindGlobal("CollinearityGraphFromFile", function(arg)
             return Length(Intersection(L[x], L[y])) = 1;
         end, true);
 end);
-
