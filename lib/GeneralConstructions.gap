@@ -185,7 +185,7 @@ BindGlobal("CliqueGraph", function(G)
         CheckDualityFunctions(G);
         H.duality := G.primality;
         H.primality := G.duality;
-        AssignVertexNames(H, List(H.names, f -> G.duality(f)));
+        AssignVertexNames(H, List(H.names, f -> G.duality(G.names{f})));
     fi;
     return H;
 end);
@@ -208,11 +208,11 @@ BindGlobal("IncidenceGraph", function(G)
             H.halfPrimality := G.primality;
         fi;
         AssignVertexNames(H, List(H.names, function(f)
-                                                if IsList(f) then
-                                                    return G.duality(f);
-                                                else
-                                                    return G.names[f];
-                                                fi;
+                                            if IsList(f) then
+                                                return G.duality(G.names{f});
+                                            else
+                                                return G.names[f];
+                                            fi;
         end));
     fi;
     return H;
