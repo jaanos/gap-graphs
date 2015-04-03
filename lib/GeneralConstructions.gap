@@ -110,6 +110,20 @@ BindGlobal("HalvedGraph", function(arg)
     if "names" in RecNames(G) then
         AssignVertexNames(H, G.names{vs});
     fi;
+    if "halfDuality" in RecNames(G) then
+        if n = 2 then
+            H.primality = G.halfDuality;
+        else
+            H.duality = G.halfDuality;
+        fi;
+    fi;
+    if "halfPrimality" in RecNames(G) then
+        if n = 2 then
+            H.duality = G.halfPrimality;
+        else
+            H.primality = G.halfPrimality;
+        fi;
+    fi;
     return H;
 end);
 
@@ -168,7 +182,10 @@ BindGlobal("CliqueGraph", function(G)
                     return Size(Intersection(x,y)) = 1;
                 end);
     if "names" in RecNames(G) then
-        AssignVertexNames(H, List(H.names, f -> G.names{f}));
+        CheckDualityFunctions(G);
+        H.duality := G.primality;
+        H.primality := G.duality;
+        AssignVertexNames(H, List(H.names, f -> G.duality(f)));
     fi;
     return H;
 end);
@@ -181,10 +198,18 @@ BindGlobal("IncidenceGraph", function(G)
                 function(x, y)
                     return (IsList(y) and x in y) or (IsList(x) and y in x);
                 end);
-    if "names" in RecNames(G) then
+    if "names" in RecNames(G) and G.order > 0 then
+        CheckDualityFunctions(G);
+        if IsList(G.names[1]) then
+            H.halfDuality := G.primality;
+            H.halfPrimality := G.duality;
+        else
+            H.halfDuality := G.duality;
+            H.halfPrimality := G.primality;
+        fi;
         AssignVertexNames(H, List(H.names, function(f)
                                                 if IsList(f) then
-                                                    return G.names{f};
+                                                    return G.duality(f);
                                                 else
                                                     return G.names[f];
                                                 fi;
