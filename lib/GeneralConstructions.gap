@@ -186,6 +186,12 @@ BindGlobal("CliqueGraph", function(G)
         H.duality := G.primality;
         H.primality := G.duality;
         AssignVertexNames(H, List(H.names, f -> G.duality(G.names{f})));
+        if "halfDuality" in RecNames(G) then
+            H.halfDuality := G.halfDuality;
+        fi;
+        if "halfPrimality" in RecNames(G) then
+            H.halfPrimality := G.halfPrimality;
+        fi;
     fi;
     return H;
 end);
