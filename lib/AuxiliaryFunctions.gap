@@ -552,19 +552,23 @@ BindGlobal("OnHughesPlane", function(q, div, dp)
 end);
 
 # Default function for dual points.
-BindGlobal("DefaultDualityFunction", G -> x -> G.names{x});
+BindGlobal("DefaultDualityFunction", function(G, x)
+    return G.names{x};
+end);
 
 # Default function for primal points.
-BindGlobal("DefaultPrimalityFunction", G -> x -> Intersection(G.names{x})[1]);
+BindGlobal("DefaultPrimalityFunction", function(G, x)
+    return Intersection(G.names{x})[1];
+end);
 
 # Check whether function for dual and primal points exist,
 # and add them if they do not.
 BindGlobal("CheckDualityFunctions", function(G)
     if not "duality" in RecNames(G) then
-        G.duality := DefaultDualityFunction(G);
+        G.duality := DefaultDualityFunction;
     fi;
     if not "primality" in RecNames(G) then
-        G.primality := DefaultPrimalityFunction(G);
+        G.primality := DefaultPrimalityFunction;
     fi;
 end);
 
