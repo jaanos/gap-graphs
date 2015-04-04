@@ -131,7 +131,7 @@ BindGlobal("GeneralizedQuadrangleW", q -> PolarGraphSp(4, q));
 # (q, q^{d-1}) derived from the projective space PG(d+1, q) containing the
 # oval or ovoid O in a hyperplane.
 BindGlobal("GeneralizedQuadrangleT", function(arg)
-    local d, o, q, G, H, L, O, P, V, dp, gr;
+    local d, o, q, G, H, O, V, gr;
     if Length(arg) < 1 then
         Error("at least one argument expected");
         return fail;
@@ -154,14 +154,14 @@ BindGlobal("GeneralizedQuadrangleT", function(arg)
     H := Subspace(V, BasisVectors(CanonicalBasis(V)){[2..d+2]}, "basis");
     O := List(o, x -> Subspace(V,
             [Concatenation([0*Z(q)], BasisVectors(Basis(x))[1])], "basis"));
-    P := Union(Filtered(Subspaces(V, 1), x -> not IsSubset(H, x)),
-                Filtered(Subspaces(V, d+1),
-                    x -> Length(Filtered(O, y -> IsSubset(x, y))) = 1), [V]);
     gr := Graph(Group(List(GeneratorsOfGroup(G),
-                g -> Concatenation([Concatenation([Z(q)^0],
+                            g -> Concatenation([Concatenation([Z(q)^0],
                                     ListWithIdenticalEntries(d+1, 0*Z(q)))],
                                 List(g, l -> Concatenation([0*Z(q)], l))))),
-        P, OnSubspaces(V), function(x, y)
+        Union(Filtered(Subspaces(V, 1), x -> not IsSubset(H, x)),
+                Filtered(Subspaces(V, d+1),
+                    x -> Length(Filtered(O, y -> IsSubset(x, y))) = 1), [V]),
+        OnSubspaces(V), function(x, y)
             local dx, dy, xy, yx;
             dx := Dimension(x);
             dy := Dimension(y);
@@ -190,6 +190,42 @@ BindGlobal("GeneralizedQuadrangleT", function(arg)
             return Sum(x);
         fi;
     end;
+    return gr;
+end);
+
+BindGlobal("GeneralizedQuadrangleTstar", function(arg)
+    local o, q, G, H, O, V, gr;
+    if Length(arg) < 1 then
+        Error("at least one argument expected");
+        return fail;
+    elif Length(arg) < 3 then
+        q := arg[1].q;
+        o := arg[1].points;
+        G := arg[1].group;
+    else
+        q := arg[1];
+        o := arg[2];
+        if Length(arg) > 2 then
+            G := arg[3];
+        else
+            G := Group(IdentityMat(d+1, GF(q)));
+        fi;
+    fi;
+    V := GF(q)^4;
+    H := Subspace(V, BasisVectors(CanonicalBasis(V)){[2..4]}, "basis");
+    O := List(o, x -> Subspace(V,
+            [Concatenation([0*Z(q)], BasisVectors(Basis(x))[1])], "basis"));
+    gr := Graph(Group(List(GeneratorsOfGroup(G),
+                            g -> Concatenation([Concatenation([Z(q)^0],
+                                    ListWithIdenticalEntries(d+1, 0*Z(q)))],
+                                List(g, l -> Concatenation([0*Z(q)], l))))),
+                Filtered(Subspaces(V, 1), x -> not IsSubset(H, x)),
+                OnSubspaces(V), function(x, y)
+                    local xy;
+                    xy := x+y;
+                    return not IsSubset(H, xy)
+                        and ForAny(O, z -> IsSubset(xy, z))
+                end, true);
     return gr;
 end);
 
