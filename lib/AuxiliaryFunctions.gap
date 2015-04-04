@@ -589,23 +589,19 @@ BindGlobal("NonclassicalConicProjectivePlane",
 );
 
 # Default function for dual points.
-BindGlobal("DefaultDualityFunction", function(G, x)
-    return G.names{x};
-end);
+BindGlobal("DefaultDualityFunction", x -> x);
 
 # Default function for primal points.
-BindGlobal("DefaultPrimalityFunction", function(G, x)
-    return Intersection(G.names{x})[1];
-end);
+BindGlobal("DefaultPrimalityFunction", x -> Intersection(x)[1]);
 
 # Check whether function for dual and primal points exist,
 # and add them if they do not.
 BindGlobal("CheckDualityFunctions", function(G)
     if not "duality" in RecNames(G) then
-        G.duality := DefaultDualityFunction;
+        G.duality := DefaultDualityFunction(G);
     fi;
     if not "primality" in RecNames(G) then
-        G.primality := DefaultPrimalityFunction;
+        G.primality := DefaultPrimalityFunction(G);
     fi;
 end);
 
