@@ -561,10 +561,10 @@ BindGlobal("DefaultPrimalityFunction", x -> Intersection(x)[1]);
 # and add them if they do not.
 BindGlobal("CheckDualityFunctions", function(G)
     if not "duality" in RecNames(G) then
-        G.duality := DefaultDualityFunction;
+        G.duality := DefaultDualityFunction(G);
     fi;
     if not "primality" in RecNames(G) then
-        G.primality := DefaultPrimalityFunction;
+        G.primality := DefaultPrimalityFunction(G);
     fi;
 end);
 
