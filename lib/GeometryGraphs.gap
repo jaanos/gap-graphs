@@ -117,7 +117,7 @@ BindGlobal("GeneralizedQuadrangleW", q -> PolarGraphSp(4, q));
 # (q, q^{d-1}) derived from the projective space PG(d+1, q) containing the
 # oval or ovoid O in a hyperplane.
 BindGlobal("GeneralizedQuadrangleT", function(arg)
-    local d, o, q, G, H, L, O, P, V, dp;
+    local d, o, q, G, H, L, O, P, V, dp, gr;
     if Length(arg) < 1 then
         Error("at least one argument expected");
         return fail;
@@ -143,7 +143,7 @@ BindGlobal("GeneralizedQuadrangleT", function(arg)
     P := Union(Filtered(Subspaces(V, 1), x -> not IsSubset(H, x)),
                 Filtered(Subspaces(V, d+1),
                     x -> Length(Filtered(O, y -> IsSubset(x, y))) = 1), [V]);
-    return Graph(Group(List(GeneratorsOfGroup(G),
+    gr := Graph(Group(List(GeneratorsOfGroup(G),
                 g -> Concatenation([Concatenation([Z(q)^0],
                                     ListWithIdenticalEntries(d+1, 0*Z(q)))],
                                 List(g, l -> Concatenation([0*Z(q)], l))))),
@@ -160,6 +160,23 @@ BindGlobal("GeneralizedQuadrangleT", function(arg)
                 (dx = d+1 and dy = d+1 and x <> y and
                                             ForAny(O, z -> IsSubset(yx, z)));
         end, true);
+    gr.duality := function(x)
+        if V in x then
+            return Filtered(O, y -> IsSubset(Intersection(x), y))[1];
+        else
+            return Sum(Filtered(x, y -> Dimension(y) = 1));
+        fi;
+    end;
+    gr.primality := function(x)
+        if ForAll(x, y -> Dimension(y) = 1) then
+            return V;
+        elif ForAll(x, y -> Dimension(y) = 2) then
+            return Intersection(x);
+        else
+            return Sum(x);
+        fi;
+    end;
+    return gr;
 end);
 
 # The collinearity graph of the generalized quadrangle P(G, z) of
