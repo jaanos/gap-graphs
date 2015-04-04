@@ -196,15 +196,29 @@ end);
 # The collinearity graph of the generalized quadrangle P(G, z) of
 # order (s-1, s+1) derived by removing the neighbourhood of a regular point z
 # of a generalized quadrangle G of order (s, s).
-BindGlobal("GeneralizedQuadrangleP", function(G, z)
-    local H;
-    H := Graph(Stabilizer(G.group, z), DistanceSet(G, 2, z), OnPoints,
+BindGlobal("GeneralizedQuadrangleP", function(Q, z)
+    local H, P;
+    H := Graph(Stabilizer(Q.group, z), DistanceSet(Q, 2, z), OnPoints,
             function(x, y)
                 local c;
-                c := Intersection(Adjacency(G, x), Adjacency(G, y));
-                return not z in c and (y in Adjacency(G, x)
-                                    or ForAll(c, w -> z in Adjacency(G, w)));
+                c := Intersection(Adjacency(Q, x), Adjacency(Q, y));
+                return not z in c and (y in Adjacency(Q, x)
+                                    or ForAll(c, w -> z in Adjacency(Q, w)));
             end, true);
+    AssignVertexNames(H, Q.names{H.names});
+    CheckDualityFunctions(Q);
+    H.duality := function(x)
+        local p;
+        p := List(x, u -> Position(Q.names, u));
+        if ForAny(Cartesian(p, p), w -> Distance(Q, w[1], w[2]) = 2) then
+            return [2, Set(x)];
+        else
+            return [1, Q.duality(Union(x,
+                    Q.names{Intersection(List(p, v -> Adjacency(Q, v)))}))];
+        fi;
+    end;
+    H.primality := x -> Q.primality(List(Filtered(x, y -> y[1] = 1),
+                                    w -> w[2]));
     return H;
 end);
 
