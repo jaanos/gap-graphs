@@ -180,24 +180,20 @@ BindGlobal("GeneralizedQuadrangleT", function(arg)
                 (dx = d+1 and dy = d+1 and x <> y and
                                             ForAny(O, z -> IsSubset(yx, z)));
         end, true);
-    gr.duality := function(G, x)
-        local z;
-        z := G.names{x};
-        if V in z then
-            return Filtered(O, y -> IsSubset(Intersection(z), y))[1];
+    gr.duality := function(x)
+        if V in x then
+            return Filtered(O, y -> IsSubset(Intersection(x), y))[1];
         else
-            return Sum(Filtered(z, y -> Dimension(y) = 1));
+            return Sum(Filtered(x, y -> Dimension(y) = 1));
         fi;
     end;
-    gr.primality := function(G, x)
-        local z;
-        z := G.names{x};
-        if ForAll(z, y -> Dimension(y) = 1) then
+    gr.primality := function(x)
+        if ForAll(x, y -> Dimension(y) = 1) then
             return V;
-        elif ForAll(z, y -> Dimension(y) = 2) then
-            return Intersection(z);
+        elif ForAll(x, y -> Dimension(y) = 2) then
+            return Intersection(x);
         else
-            return Sum(z);
+            return Sum(x);
         fi;
     end;
     return gr;
