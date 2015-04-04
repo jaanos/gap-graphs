@@ -52,8 +52,8 @@ BindGlobal("PolarGraphO", function(arg)
                 OnSubspaces(V), function(x, y)
                     return x <> y and IsZero(Elements(x)[2]*B*Elements(y)[2]);
                 end, true);
-    H.duality := Sum;
-    H.primality := Intersection;
+    H.duality := ProjectiveDualityFunction;
+    H.primality := ProjectivePrimalityFunction;
     return H;
 end);
 
@@ -68,8 +68,8 @@ BindGlobal("PolarGraphSp", function(d, q)
                 OnSubspaces(V), function(x, y)
                     return x <> y and IsZero(Elements(x)[2]*Q*Elements(y)[2]);
                 end);
-    H.duality := Sum;
-    H.primality := Intersection;
+    H.duality := ProjectiveDualityFunction;
+    H.primality := ProjectivePrimalityFunction;
     return H;
 end);
 
@@ -87,8 +87,8 @@ BindGlobal("PolarGraphU", function(d, r)
             OnSubspaces(V), function(x, y)
                 return x <> y and IsZero(Elements(x)[2]*Q*F(Elements(y)[2]));
             end);
-    H.duality := Sum;
-    H.primality := Intersection;
+    H.duality := ProjectiveDualityFunction;
+    H.primality := ProjectivePrimalityFunction;
     return H;
 end);
 
