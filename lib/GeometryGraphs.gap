@@ -7,8 +7,12 @@ BindGlobal("DesarguesianPlaneIncidenceGraph", function(q)
                 OnProjectivePlane(V, dp), function(x, y)
                     return x <> y and Intersection(x, y) in [x, y];
                 end, true);
-    G.halfDuality := x -> Sum(G.names{x});
-    G.halfPrimality := x -> Intersection(G.names{x});
+    G.halfDuality := function(G, x)
+                        return Sum(G.names{x});
+                    end;
+    G.halfPrimality := function(G, x)
+                            return Intersection(G.names{x});
+                        end;
     return G;
 end);
 
@@ -30,8 +34,8 @@ BindGlobal("HallPlaneIncidenceGraph", function(q)
                          Group([[c[2], Z(q)^0], [-c[1], 0*Z(q)]])]));
     G := Graph(dp, Union(P, L), OnHallPlane(q, dp),
                 PointLineIncidence, true);
-    G.halfDuality := DefaultDualityFunction(G);
-    G.halfPrimality := DefaultPrimalityFunction(G);
+    G.halfDuality := DefaultDualityFunction;
+    G.halfPrimality := DefaultPrimalityFunction;
     return G;
 end);
 
@@ -104,9 +108,11 @@ BindGlobal("HughesPlaneIncidenceGraph", function(arg)
                 function(x, y)
                     return x[1] <> y[1] and orth(x[2], y[2]);
                 end, true);
-    df := x -> [H.names[x[1]][1]^(1, 2),
-                Intersection(List(List(H.names{x}, w -> w[2]),
+    df := function(G, x)
+                return [G.names[x[1]][1]^(1, 2),
+                        Intersection(List(List(G.names{x}, w -> w[2]),
                                     y -> Filtered(P, z -> orth(y, z))))[1]];
+            end;
     H.halfDuality := df;
     H.halfPrimality := df;
     return H;
