@@ -588,6 +588,23 @@ BindGlobal("NonclassicalConicProjectivePlane",
             d := 2, q := q)
 );
 
+# Default function for dual points.
+BindGlobal("DefaultDualityFunction", x -> x);
+
+# Default function for primal points.
+BindGlobal("DefaultPrimalityFunction", x -> Intersection(x)[1]);
+
+# Check whether function for dual and primal points exist,
+# and add them if they do not.
+BindGlobal("CheckDualityFunctions", function(G)
+    if not "duality" in RecNames(G) then
+        G.duality := DefaultDualityFunction;
+    fi;
+    if not "primality" in RecNames(G) then
+        G.primality := DefaultPrimalityFunction;
+    fi;
+end);
+
 # Read a file into a list of lines.
 BindGlobal("ReadLines", function(file)
     local f, ln, lns;
