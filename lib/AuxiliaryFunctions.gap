@@ -590,7 +590,7 @@ BindGlobal("NonclassicalConicProjectivePlane",
 
 # Default function for dual points.
 BindGlobal("DefaultDualityFunction", function(G, x)
-    return G.names{x}
+    return G.names{x};
 end);
 
 # Default function for primal points.
