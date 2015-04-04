@@ -561,7 +561,7 @@ BindGlobal("OnHughesPlane", function(q, div, dp)
     end;
 end);
 
-# A classical conic in a Desarguesian projective plane.
+# A classical conic in a Desarguesian projective plane of order q.
 BindGlobal("ClassicalConicProjectivePlane",
     q -> rec(points := Set(List(Union([[0,1,0]*Z(q)^0], List(GF(q),
             t -> [t, t^2, 1]*Z(q)^0)), x -> Subspace(GF(q)^3, [x], "basis"))),
@@ -579,7 +579,7 @@ BindGlobal("ClassicalConicProjectivePlane",
             ]), d := 2, q := q)
 );
 
-# A nonclassical conic in a Desarguesian projective plane.
+# A nonclassical conic in a Desarguesian projective plane of order q.
 BindGlobal("NonclassicalConicProjectivePlane",
     q -> rec(points := Set(List(Union([[1,0,0]*Z(q)^0], List(GF(q),
             t -> [t, t^2, 1]*Z(q)^0)), x -> Subspace(GF(q)^3, [x], "basis"))),
@@ -587,6 +587,16 @@ BindGlobal("NonclassicalConicProjectivePlane",
                             Z(q)*IdentityMat(3, GF(q))]),
             d := 2, q := q)
 );
+
+# An elliptic quadric in a d-dimensional projective space of order q.
+BindGlobal("EllipticQuadricProjectiveSpace", function(q)
+    local G, V;
+    G := GO(-1, 4, q);
+    V := GF(q)^4;
+    return rec(points := IsotropicSpacesQuadraticForm(
+                    InvariantQuadraticForm(G).matrix)(Subspaces(V, 1)),
+                group := G, d := 3, q := q);
+end);
 
 # Default function for dual points.
 BindGlobal("DefaultDualityFunction", x -> x);
