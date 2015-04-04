@@ -14,7 +14,7 @@ end);
 
 # The incidence graph of a Hall plane.
 BindGlobal("HallPlaneIncidenceGraph", function(q)
-    local c, p, H, L, P, dp, mul;
+    local c, p, G, H, L, P, dp, mul;
     H := GF(q)^2;
     p := DefiningPolynomial(GF(GF(q), 2));
     c := CoefficientsOfUnivariatePolynomial(p);
@@ -28,8 +28,11 @@ BindGlobal("HallPlaneIncidenceGraph", function(q)
                                         FieldAdditionPermutationGroup(q)),
                         [FieldMultiplicationPermutationGroup(q),
                          Group([[c[2], Z(q)^0], [-c[1], 0*Z(q)]])]));
-    return Graph(dp, Union(P, L), OnHallPlane(q, dp),
+    G := Graph(dp, Union(P, L), OnHallPlane(q, dp),
                 PointLineIncidence, true);
+    G.halfDuality := DefaultDualityFunction;
+    G.halfPrimality := DefaultPrimalityFunction;
+    return G;
 end);
 
 # The incidence graph of a Hughes plane. If the second parameter n is zero or
@@ -39,7 +42,7 @@ end);
 # exceptional near-fields of order 11^2, setting n to 1 or 2 chooses one of
 # these semifields when q = 11.
 BindGlobal("HughesPlaneIncidenceGraph", function(arg)
-    local c, n, q, A, B, F, G, P, dp, th, mul, rdiv, gens;
+    local c, n, q, A, B, F, G, H, P, df, dp, th, mul, rdiv, gens, orth;
     if Length(arg) < 1 then
         Error("at least one argument expected");
         return fail;
@@ -92,13 +95,21 @@ BindGlobal("HughesPlaneIncidenceGraph", function(arg)
     P := Filtered(GF(q^2)^3,
             x -> not IsZero(x) and IsOne(Filtered(x, y -> not IsZero(y))[1]));
     dp := DirectProduct(Group(A), SymmetricGroup(2));
-    return Graph(dp, Cartesian([1, 2], P),
-            OnHughesPlane(q, rdiv, dp),
-            function(x, y)
-                local z;
-                z := TransposedMat(List(y[2], w -> Coefficients(B, w)));
-                return x[1] <> y[1] and IsZero(x[2]*z[1] + mul(th, x[2]*z[2]));
-            end, true);;
+    orth := function(x, y)
+        local z;
+        z := TransposedMat(List(y, w -> Coefficients(B, w)));
+        return IsZero(x*z[1] + mul(th, x*z[2]));
+    end;
+    df := x -> [x[1][1]^(1, 2),
+                Intersection(List(List(x, w -> w[2]),
+                                    y -> Filtered(P, z -> orth(y, z))))[1]];
+    H := Graph(dp, Cartesian([1, 2], P), OnHughesPlane(q, rdiv, dp),
+                function(x, y)
+                    return x[1] <> y[1] and orth(x[2], y[2]);
+                end, true);
+    H.halfDuality := df;
+    H.halfPrimality := df;
+    return H;
 end);
 
 # The collinearity graph of the generalized quadrangle Q(d, q)
