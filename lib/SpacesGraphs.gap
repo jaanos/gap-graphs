@@ -31,7 +31,7 @@ end);
 # The polar graph O^{(+/-)}(d, q) of isotropic lines of F_q^d
 # with respect to a nondegenerate quadratic form.
 BindGlobal("PolarGraphO", function(arg)
-    local d, e, q, B, G, Q, V;
+    local d, e, q, B, G, H, Q, V;
     if Length(arg) < 2 then
         Error("at least two arguments expected");
         return fail;
@@ -48,39 +48,48 @@ BindGlobal("PolarGraphO", function(arg)
     Q := InvariantQuadraticForm(G).matrix;
     B := Q + TransposedMat(Q);
     V := GF(q)^d;
-    return Graph(G, IsotropicSpacesQuadraticForm(Q)(Subspaces(V, 1)),
-        OnSubspaces(V), function(x, y)
-            return x <> y and IsZero(Elements(x)[2]*B*Elements(y)[2]);
-        end, true);
+    H := Graph(G, IsotropicSpacesQuadraticForm(Q)(Subspaces(V, 1)),
+                OnSubspaces(V), function(x, y)
+                    return x <> y and IsZero(Elements(x)[2]*B*Elements(y)[2]);
+                end, true);
+    H.duality := Sum;
+    H.primality := Intersection;
+    return H;
 end);
 
 # The polar graph Sp(d, q) of isotropic lines of F_q^d
 # with respect to a nondegenerate symplectic form.
 BindGlobal("PolarGraphSp", function(d, q)
-    local G, Q, V;
+    local G, H, Q, V;
     G := Sp(d, q);
     Q := InvariantBilinearForm(G).matrix;
     V := GF(q)^d;
-    return Graph(G, [Subspace(V, Elements(CanonicalBasis(V)){[1]}, "basis")],
-        OnSubspaces(V), function(x, y)
-            return x <> y and IsZero(Elements(x)[2]*Q*Elements(y)[2]);
-        end);
+    H := Graph(G, [Subspace(V, Elements(CanonicalBasis(V)){[1]}, "basis")],
+                OnSubspaces(V), function(x, y)
+                    return x <> y and IsZero(Elements(x)[2]*Q*Elements(y)[2]);
+                end);
+    H.duality := Sum;
+    H.primality := Intersection;
+    return H;
 end);
 
 # The polar graph U(d, r) of isotropic lines of F_{r^2}^d
 # with respect to a nondegenerate Hermitean form.
 BindGlobal("PolarGraphU", function(d, r)
-    local c, B, F, G, Q, V;
+    local c, B, F, G, H, Q, V;
     G := GU(d, r);
     Q := InvariantSesquilinearForm(G).matrix;
     V := GF(r^2)^d;
     B := Elements(CanonicalBasis(V));
     c := Conjugates(GF(r^2), GF(r), Z(r^2));
     F := x -> List(x, y -> y^r);
-    return Graph(G, [Subspace(V, [B[1] + (c[1]-c[2])*B[d]], "basis")],
-        OnSubspaces(V), function(x, y)
-            return x <> y and IsZero(Elements(x)[2]*Q*F(Elements(y)[2]));
-        end);
+    H := Graph(G, [Subspace(V, [B[1] + (c[1]-c[2])*B[d]], "basis")],
+            OnSubspaces(V), function(x, y)
+                return x <> y and IsZero(Elements(x)[2]*Q*F(Elements(y)[2]));
+            end);
+    H.duality := Sum;
+    H.primality := Intersection;
+    return H;
 end);
 
 # The dual polar graph B_d(q) of isotropic d-dimensional subspaces of
