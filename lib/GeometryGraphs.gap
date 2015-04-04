@@ -7,8 +7,12 @@ BindGlobal("DesarguesianPlaneIncidenceGraph", function(q)
                 OnProjectivePlane(V, dp), function(x, y)
                     return x <> y and Intersection(x, y) in [x, y];
                 end, true);
-    G.halfDuality := ProjectiveDualityFunction;
-    G.halfPrimality := ProjectivePrimalityFunction;
+    G.halfDuality := function(G, x)
+                        return Sum(G.names{x});
+                    end;
+    G.halfPrimality := function(G, x)
+                            return Intersection(G.names{x});
+                        end;
     return G;
 end);
 

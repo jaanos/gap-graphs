@@ -598,16 +598,6 @@ BindGlobal("DefaultPrimalityFunction", function(G, x)
     return Intersection(G.names{x})[1];
 end);
 
-# Default function for dual points.
-BindGlobal("ProjectiveDualityFunction", function(G, x)
-    return Sum(G.names{x});
-end);
-
-# Default function for primal points.
-BindGlobal("ProjectivePrimalityFunction", function(G, x)
-    return Intersection(G.names{x});
-end);
-
 # Check whether function for dual and primal points exist,
 # and add them if they do not.
 BindGlobal("CheckDualityFunctions", function(G)
