@@ -32,8 +32,9 @@ The following graphs are currently supported:
   * collinearity graphs of generalized quadrangles H(d, r) of order (r<sup>2</sup>, r<sup>d-5/2</sup>) for d = 3, 4
   * collinearity graphs of generalized quadrangles W(q) of order (q, q)
   * collinearity graphs of generalized quadrangles AS(q) of order (q-1, q+1)
+  * collinearity graphs of derived generalized quadrangles T<sub>d</sub>(O) of order (q, q<sup>d-1</sup>)
+  * collinearity graphs of derived generalized quadrangles T<sup>*</sup>(O) of order (2<sup>h</sup>-1, 2<sup>h</sup>+1)
   * collinearity graphs of derived generalized quadrangles P(S, x) of order (s-1, s+1)
-  * collinearity graphs of derived generalized quadrangles T_d(O) of order (q, q^{d-1})
   * incidence graphs from files as listed on E. Moorhouse's webpage on [projective planes](http://www.uwyo.edu/moorhouse/pub/planes/) or [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
   * collinearity graphs from files as listed on E. Moorhouse's webpage on [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
 * Other infinite families of distance-regular graphs:

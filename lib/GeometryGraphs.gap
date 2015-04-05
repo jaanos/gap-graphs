@@ -194,7 +194,7 @@ BindGlobal("GeneralizedQuadrangleT", function(arg)
 end);
 
 # The collinearity graph of the generalized quadrangle T*(O) of order
-# (2^s-1, 2^s+1) derived from the projective space PG(3, 2^s) containing the
+# (2^h-1, 2^h+1) derived from the projective space PG(3, 2^h) containing the
 # hyperoval O in a hyperplane.
 BindGlobal("GeneralizedQuadrangleTstar", function(arg)
     local o, q, G, H, O, V, gr;
