@@ -193,6 +193,9 @@ BindGlobal("GeneralizedQuadrangleT", function(arg)
     return gr;
 end);
 
+# The collinearity graph of the generalized quadrangle T*(O) of order
+# (2^s-1, 2^s+1) derived from the projective space PG(3, 2^s) containing the
+# hyperoval O in a hyperplane.
 BindGlobal("GeneralizedQuadrangleTstar", function(arg)
     local o, q, G, H, O, V, gr;
     if Length(arg) < 1 then
@@ -203,12 +206,12 @@ BindGlobal("GeneralizedQuadrangleTstar", function(arg)
         o := arg[1].points;
         G := arg[1].group;
     else
-        q := arg[1];
+        q := 2^arg[1];
         o := arg[2];
         if Length(arg) > 2 then
             G := arg[3];
         else
-            G := Group(IdentityMat(d+1, GF(q)));
+            G := Group(IdentityMat(3, GF(q)));
         fi;
     fi;
     V := GF(q)^4;
@@ -217,15 +220,17 @@ BindGlobal("GeneralizedQuadrangleTstar", function(arg)
             [Concatenation([0*Z(q)], BasisVectors(Basis(x))[1])], "basis"));
     gr := Graph(Group(List(GeneratorsOfGroup(G),
                             g -> Concatenation([Concatenation([Z(q)^0],
-                                    ListWithIdenticalEntries(d+1, 0*Z(q)))],
+                                    ListWithIdenticalEntries(3, 0*Z(q)))],
                                 List(g, l -> Concatenation([0*Z(q)], l))))),
                 Filtered(Subspaces(V, 1), x -> not IsSubset(H, x)),
                 OnSubspaces(V), function(x, y)
                     local xy;
                     xy := x+y;
                     return not IsSubset(H, xy)
-                        and ForAny(O, z -> IsSubset(xy, z))
+                        and ForAny(O, z -> IsSubset(xy, z));
                 end, true);
+    gr.duality := Sum;
+    gr.primality := Intersection;
     return gr;
 end);
 
