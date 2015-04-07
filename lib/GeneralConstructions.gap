@@ -208,7 +208,7 @@ BindGlobal("CliqueGraph", function(arg)
                 function(x, y)
                     return Size(Intersection(x,y)) = 1;
                 end);
-    if n > 0
+    if n > 0 then
         H := InducedSubgraph(H, ConnectedComponents(H)[n], H.group);
     fi;
     if "names" in RecNames(G) then
