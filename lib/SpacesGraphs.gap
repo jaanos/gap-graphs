@@ -1,6 +1,10 @@
 # The Grassmann graph J_q(n, d) of d-dimensional subspaces of F_q^n.
 BindGlobal("GrassmannGraph", function(q, n, d)
-    return SubspaceGraph(GL(n, q), Elements, GF(q)^n, d, true);
+    local G;
+    G := SubspaceGraph(GL(n, q), Elements, GF(q)^n, d, true);
+    G.duality := Intersection;
+    G.primality := Sum;
+    return G;
 end);
 
 # The twisted Grassmann graph TG_d(q) of (d+1)-dimensional subspaces of
