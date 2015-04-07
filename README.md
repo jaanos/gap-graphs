@@ -86,11 +86,12 @@ The following graphs are currently supported:
   * Box (Cartesian) product
   * Cross (tensor) product
   * Strong product
+  * Bipartite double
   * Extended bipartite double
   * Halved graphs
   * Antipodal quotients
   * Clique graphs
   * Vertex-clique incidence graphs
 
-Some constructions, such as complete graphs, Johnson graphs and Cayley graphs
+Some constructions, such as complete graphs, Johnson graphs and Cayley graphs,
 are already available in GRAPE.
