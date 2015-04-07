@@ -616,6 +616,11 @@ BindGlobal("DefaultDualityFunction", x -> x);
 # Default function for primal points.
 BindGlobal("DefaultPrimalityFunction", x -> Intersection(x)[1]);
 
+# Duality function for bipartite doubles.
+BindGlobal("BipartiteDoubleDualityFunction",
+    f -> x -> [x[1][1], f(List(x, y -> y[2]))]
+);
+
 # Check whether function for dual and primal points exist,
 # and add them if they do not.
 BindGlobal("CheckDualityFunctions", function(G)

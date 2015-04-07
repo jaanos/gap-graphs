@@ -63,6 +63,16 @@ BindGlobal("StrongProductGraph", function(arg)
     end);
 end);
 
+# The bipartite double of a graph.
+BindGlobal("BipartiteDoubleGraph", function(G)
+    local H;
+    H := BipartiteDouble(G);
+    CheckDualityFunctions(G);
+    H.halfDuality := BipartiteDoubleDualityFunction(G.duality);
+    H.halfPrimality := BipartiteDoubleDualityFunction(G.primality);
+    return H;
+end);
+
 # The extended bipartite double of a graph.
 BindGlobal("ExtendedBipartiteDoubleGraph", function(G)
     local dp, signs, H;
@@ -75,6 +85,9 @@ BindGlobal("ExtendedBipartiteDoubleGraph", function(G)
     if "names" in RecNames(G) then
         AssignVertexNames(H, List(H.names, x -> [G.names[x[1]], x[2]]));
     fi;
+    CheckDualityFunctions(G);
+    H.halfDuality := BipartiteDoubleDualityFunction(G.duality);
+    H.halfPrimality := BipartiteDoubleDualityFunction(G.primality);
     return H;
 end);
 
@@ -150,7 +163,7 @@ end);
 # as the vertex set, acted upon by the matrix group G,
 # with two subspaces being adjacent iff their intersection has dimension d-1.
 BindGlobal("SubspaceGraph", function(arg)
-    local G, S, V, d, invt, vcs;
+    local G, H, S, V, d, invt, vcs;
     if Length(arg) < 4 then
         Error("at least four arguments expected");
         return fail;
@@ -169,18 +182,35 @@ BindGlobal("SubspaceGraph", function(arg)
     else
         vcs := S(Subspaces(V, d));
     fi;
-    return Graph(G, vcs, OnSubspaces(V), function(x,y)
-            return Dimension(Intersection(x,y)) = d-1;
-        end, invt);
+    H := Graph(G, vcs, OnSubspaces(V), function(x,y)
+                    return Dimension(Intersection(x,y)) = d-1;
+                end, invt);
+    H.duality := Intersection;
+    H.primality := Sum;
+    return H;
 end);
 
-# The clique (dual geometry) graph of a collinearity graph.
-BindGlobal("CliqueGraph", function(G)
-    local H;
+# The clique (dual geometry) graph of a collinearity graph. The optional second
+# argument allows choosing a connected component of the resulting graph.
+BindGlobal("CliqueGraph", function(arg)
+    local G, H, n;
+    if Length(arg) < 1 then
+        Error("at least one argument expected");
+        return fail;
+    fi;
+    G := arg[1];
+    if Length(arg) > 1 then
+        n := arg[2];
+    else
+        n := 0;
+    fi;
     H := Graph(G.group, Cliques(G), OnSets,
                 function(x, y)
                     return Size(Intersection(x,y)) = 1;
                 end);
+    if n > 0
+        H := InducedSubgraph(H, ConnectedComponents(H)[n], H.group);
+    fi;
     if "names" in RecNames(G) then
         CheckDualityFunctions(G);
         H.duality := G.primality;

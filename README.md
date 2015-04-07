@@ -43,7 +43,7 @@ The following graphs are currently supported:
   * Folded Johnson graphs J̃(2d, d)
   * Folded cubes H̃(d, 2)
   * Folded halved cubes 1/2 H̃(2d, 2)
-  * unitary nonisotropics graphs with intersection arrays {q^2-q, q^2-q-2, q+1; 1, 1, q^2-2q}
+  * unitary nonisotropics graphs with intersection arrays {q<sup>2</sup>-q, q<sup>2</sup>-q-2, q+1; 1, 1, q<sup>2</sup>-2q}
   * the Brouwer "vector product" graphs Br(q) with intersection arrays {q<sup>3</sup>-1, q<sup>3</sup>-q, q<sup>3</sup>-q<sup>2</sup>+1; 1, q, q<sup>2</sup>-1}
   * the Pasechnik graphs Pa(q) with intersection arrays {q<sup>3</sup>, q<sup>3</sup>-1, q<sup>3</sup>-q, q<sup>3</sup>-q<sup>2</sup>+1; 1, q, q<sup>2</sup>-1, q<sup>3</sup>}
   * coset graphs of Kasami codes
@@ -56,6 +56,8 @@ The following graphs are currently supported:
   * polar graphs O<sup>(±)</sup>(d, q)
   * polar graphs Sp(d, q)
   * polar graphs U(d, r)
+  * affine polar graphs VO<sup>±</sup>(2e, q)
+  * affine polar graphs VNO<sup>±</sup>(2e, q)
 * Sporadic and other named distance-regular graphs:
   * the Heawood graph with intersection array {3, 2, 2; 1, 1, 3}
   * the skeleton of the icosahedron with intersection array {5, 2, 1; 1, 2, 5}
@@ -84,11 +86,12 @@ The following graphs are currently supported:
   * Box (Cartesian) product
   * Cross (tensor) product
   * Strong product
+  * Bipartite double
   * Extended bipartite double
   * Halved graphs
   * Antipodal quotients
   * Clique graphs
   * Vertex-clique incidence graphs
 
-Some constructions, such as complete graphs, Johnson graphs and Cayley graphs
+Some constructions, such as complete graphs, Johnson graphs and Cayley graphs,
 are already available in GRAPE.
