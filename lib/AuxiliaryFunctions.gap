@@ -323,9 +323,9 @@ BindGlobal("RegularPoints", function(G)
     t := par[3];
     l := [1..Length(G.representatives)];
     P := [1..G.order];
-    orb := List(l, i -> OrbitRepresentatives(Stabilizer(G.group,
+    orb := List(l, i -> OrbitsDomain(Stabilizer(G.group,
                                                     G.representatives[i]), P));
-    return G.representatives{Filtered(l, i -> ForAll(orb[i],
+    return G.representatives{Filtered(l, i -> ForAll(orb[i][1],
                         x -> IsRegularPair(G, G.representatives[i], x, t)))};
 end);
 
