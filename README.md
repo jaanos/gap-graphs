@@ -57,6 +57,7 @@ The following graphs are currently supported:
   * polar graphs Sp(d, q)
   * polar graphs U(d, r)
   * affine polar graphs VO<sup>±</sup>(2e, q)
+  * affine polar graphs VNO<sup>±</sup>(2e, q)
 * Sporadic and other named distance-regular graphs:
   * the Heawood graph with intersection array {3, 2, 2; 1, 1, 3}
   * the skeleton of the icosahedron with intersection array {5, 2, 1; 1, 2, 5}
