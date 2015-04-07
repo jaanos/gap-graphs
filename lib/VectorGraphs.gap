@@ -100,3 +100,26 @@ BindGlobal("MultiplicativeSymplecticCoverGraph", function(q, m)
                     return x <> y and x[1]*B*y[1] in K;
                 end, true);
 end);
+
+# The affine polar graph VO^{(+/-)}(d, q)
+# with respect to a nondegenerate quadratic form.
+BindGlobal("AffinePolarGraphVO", function(arg)
+    local d, e, q, B, G, H, Q, V;
+    if Length(arg) < 2 then
+        Error("at least two arguments expected");
+        return fail;
+    elif Length(arg) = 2 then
+        e := 0;
+        d := arg[1];
+        q := arg[2];
+    else
+        e := arg[1];
+        d := arg[2];
+        q := arg[3];
+    fi;
+    G := GO(e, d, q);
+    Q := InvariantQuadraticForm(G).matrix;
+    return Graph(G, Elements(GF(q)^d), OnPoints, function(x, y)
+                    return x <> y and IsZero((x-y)*Q*(x-y));
+                end, true);
+end);
