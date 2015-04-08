@@ -57,6 +57,32 @@ BindGlobal("PolarGraphO", function(arg)
     return H;
 end);
 
+# The polar graph NO^{+/-}orth(d, q) of nonisotropic lines of F_q^d
+# with respect to a nondegenerate quadratic form.
+BindGlobal("PolarGraphNOorth", function(e, d, q)
+    local f, z, B, G, H, Q, V;
+    if d mod 2 = 1 then
+        f := 0;
+        if q mod 4 = 3 and d mod 4 = 1 then
+            e := -e;
+        fi;
+    else
+        f := e;
+    fi;
+    G := GO(f, d, q);
+    Q := InvariantQuadraticForm(G).matrix;
+    B := Q + TransposedMat(Q);
+    V := GF(q)^d;
+    z := Z(q)^((1-e)/2);
+    H := Graph(G, NonisotropicSpacesQuadraticForm(Q, z)(Subspaces(V, 1)),
+                OnSubspaces(V), function(x, y)
+                    return x <> y and IsZero(Elements(x)[2]*B*Elements(y)[2]);
+                end, true);
+    H.duality := Sum;
+    H.primality := Intersection;
+    return H;
+end);
+
 # The polar graph Sp(d, q) of isotropic lines of F_q^d
 # with respect to a nondegenerate symplectic form.
 BindGlobal("PolarGraphSp", function(d, q)

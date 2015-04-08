@@ -111,8 +111,7 @@ BindGlobal("HigmanGraph", Graph(Stabilizer(MathieuGroup(24), [23, 24], OnSets),
                             end));
 
 # The Coxeter graph with intersection array {3,2,2,1; 1,1,1,2}.
-BindGlobal("CoxeterGraph", Graph(PGL(3, 2), [[1, 2, 4]],
-                                 OnSets, DisjointSets));
+BindGlobal("CoxeterGraph", PolarGraphNOorth(1, 3, 7));
 
 # The doubly truncated Witt graph with intersection array {7,6,4,4; 1,1,1,6}.
 BindGlobal("Witt22Graph", Graph(MathieuGroup(22), [[1,2,3,4,5,10,18,21]],

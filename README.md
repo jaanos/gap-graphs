@@ -54,6 +54,7 @@ The following graphs are currently supported:
   * Cocktail party graphs
   * Latin square graphs
   * polar graphs O<sup>(±)</sup>(d, q)
+  * polar graphs NO<sup>±</sup><sub>⊥</sub>(d, q)
   * polar graphs Sp(d, q)
   * polar graphs U(d, r)
   * affine polar graphs VO<sup>±</sup>(2e, q)
