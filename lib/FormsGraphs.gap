@@ -9,10 +9,9 @@ end);
 
 # The Hermitean forms graph Her(d, r) of Hermitean matrices over GF(r^2).
 BindGlobal("HermiteanFormsGraph", function(d, r)
-    return Graph(WreathProduct(FieldAdditionPermutationGroup(r),
-            MatrixRowColumnPermutationGroup(d)),
-        List(GF(r)^[d, d], x -> ToHermitean(x, r)),
-        OnHermiteanMatrices(r, d), function(x, y)
-            return RankMat(x-y) = 1;
-        end, true);
+    local dp;
+    dp := DirectProduct(Concatenation([GL(d, r^2)],
+        ListWithIdenticalEntries(d*d, FieldAdditionPermutationGroup(r))));
+    return Graph(dp, List(GF(r)^[d, d], x -> ToHermitean(x, r)),
+        OnHermiteanMatrices(r, d, dp), RankAdjacency([1]), true);
 end);
