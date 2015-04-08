@@ -67,6 +67,24 @@ BindGlobal("IntToFFE", function(x, q)
     fi;
 end);
 
+# Transforms a matrix over GF(r) to a Hermitean matrix over GF(r^2).
+BindGlobal("ToHermitean", function(A, r)
+    local c, n, Hermitize;
+    c := Conjugates(GF(r^2), GF(r), Z(r^2));
+    Hermitize := function(i, j)
+        if i = j then
+            return A[i][j];
+        elif i < j then
+            return A[i][j] + c[1]*A[j][i];
+        else
+            return A[j][i] + c[2]*A[i][j];
+        fi;
+    end;
+    n := Size(A);
+    return Immutable(List([1..n],
+        i -> List([1..n], j -> Hermitize(i, j))));
+end);
+
 # The vector product of two vectors with 3 elements.
 BindGlobal("VectorProduct", function(u, v)
     return [u[2]*v[3]-u[3]*v[2], u[3]*v[1]-u[1]*v[3], u[1]*v[2]-u[2]*v[1]];
@@ -91,44 +109,33 @@ BindGlobal("OnVectorPairs", function(q)
 end);
 
 # Action of a wreath product on matrices over a field.
-BindGlobal("OnMatrices", function(q, d, e)
-    local ij;
-    ij := Cartesian([1..d], [1..e], [0..q-1]);
+BindGlobal("OnMatrices", function(q, d, e, dp)
+    local F, N, p1, p2, pm;
+    F := Elements(GF(q));
+    N := Position(F, 0*Z(q));
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    pm := List([0..d-1], i -> List([1..e], j -> Projection(dp, e*i+j+2)));
     return function(M, g)
-        local ji, v, w, vw;
-        ji := ij{OnTuples([1..d*e*q], g)};
-        vw := List([1..d],
-            i -> List([1..e],
-                j -> ji[FFEToInt(M[i][j], q)+(j-1)*q+(i-1)*q*e+1]));
-        v := List(vw, r -> List(r, x -> IntToFFE(x[3], q)));
-        w := List(vw, r -> List(r, x -> x[2]));
-        return List([1..d], i -> v[i]{List([1..e], j -> Position(w[i], j))});
+        return Image(p1, g)*M*Image(p2, g) +
+            List(pm, r -> List(r, p -> F[N^Image(p, g)]));
     end;
 end);
 
 # Action of a wreath product on Hermitean matrices over a field.
-BindGlobal("OnHermiteanMatrices", function(r, d)
-    local c, ij;
-    ij := Cartesian([1..d], [1..d], [0..r-1]);
-    c := Conjugates(GF(r^2), GF(r), Z(r^2));
+BindGlobal("OnHermiteanMatrices", function(r, d, dp)
+    local C, F, K, N, p1, pm;
+    F := Elements(GF(r));
+    N := Position(F, 0*Z(r));
+    K := Elements(GF(r^2));
+    C := List(K, x -> Conjugates(GF(r^2), GF(r), x)[2]);
+    p1 := Projection(dp, 1);
+    pm := List([0..d-1], i -> List([1..d], j -> Projection(dp, d*i+j+1)));
     return function(M, g)
-        local ji, vw, F;
-        ji := ij{OnTuples([1..d*d*r], g)};
-        vw := List([1..d],
-            i -> List([1..d],
-                j -> ji[(j-1)*r+(i-1)*r*d+1]));
-        F := function(i, j)
-            if i = j then
-                return IntToFFE(vw[i][j][3], r);
-            elif i < j then
-                return IntToFFE(vw[i][j][3], r) + c[1]*IntToFFE(vw[j][i][3], r);
-            else
-                return IntToFFE(vw[j][i][3], r) + c[2]*IntToFFE(vw[i][j][3], r);
-            fi;
-        end;
-        return List([1..d],
-            i -> List([1..d],
-                j -> M[vw[i][j][1]][vw[i][j][2]] + F(i, j)));
+        local H;
+        H := Image(p1, g);
+        return List(H, r -> List(r, x -> C[Position(K, x)]))*M*TransposedMat(H)
+            + ToHermitean(List(pm, r -> List(r, p -> F[N^Image(p, g)])), r);
     end;
 end);
 
@@ -341,24 +348,6 @@ BindGlobal("RegularPoints", function(G)
                         x -> IsRegularPair(G, G.representatives[i], x, t)))};
 end);
 
-# Transforms a matrix over GF(r) to a Hermitean matrix over GF(r^2).
-BindGlobal("ToHermitean", function(A, r)
-    local c, n, Hermitize;
-    c := Conjugates(GF(r^2), GF(r), Z(r^2));
-    Hermitize := function(i, j)
-        if i = j then
-            return A[i][j];
-        elif i < j then
-            return A[i][j] + c[1]*A[j][i];
-        else
-            return A[j][i] + c[2]*A[i][j];
-        fi;
-    end;
-    n := Size(A);
-    return Immutable(List([1..n],
-        i -> List([1..n], j -> Hermitize(i, j))));
-end);
-
 # Checks whether the sum of two subspaces are hyperbolic
 # given a quadratic form.
 BindGlobal("IsHyperbolic", function(Q)
@@ -407,15 +396,21 @@ BindGlobal("IsotropicSpacesSesquilinearForm", function(Q, r)
     return V -> Filtered(V, y -> O(y, y));
 end);
 
-# Adjacency function for Kneser-type graphs
+# Adjacency function for Kneser-type graphs.
 BindGlobal("DisjointSets", function(x, y)
     return Intersection(x, y) = [];
 end);
 
-# Adjacency function for roots of E_8
+# Adjacency function for roots of E_8.
 BindGlobal("RootAdjacency", function(x, y)
     return x*y = 8;
 end);
+
+# Adjacency function for forms graphs.
+BindGlobal("RankAdjacency",
+    r -> function(x, y)
+        return RankMat(x-y) in r;
+    end);
 
 # Point-line incidence
 BindGlobal("PointLineIncidence", function(x, y)
