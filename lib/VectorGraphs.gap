@@ -104,7 +104,7 @@ end);
 # The affine polar graph VO^{(+/-)}(d, q)
 # with respect to a nondegenerate quadratic form.
 BindGlobal("AffinePolarGraphVO", function(arg)
-    local d, e, q, B, G, H, Q, V;
+    local d, e, q, B, G, Q, V, dp;
     if Length(arg) < 2 then
         Error("at least two arguments expected");
         return fail;
@@ -118,8 +118,10 @@ BindGlobal("AffinePolarGraphVO", function(arg)
         q := arg[3];
     fi;
     G := GO(e, d, q);
+    dp := DirectProduct(Concatenation([G],
+            ListWithIdenticalEntries(d, FieldAdditionPermutationGroup(q))));
     Q := InvariantQuadraticForm(G).matrix;
-    return Graph(G, Elements(GF(q)^d), OnPoints, function(x, y)
+    return Graph(dp, Elements(GF(q)^d), OnAffine(q, d, dp), function(x, y)
                     return x <> y and IsZero((x-y)*Q*(x-y));
                 end, true);
 end);
@@ -127,7 +129,7 @@ end);
 # The affine polar graph VNO^{(+/-)}(d, q)
 # with respect to a nondegenerate quadratic form.
 BindGlobal("AffinePolarGraphVNO", function(arg)
-    local d, e, q, B, G, H, Q, V;
+    local d, e, q, B, G, H, Q, V, dp;
     if Length(arg) < 2 then
         Error("at least two arguments expected");
         return fail;
@@ -141,8 +143,11 @@ BindGlobal("AffinePolarGraphVNO", function(arg)
         q := arg[3];
     fi;
     G := GO(e, d, q);
+    dp := DirectProduct(Concatenation([G],
+            ListWithIdenticalEntries(d, FieldAdditionPermutationGroup(q))));
     Q := InvariantQuadraticForm(G).matrix;
-    return Graph(G, Elements(GF(q)^d), OnPoints, function(x, y)
+    return Graph(dp, Elements(GF(q)^d), OnAffine(q, d, dp),
+                function(x, y)
                     return x <> y and IsOne(((x-y)*Q*(x-y))^((q-1)/2));
                 end, true);
 end);

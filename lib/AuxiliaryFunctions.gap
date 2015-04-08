@@ -200,6 +200,18 @@ BindGlobal("OnAdditiveSymplecticCover", function(q, m, B, dp)
     end;
 end);
 
+# Action on the vertices of affine polar graphs.
+BindGlobal("OnAffine", function(q, d, dp)
+    local F, N, p1, pr;
+    F := Elements(GF(q));
+    N := Position(F, 0*Z(q));
+    p1 := Projection(dp, 1);
+    pr := List([1..d], i -> Projection(dp, i+1));
+    return function(v, g)
+        return v^Image(p1, g) + List([1..d], i -> F[N^Image(pr[i], g)]);;
+    end;
+end);
+
 # Action on the roots of E_8
 BindGlobal("OnRoots", function(v, g)
     return (-1)^(10^g) * v{OnTuples([1..Length(v)], g)};
