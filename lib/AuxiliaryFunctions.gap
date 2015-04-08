@@ -91,18 +91,16 @@ BindGlobal("OnVectorPairs", function(q)
 end);
 
 # Action of a wreath product on matrices over a field.
-BindGlobal("OnMatrices", function(q, d, e)
-    local ij;
-    ij := Cartesian([1..d], [1..e], [0..q-1]);
+BindGlobal("OnMatrices", function(q, d, e, dp)
+    local F, N, p1, p2, pm;
+    F := Elements(GF(q));
+    N := Position(F, 0*Z(q));
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    pm := List([0..d-1], i -> List([1..e], j -> Projection(dp, e*i+j+2)));
     return function(M, g)
-        local ji, v, w, vw;
-        ji := ij{OnTuples([1..d*e*q], g)};
-        vw := List([1..d],
-            i -> List([1..e],
-                j -> ji[FFEToInt(M[i][j], q)+(j-1)*q+(i-1)*q*e+1]));
-        v := List(vw, r -> List(r, x -> IntToFFE(x[3], q)));
-        w := List(vw, r -> List(r, x -> x[2]));
-        return List([1..d], i -> v[i]{List([1..e], j -> Position(w[i], j))});
+        return Image(p1, g)*M*Image(p2, g) +
+            List(pm, r -> List(r, p -> F[N^Image(p, g)]));
     end;
 end);
 
@@ -388,15 +386,21 @@ BindGlobal("IsotropicSpacesSesquilinearForm", function(Q, r)
     return V -> Filtered(V, y -> O(y, y));
 end);
 
-# Adjacency function for Kneser-type graphs
+# Adjacency function for Kneser-type graphs.
 BindGlobal("DisjointSets", function(x, y)
     return Intersection(x, y) = [];
 end);
 
-# Adjacency function for roots of E_8
+# Adjacency function for roots of E_8.
 BindGlobal("RootAdjacency", function(x, y)
     return x*y = 8;
 end);
+
+# Adjacency function for forms graphs.
+BindGlobal("RankAdjacency",
+    r -> function(x, y)
+        return RankMat(x-y) in r;
+    end);
 
 # Point-line incidence
 BindGlobal("PointLineIncidence", function(x, y)
