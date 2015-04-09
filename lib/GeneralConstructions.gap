@@ -227,9 +227,28 @@ BindGlobal("CliqueGraph", function(arg)
 end);
 
 # The incidence graph of a collinearity graph.
-BindGlobal("IncidenceGraph", function(G)
-    local H;
-    H := Graph(G.group, Union(G.representatives, Cliques(G)),
+BindGlobal("IncidenceGraph", function(arg)
+    local C, D, G, H, n;
+    if Length(arg) < 1 then
+        Error("at least one argument expected");
+        return fail;
+    fi;
+    G := arg[1];
+    if Length(arg) > 1 then
+        n := arg[2];
+    else
+        n := 0;
+    fi;
+    if n = 0 then
+        C := Cliques(G);
+    else
+        D := Graph(G.group, Cliques(G), OnSets,
+                    function(x, y)
+                        return Size(Intersection(x,y)) = 1;
+                    end);
+        C := D.names{ConnectedComponents(D)[n]};
+    fi;
+    H := Graph(G.group, Union(G.representatives, C),
                 OnPointsOrLines(OnPoints, IsList),
                 function(x, y)
                     return (IsList(y) and x in y) or (IsList(x) and y in x);

@@ -621,6 +621,17 @@ BindGlobal("BipartiteDoubleDualityFunction",
     f -> x -> [x[1][1], f(List(x, y -> y[2]))]
 );
 
+# Duality function for Grassmann graphs.
+BindGlobal("GrassmannDualityFunction", function(x)
+    local y;
+    y := Intersection(x);
+    if Dimension(y) = 0 then
+        return Sum(x);
+    else
+        return y;
+    fi;
+end);
+
 # Check whether function for dual and primal points exist,
 # and add them if they do not.
 BindGlobal("CheckDualityFunctions", function(G)
