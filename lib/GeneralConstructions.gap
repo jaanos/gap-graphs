@@ -193,24 +193,25 @@ end);
 # The clique (dual geometry) graph of a collinearity graph. The optional second
 # argument allows choosing a connected component of the resulting graph.
 BindGlobal("CliqueGraph", function(arg)
-    local G, H, n;
+    local C, G, H, n;
     if Length(arg) < 1 then
         Error("at least one argument expected");
         return fail;
     fi;
     G := arg[1];
+    C := Cliques(G);
     if Length(arg) > 1 then
         n := arg[2];
+        if not IsList(n) then
+            n := [n];
+        fi;
     else
-        n := 0;
+        n := [1..Length(C)];
     fi;
-    H := Graph(G.group, Cliques(G), OnSets,
+    H := Graph(G.group, C{n}, OnSets,
                 function(x, y)
                     return Size(Intersection(x,y)) = 1;
                 end);
-    if n > 0 then
-        H := InducedSubgraph(H, ConnectedComponents(H)[n], H.group);
-    fi;
     if "names" in RecNames(G) then
         CheckDualityFunctions(G);
         H.duality := G.primality;
@@ -228,34 +229,29 @@ end);
 
 # The incidence graph of a collinearity graph.
 BindGlobal("IncidenceGraph", function(arg)
-    local C, D, G, H, n;
+    local C, G, H, n;
     if Length(arg) < 1 then
         Error("at least one argument expected");
         return fail;
     fi;
     G := arg[1];
+    C := Cliques(G);
     if Length(arg) > 1 then
         n := arg[2];
+        if not IsList(n) then
+            n := [n];
+        fi;
     else
-        n := 0;
+        n := [1..Length(C)];
     fi;
-    if n = 0 then
-        C := Cliques(G);
-    else
-        D := Graph(G.group, Cliques(G), OnSets,
-                    function(x, y)
-                        return Size(Intersection(x,y)) = 1;
-                    end);
-        C := D.names{ConnectedComponents(D)[n]};
-    fi;
-    H := Graph(G.group, Union(G.representatives, C),
+    H := Graph(G.group, Union(G.representatives, C{n}),
                 OnPointsOrLines(OnPoints, IsList),
                 function(x, y)
                     return (IsList(y) and x in y) or (IsList(x) and y in x);
                 end);
     if "names" in RecNames(G) and G.order > 0 then
         CheckDualityFunctions(G);
-        if IsList(G.names[1]) then
+        if IsList(H.names[1]) then
             H.halfDuality := G.primality;
             H.halfPrimality := G.duality;
         else
