@@ -7,6 +7,22 @@ BindGlobal("GrassmannGraph", function(q, n, d)
     return G;
 end);
 
+# The doubled Grassmann graph 2J_q(2d+1, d) of d- and (d+1)-dimensional
+# subspaces of F_q^{2d+1}.
+BindGlobal("DoubledGrassmannGraph", function(q, d)
+    local n, G, V, dp;
+    n := 2*d+1;
+    V := GF(q)^n;
+    dp := DirectProduct(GL(n, q), Group((1, 2)));
+    G := Graph(dp, Union(Subspaces(V, d), Subspaces(V, d+1)),
+                OnDoubledGrassmann(V, dp), function(x, y)
+                    return x <> y and (IsSubset(x, y) or IsSubset(y, x));
+                end, true);
+    G.halfDuality := GrassmannDualityFunction;
+    G.halfPrimality := GrassmannDualityFunction;
+    return G;
+end);
+
 # The twisted Grassmann graph TG_d(q) of (d+1)-dimensional subspaces of
 # F_q^{2d+1} which are not subspaces of a hyperplane H, and (d-1)-dimensional
 # subspaces of H.
@@ -19,15 +35,12 @@ BindGlobal("TwistedGrassmannGraph", function(d, q)
             Subspaces(H, d-1));
     S := OnSubspaces(F);
     return Graph(Stabilizer(GL(n, q), H, S), V, S, function(x, y)
-        local d1, d2;
-        d1 := Dimension(x);
-        d2 := Dimension(y);
-        if d1 < d2 then
-            return IsSubset(y, x);
-        elif d1 > d2 then
-            return IsSubset(x, y);
+        local dx;
+        dx := Dimension(x);
+        if dx = Dimension(y) then
+            return Dimension(Intersection(x, y)) = dx-1;
         else
-            return Dimension(Intersection(x, y)) = d1-1;
+            return IsSubset(x, y) or IsSubset(y, x);
         fi;
     end, true);
 end);
