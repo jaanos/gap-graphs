@@ -138,23 +138,16 @@ end);
 # The dual polar graph B_d(q) of isotropic d-dimensional subspaces of
 # F_q^{2d+1} with respect to a nondegenerate quadratic form.
 BindGlobal("DualPolarGraphB", function(d, q)
-    local B, F, G, S, e, z, invt;
+    local F, G, S, e, z, invt;
     e := 2*d+1;
     F := GF(q)^e;
     G := GO(e, q);
-    if q mod 4 = 3 then
+    if q mod 2 = 1 then
         invt := true;
         S := IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix);
     else
         invt := false;
-        B := Elements(CanonicalBasis(F));
-        if q mod 4 = 1 then
-            z := Z(q)^((q-1)/4);
-            S := [Subspace(F, Union([B[1]], List([2..d],
-                                        i -> B[2*i-1] + B[2*i]*z)), "basis")];
-        else
-            S := [Subspace(F, B{[2..d+1]}, "basis")];
-        fi;
+        S := [Subspace(F, Elements(CanonicalBasis(F)){[2..d+1]}, "basis")];
     fi;
     return SubspaceGraph(G, S, F, d, invt);
 end);
