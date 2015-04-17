@@ -176,7 +176,7 @@ BindGlobal("GeneralizedQuadrangleT", function(arg)
         end, true);
     gr.duality := function(x)
         if V in x then
-            return Filtered(O, y -> IsSubset(Intersection(x), y))[1];
+            return First(O, y -> IsSubset(Intersection(x), y));
         else
             return Sum(Filtered(x, y -> Dimension(y) = 1));
         fi;
