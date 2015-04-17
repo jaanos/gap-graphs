@@ -493,7 +493,7 @@ end);
 BindGlobal("NormalizeSemifieldVector",
     div -> function(v)
         local n;
-        n := Filtered(v, x -> not IsZero(x))[1];
+        n := First(v, x -> not IsZero(x));
         return List(v, x -> div(x, n));
     end);
 
