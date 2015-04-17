@@ -93,7 +93,7 @@ BindGlobal("HughesPlaneIncidenceGraph", function(arg)
           [-c[2], 0*Z(q), Z(q)^0],
           [-c[1], 0*Z(q), 0*Z(q)]];
     P := Filtered(GF(q^2)^3,
-            x -> not IsZero(x) and IsOne(Filtered(x, y -> not IsZero(y))[1]));
+            x -> not IsZero(x) and IsOne(First(x, y -> not IsZero(y))));
     dp := DirectProduct(Group(A), SymmetricGroup(2));
     orth := function(x, y)
         local z;
