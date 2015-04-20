@@ -48,7 +48,7 @@ end);
 # The polar graph O^{(+/-)}(d, q) of isotropic lines of F_q^d
 # with respect to a nondegenerate quadratic form.
 BindGlobal("PolarGraphO", function(arg)
-    local d, e, q, B, G, H, Q, V;
+    local b, d, e, q, B, G, H, S, V;
     if Length(arg) < 2 then
         Error("at least two arguments expected");
         return fail;
@@ -62,13 +62,19 @@ BindGlobal("PolarGraphO", function(arg)
         q := arg[3];
     fi;
     G := GO(e, d, q);
-    Q := InvariantQuadraticForm(G).matrix;
-    B := Q + TransposedMat(Q);
+    B := InvariantBilinearForm(G).matrix;
     V := GF(q)^d;
-    H := Graph(G, IsotropicSpacesQuadraticForm(Q)(Subspaces(V, 1)),
-                OnSubspaces(V), function(x, y)
+    b := Elements(CanonicalBasis(V));
+    if e = -1 and d = 2 then
+        S := [];
+    elif e = 0 and q mod 2 = 1 then
+        S := [b[2]];
+    else
+        S := [b[1]];
+    fi;
+    H := Graph(G, S, OnSubspaces(V), function(x, y)
                     return x <> y and IsZero(Elements(x)[2]*B*Elements(y)[2]);
-                end, true);
+                end);
     H.duality := Sum;
     H.primality := Intersection;
     return H;
