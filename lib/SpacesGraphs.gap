@@ -107,10 +107,10 @@ BindGlobal("PolarGraphSp", function(d, q)
     G := Sp(d, q);
     Q := InvariantBilinearForm(G).matrix;
     V := GF(q)^d;
-    H := Graph(G, [Subspace(V, Elements(CanonicalBasis(V)){[1]}, "basis")],
+    H := Graph(G, IsotropicSpacesQuadraticForm(Q)(Subspaces(V, 1)),
                 OnSubspaces(V), function(x, y)
                     return x <> y and IsZero(Elements(x)[2]*Q*Elements(y)[2]);
-                end);
+                end, true);
     H.duality := Sum;
     H.primality := Intersection;
     return H;
@@ -126,10 +126,10 @@ BindGlobal("PolarGraphU", function(d, r)
     B := Elements(CanonicalBasis(V));
     c := Conjugates(GF(r^2), GF(r), Z(r^2));
     F := x -> List(x, y -> y^r);
-    H := Graph(G, [Subspace(V, [B[1] + (c[1]-c[2])*B[d]], "basis")],
+    H := Graph(G, IsotropicSpacesSesquilinearForm(Q, r)(Subspaces(V, 1)),
             OnSubspaces(V), function(x, y)
                 return x <> y and IsZero(Elements(x)[2]*Q*F(Elements(y)[2]));
-            end);
+            end, true);
     H.duality := Sum;
     H.primality := Intersection;
     return H;
