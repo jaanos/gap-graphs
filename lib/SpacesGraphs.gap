@@ -183,19 +183,12 @@ end);
 # The dual polar graph ^2D_{d+1}(q) of isotropic d-dimensional subspaces of
 # F_q^{2d+2} with respect to a nondegenerate quadratic form of Witt index d.
 BindGlobal("DualPolarGraph2D", function(d, q)
-    local F, G, S, e, invt;
+    local G, e;
     e := 2*d+2;
-    F := GF(q)^e;
     G := GO(-1, e, q);
-    if q mod 2 = 1 then
-        invt := true;
-        S := IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix);
-    else
-        invt := false;
-        S := [Subspace(F, Elements(CanonicalBasis(F)){Concatenation([1],
-                                                    [5,7..e-1])}, "basis")];
-    fi;
-    return SubspaceGraph(G, S, F, d, invt);
+    return SubspaceGraph(G,
+        IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix),
+        GF(q)^e, d);
 end);
 
 # The dual polar graph ^2A_{e-1}(r) of isotropic [e/2]-dimensional
