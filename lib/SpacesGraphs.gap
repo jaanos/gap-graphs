@@ -68,9 +68,9 @@ BindGlobal("PolarGraphO", function(arg)
     if e = -1 and d = 2 then
         S := [];
     elif e = 0 and q mod 2 = 1 then
-        S := [b[2]];
+        S := [Subspace(V, [b[2]], "basis")];
     else
-        S := [b[1]];
+        S := [Subspace(V, [b[1]], "basis")];
     fi;
     H := Graph(G, S, OnSubspaces(V), function(x, y)
                     return x <> y and IsZero(Elements(x)[2]*B*Elements(y)[2]);
