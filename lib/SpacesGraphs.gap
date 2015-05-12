@@ -95,8 +95,6 @@ BindGlobal("PolarGraphNOorth", function(e, d, q)
                 OnSubspaces(V), function(x, y)
                     return x <> y and IsZero(Elements(x)[2]*B*Elements(y)[2]);
                 end, true);
-    H.duality := Sum;
-    H.primality := Intersection;
     return H;
 end);
 
