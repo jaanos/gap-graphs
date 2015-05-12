@@ -636,6 +636,24 @@ BindGlobal("EllipticQuadricProjectiveSpace", function(q)
                 group := G, d := 3, q := q);
 end);
 
+# Finds x and y in F_q such that x^2 + y^2 = z.
+BindGlobal("AsSumOfSquares", function(z, q)
+    local i, x, y;
+    if q mod 2 = 0 then
+        return [Z(q)^0, (z-Z(q)^0)^(1/2 mod (q-1))];
+    fi;
+    i := (q-1)/2;
+    while i > 0 do
+        x := Z(q)^(2*i);
+        y := z - x;
+        if IsOne(y^((q-1)/2)) then
+            return [x, y];
+        fi;
+        i := i-1;
+    od;
+    return fail;
+end);
+
 # Default function for dual points.
 BindGlobal("DefaultDualityFunction", x -> x);
 

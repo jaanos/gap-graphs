@@ -263,6 +263,36 @@ BindGlobal("GeneralizedQuadrangleP", function(Q, z)
     return H;
 end);
 
+BindGlobal("GeneralizedHexagonG2", function(q)
+    local h, o, r, s, z, G, P, Q;
+    o := Z(q)^0;
+    z := 0*Z(q);
+    if q mod 4 = 1 then
+        h := o/2;
+        r := Z(q)^((q-1)/4)/2;
+        P := [[o,z,z,z,z,z,z],
+              [z,z,z,z,o,z,z],
+              [z,z,z,2*r,z,z,z],
+              [z,h,z,z,z,h,z],
+              [z,-r,z,z,z,r,z],
+              [z,z,h,z,z,z,h],
+              [z,z,-r,z,z,z,r]];
+    elif q mod 4 = 3 then
+        h := o/2;
+        r := Z(q)^((q-3)/4)/2;
+        s := AsSumOfSquares(Z(q)^((q-3)/4), q);
+    else
+        P := PermutationMat((1,4,3,2), 7, GF(q));
+    fi;
+    Q := [[0,0,0,0,0,0,0],
+          [0,0,0,0,0,0,0],
+          [0,0,0,0,0,0,0],
+          [0,0,0,-1,0,0,0],
+          [1,0,0,0,0,0,0],
+          [0,1,0,0,0,0,0],
+          [0,0,1,0,0,0,0]]*Z(q)^0;
+end);
+
 # The collinearity graph of the generalized quadrangle AS(q)
 # of order (q-1, q+1).
 BindGlobal("GeneralizedQuadrangleAS",
