@@ -167,6 +167,18 @@ BindGlobal("OnDoubledGrassmann", function(V, dp)
     end;
 end);
 
+# Action on the vertices of Paley graphs.
+BindGlobal("OnPaley", function(q, dp)
+    local F, N, p1, p2;
+    F := Elements(GF(q));
+    N := Position(F, 0*Z(q));
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    return function(x, g)
+        return (x + F[N^Image(p1, g)]) * Z(q)^((q-1)^Image(p2, g));
+    end;
+end);
+
 # Action on the vertices of Preparata graphs.
 BindGlobal("OnPreparata", function(q, s, dp)
     local F, N, p1, p2, p3, p4;

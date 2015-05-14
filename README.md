@@ -53,6 +53,7 @@ The following graphs are currently supported:
   * multiplicative symplectic covers of complete graphs with intersection arrays {q, q-m-1, 1; 1, m, q} (q or m even, m divides q-1)
 * Families of strongly regular graphs:
   * Cocktail party graphs
+  * Paley graphs
   * Latin square graphs
   * polar graphs O<sup>(±)</sup>(d, q)
   * polar graphs NO<sup>±</sup><sub>⊥</sub>(d, q)

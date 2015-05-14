@@ -17,7 +17,7 @@ BindGlobal("CompleteMultipartiteGraph", function(arg)
     fi;
 end);
 
-# Cycle graphs
+# Cycle graphs.
 BindGlobal("CycleGraph", n -> Graph(CyclicGroup(IsPermGroup, n), [1..n],
     OnPoints, function(x, y)
         return (x-y) mod n in [1,n-1];
@@ -27,6 +27,19 @@ BindGlobal("CycleGraph", n -> Graph(CyclicGroup(IsPermGroup, n), [1..n],
 BindGlobal("CocktailPartyGraph",
     n -> CompleteMultipartiteGraph(n, 2)
 );
+
+# Paley graphs.
+# For q = 1 (mod 4) a prime power, the graph is strongly regular.
+# For q = 3 (mod 4) a prime power, the graph is directed.
+BindGlobal("PaleyGraph", function(q)
+    local dp;
+    dp := DirectProduct(FieldAdditionPermutationGroup(q),
+        Group(GeneratorsOfGroup(FieldMultiplicationPermutationGroup(q))[1]^2));
+    return Graph(dp, Elements(GF(q)), OnPaley(q, dp),
+        function(x, y)
+            return IsOne((x-y)^((q-1)/2));
+        end, true);
+end);
 
 # Latin square graphs.
 BindGlobal("LatinSquareGraph", function(arg)
