@@ -6,6 +6,7 @@
 ##
 
 ReadPackage( "gap-graphs", "lib/AuxiliaryFunctions.gap" );
+ReadPackage( "gap-graphs", "lib/Graph6.gap" );
 ReadPackage( "gap-graphs", "lib/GeneralConstructions.gap" );
 ReadPackage( "gap-graphs", "lib/BasicGraphs.gap" );
 ReadPackage( "gap-graphs", "lib/SetGraphs.gap" );
