@@ -436,6 +436,12 @@ BindGlobal("RankAdjacency",
         return RankMat(x-y) in r;
     end);
 
+# Adjacency function for adjacency matrices.
+BindGlobal("MatrixAdjacency",
+    M -> function(x, y)
+        return M[x][y] = 1;
+    end);
+
 # Point-line incidence
 BindGlobal("PointLineIncidence", function(x, y)
     return x in y or y in x;

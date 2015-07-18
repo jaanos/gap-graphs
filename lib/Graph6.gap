@@ -23,13 +23,13 @@ BindGlobal("Graph6EncodeInteger", function(x)
 end);
 
 # graph6 integer decoding
-BindGlobal("Graph6DecodeInteger", function(i, b)
-    if b[i] <> 126 then
-        return [i+1, b[i] - 63];
-    elif b[i+1] <> 126 then
-        return [i+4, (b{[i+1..i+3]} - 63)*Graph6IntVector{[4..6]}];
+BindGlobal("Graph6DecodeInteger", function(i, s)
+    if s[i] <> 126 then
+        return [i+1, s[i] - 63];
+    elif s[i+1] <> 126 then
+        return [i+4, (s{[i+1..i+3]} - 63)*Graph6IntVector{[4..6]}];
     else
-        return [i+8, (b{[i+2..i+7]} - 63)*Graph6IntVector];
+        return [i+8, (s{[i+2..i+7]} - 63)*Graph6IntVector];
     fi;
 end);
 
@@ -48,4 +48,43 @@ BindGlobal("BitsToInt", function(b, w)
         i := i+w;
     od;
     return out;
+end);
+
+# Convert a bitstring to a graph6 string with padding p
+BindGlobal("BitsToString", function(b, p)
+    local c;
+    c := Concatenation(b, ListWithIdenticalEntries(-Length(b) mod 6, p));
+    return List([0,6..Length(c)-6], i -> c{[i+1..i+6]}*Graph6BitVector + 63);
+end);
+
+# Convert a graph6 string to a bitstring
+BindGlobal("StringToBits", function(s)
+    return Concatenation(List(s, x -> List(Graph6BitVector, y -> Int((x-63)/y) mod 2)));
+end);
+
+# graph6 string
+BindGlobal("Graph6String", function(G)
+    local A, s;
+    A := CollapsedAdjacencyMat(Group(()), G);
+    s := Concatenation(Graph6EncodeInteger(G.order),
+        BitsToString(Concatenation(List([1..G.order], i -> A[i]{[1..i-1]})), 0));
+    return List(s, CharInt);
+end);
+
+# Read graph from graph6 string
+BindGlobal("GraphFromGraph6String", function(s)
+    local A, b, n, i, j, t;
+    s := List(s, IntChar);
+    t := Graph6DecodeInteger(1, s);
+    i := t[1];
+    n := t[2];
+    b := StringToBits(s{[i..Length(s)]});
+    A := NullMat(n, n);
+    i := 1;
+    for j in [2..n] do
+        A[j]{[1..j-1]} := b{[i..i+j-2]};
+        A{[1..j-1]}[j] := b{[i..i+j-2]};
+        i := i+j-1;
+    od;
+    return AdjFunGraph([1..n], MatrixAdjacency(A));
 end);
