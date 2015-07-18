@@ -195,7 +195,7 @@ BindGlobal("IncrementalSparse6String", function(G, H)
     return List(Concatenation([59], BitsToString(b, 1)), CharInt);
 end);
 
-# Read graph from sparse6 string
+# Read graph from incremental sparse6 string
 BindGlobal("GraphFromIncrementalSparse6String", function(s, H)
     local A, B, b, i, m, v, w, c, x, y, z;
     if s[1] = ';' then
@@ -227,4 +227,95 @@ BindGlobal("GraphFromIncrementalSparse6String", function(s, H)
         fi;
     od;
     return AdjFunGraph([1..H.order], MatrixAdjacency(A));
+end);
+
+# auto6 string
+BindGlobal("Auto6String", function(G)
+    local b, g, h, i, r, s, w, x;
+    if Order(G.group) = 1 then
+        g := [];
+    else
+        g := GeneratorsOfGroup(G.group);
+    fi;
+    w := Log2Int(G.order-1)+1;
+    r := Length(G.representatives);
+    b := IntToBits(r, w);
+    for i in [1..r] do
+        Append(b, IntToBits(G.representatives[i]-1, w));
+        Append(b, IntToBits(Length(G.adjacencies[i]), w));
+        for x in G.adjacencies[i] do
+            Append(b, IntToBits(x-1, w));
+        od;
+    od;
+    if Length(g) > 0 then
+        for h in g do
+            for i in [1..G.order] do
+                Append(b, IntToBits(i^h - 1, w));
+            od;
+        od;
+        s := Log2Int(Maximum(G.schreierVector)) + 1;
+        Append(b, IntToBits(s, Log2Int(w)+1));
+        for i in [1..G.order] do
+            if G.schreierVector[i] < 0 then
+                Append(b, IntToBits(0, s));
+            else
+                Append(b, IntToBits(G.schreierVector[i], s));
+            fi;
+        od;
+    fi;
+    return List(Concatenation([33], Graph6EncodeInteger(G.order),
+                Graph6EncodeInteger(Length(g)), BitsToString(b, 0)), CharInt);
+end);
+
+# Read graph from auto6 string
+BindGlobal("GraphFromAuto6String", function(s)
+    local G, A, R, S, a, b, d, r, t, g, i, j, k, n, v, w;
+    if s[1] = '!' then
+        s := s{[2..Length(s)]};
+    fi;
+    s := List(s, IntChar);
+    t := Graph6DecodeInteger(1, s);
+    i := t[1];
+    n := t[2];
+    w := Log2Int(n-1)+1;
+    t := Graph6DecodeInteger(i, s);
+    i := t[1];
+    g := t[2];
+    b := StringToBits(s{[i..Length(s)]});
+    d := BitsToInt(b, w);
+    r := d[1];
+    i := 2;
+    R := [];
+    A := [];
+    for j in [1..r] do
+        Add(R, d[i]+1);
+        Add(A, d{[i+2..i+d[i+1]+1]}+1);
+        i := i + d[i+1] + 2;
+    od;
+    if g = 0 then
+        G := ();
+        v := -[1..n];
+    else
+        G := [];
+        for j in [1..g] do
+            Add(G, PermList(d{[i..i+n-1]}+1));
+            i := i+n;
+        od;
+        k := w*(i-1) + 1;
+        w := Log2Int(w);
+        t := BitsToInt(b{[k..k+w]}, w+1);
+        v := BitsToInt(b{[k+w+1..k+w+n*t[1]]}, t[1]);
+        for j in [1..r] do
+            v[R[j]] := -j;
+        od;
+    fi;
+    return rec(
+        isGraph := true,
+        order := n,
+        names := [1..n],
+        representatives := Immutable(R),
+        adjacencies := Immutable(A),
+        group := Group(G),
+        schreierVector := Immutable(v)
+    );
 end);
