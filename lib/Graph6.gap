@@ -88,3 +88,72 @@ BindGlobal("GraphFromGraph6String", function(s)
     od;
     return AdjFunGraph([1..n], MatrixAdjacency(A));
 end);
+
+# sparse6 string
+BindGlobal("Sparse6String", function(G)
+    local A, i, j, s, b, c, v, w;
+    A := CollapsedAdjacencyMat(Group(()), G);
+    w := Log2Int(G.order-1)+1;
+    b := [];
+    v := 1;
+    for i in [1..G.order] do
+        for j in [1..i] do
+            if A[i][j] = 1 then
+                if i = v+1 then
+                    c := 1;
+                else
+                    if i > v then
+                        Add(b, 1);
+                        Append(b, IntToBits(i-1, w));
+                    fi;
+                    c := 0;
+                fi;
+                Add(b, c);
+                Append(b, IntToBits(j-1, w));
+                v := i;
+            fi;
+        od;
+    od;
+    if G.order in [2,4,8,16] and 1 in A[G.order-1] and not (1 in A[G.order])
+            and (-Length(b)) mod 6 > w then
+        Add(b, 0);
+    fi;
+    s := Concatenation([58], Graph6EncodeInteger(G.order), BitsToString(b, 1));
+    return List(s, CharInt);
+end);
+
+# Read graph from sparse6 string
+BindGlobal("GraphFromSparse6String", function(s)
+    local A, b, t, i, m, n, v, w, c, x, y, z;
+    if s[1] = ':' then
+        s := s{[2..Length(s)]};
+    fi;
+    s := List(s, IntChar);
+    t := Graph6DecodeInteger(1, s);
+    i := t[1];
+    n := t[2];
+    w := Log2Int(n-1)+1;
+    b := StringToBits(s{[i..Length(s)]});
+    A := NullMat(n, n);
+    i := 1;
+    v := 1;
+    z := BitsToInt(b, w+1);
+    m := 2^w;
+    for y in z do
+        c := Int(y/m);
+        x := y mod m + 1;
+        if c = 1 then
+            v := v+1;
+        fi;
+        if v > n or x > n then
+            break;
+        fi;
+        if x > v then
+            v := x;
+        else
+            A[x][v] := 1;
+            A[v][x] := 1;
+        fi;
+    od;
+    return AdjFunGraph([1..n], MatrixAdjacency(A));
+end);
