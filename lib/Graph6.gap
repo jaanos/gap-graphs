@@ -91,7 +91,7 @@ end);
 
 # sparse6 string
 BindGlobal("Sparse6String", function(G)
-    local A, i, j, s, b, c, v, w;
+    local A, i, j, b, c, v, w;
     A := CollapsedAdjacencyMat(Group(()), G);
     w := Log2Int(G.order-1)+1;
     b := [];
@@ -118,8 +118,8 @@ BindGlobal("Sparse6String", function(G)
             and (-Length(b)) mod 6 > w then
         Add(b, 0);
     fi;
-    s := Concatenation([58], Graph6EncodeInteger(G.order), BitsToString(b, 1));
-    return List(s, CharInt);
+    return List(Concatenation([58], Graph6EncodeInteger(G.order),
+                                BitsToString(b, 1)), CharInt);
 end);
 
 # Read graph from sparse6 string
@@ -156,4 +156,75 @@ BindGlobal("GraphFromSparse6String", function(s)
         fi;
     od;
     return AdjFunGraph([1..n], MatrixAdjacency(A));
+end);
+
+# sparse6 string
+BindGlobal("IncrementalSparse6String", function(G, H)
+    local A, B, i, j, b, c, v, w;
+    if G.order <> H.order then
+        Error("graphs have different order");
+        return fail;
+    fi;
+    A := CollapsedAdjacencyMat(Group(()), G);
+    B := CollapsedAdjacencyMat(Group(()), H);
+    w := Log2Int(G.order-1)+1;
+    b := [];
+    v := 1;
+    for i in [1..G.order] do
+        for j in [1..i] do
+            if A[i][j] <> B[i][j] then
+                if i = v+1 then
+                    c := 1;
+                else
+                    if i > v then
+                        Add(b, 1);
+                        Append(b, IntToBits(i-1, w));
+                    fi;
+                    c := 0;
+                fi;
+                Add(b, c);
+                Append(b, IntToBits(j-1, w));
+                v := i;
+            fi;
+        od;
+    od;
+    if G.order in [2,4,8,16] and A[G.order-1] <> B[G.order-1]
+            and A[G.order] = B[G.order] and (-Length(b)) mod 6 > w then
+        Add(b, 0);
+    fi;
+    return List(Concatenation([59], BitsToString(b, 1)), CharInt);
+end);
+
+# Read graph from sparse6 string
+BindGlobal("GraphFromIncrementalSparse6String", function(s, H)
+    local A, B, b, i, m, v, w, c, x, y, z;
+    if s[1] = ';' then
+        s := s{[2..Length(s)]};
+    fi;
+    B := CollapsedAdjacencyMat(Group(()), H);
+    A := List(B, ShallowCopy);
+    s := List(s, IntChar);
+    w := Log2Int(H.order-1)+1;
+    b := StringToBits(s);
+    i := 1;
+    v := 1;
+    z := BitsToInt(b, w+1);
+    m := 2^w;
+    for y in z do
+        c := Int(y/m);
+        x := y mod m + 1;
+        if c = 1 then
+            v := v+1;
+        fi;
+        if v > H.order or x > H.order then
+            break;
+        fi;
+        if x > v then
+            v := x;
+        else
+            A[x][v] := 1 - A[x][v];
+            A[v][x] := A[x][v];
+        fi;
+    od;
+    return AdjFunGraph([1..H.order], MatrixAdjacency(A));
 end);
