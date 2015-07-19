@@ -331,7 +331,7 @@ BindGlobal("GraphFromAuto6String", function(s)
         order := n,
         names := [1..n],
         representatives := Immutable(R),
-        adjacencies := Immutable(A),
+        adjacencies := A,
         group := Group(G),
         schreierVector := Immutable(v)
     );
