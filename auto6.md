@@ -85,6 +85,7 @@ The remaining bytes are `R(x)`, where `x` is a bitstring obtained by concatenati
 ### Schreier vector
 
 Let `t` be the number of bits needed to represent `g` in binary.
+
 `n*t` bits. Encode each entry in the Schreier vector in bigendian order, substituting negative entries (at representatives) by zeros.
 
 If the group is trivial or cyclic (i.e., `g` is zero or one), the Schreier vector is omitted, as it can be easily reconstructed.
