@@ -97,7 +97,7 @@ BindGlobal("Sparse6String", function(G)
     v := 1;
     for i in [1..G.order] do
         for j in [1..i] do
-            if Distance(G, i, j) = 1 then
+            if IsVertexPairEdge(G, i, j) then
                 if i = v+1 then
                     c := 1;
                 else
@@ -170,7 +170,7 @@ BindGlobal("IncrementalSparse6String", function(G, H)
     v := 1;
     for i in [1..G.order] do
         for j in [1..i] do
-            if (Distance(G, i, j) = 1) <> (Distance(H, i, j) = 1) then
+            if IsVertexPairEdge(G, i, j) <> IsVertexPairEdge(H, i, j) then
                 if i = v+1 then
                     c := 1;
                 else
