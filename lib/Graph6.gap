@@ -91,14 +91,13 @@ end);
 
 # sparse6 string
 BindGlobal("Sparse6String", function(G)
-    local A, i, j, b, c, v, w;
-    A := CollapsedAdjacencyMat(Group(()), G);
+    local i, j, b, c, v, w;
     w := Log2Int(G.order-1)+1;
     b := [];
     v := 1;
     for i in [1..G.order] do
         for j in [1..i] do
-            if A[i][j] = 1 then
+            if Distance(G, i, j) = 1 then
                 if i = v+1 then
                     c := 1;
                 else
@@ -114,8 +113,9 @@ BindGlobal("Sparse6String", function(G)
             fi;
         od;
     od;
-    if G.order in [2,4,8,16] and 1 in A[G.order-1] and not (1 in A[G.order])
-            and (-Length(b)) mod 6 > w then
+    if G.order in [2,4,8,16] and (-Length(b)) mod 6 > w
+            and Length(Adjacency(G, G.order-1)) > 0
+            and Length(Adjacency(G, G.order)) = 0 then
         Add(b, 0);
     fi;
     return List(Concatenation([58], Graph6EncodeInteger(G.order),
@@ -134,7 +134,7 @@ BindGlobal("GraphFromSparse6String", function(s)
     n := t[2];
     w := Log2Int(n-1)+1;
     b := StringToBits(s{[i..Length(s)]});
-    A := NullMat(n, n);
+    A := List([1..n], j -> []);
     i := 1;
     v := 1;
     z := BitsToInt(b, w+1);
@@ -151,28 +151,26 @@ BindGlobal("GraphFromSparse6String", function(s)
         if x > v then
             v := x;
         else
-            A[x][v] := 1;
-            A[v][x] := 1;
+            Add(A[x], v);
+            Add(A[v], x);
         fi;
     od;
-    return AdjFunGraph([1..n], MatrixAdjacency(A));
+    return AdjFunGraph([1..n], ListAdjacency(A));
 end);
 
 # sparse6 string
 BindGlobal("IncrementalSparse6String", function(G, H)
-    local A, B, i, j, b, c, v, w;
+    local i, j, b, c, v, w;
     if G.order <> H.order then
-        Error("graphs have different order");
+        Error("graphs have different orders");
         return fail;
     fi;
-    A := CollapsedAdjacencyMat(Group(()), G);
-    B := CollapsedAdjacencyMat(Group(()), H);
     w := Log2Int(G.order-1)+1;
     b := [];
     v := 1;
     for i in [1..G.order] do
         for j in [1..i] do
-            if A[i][j] <> B[i][j] then
+            if (Distance(G, i, j) = 1) <> (Distance(H, i, j) = 1) then
                 if i = v+1 then
                     c := 1;
                 else
@@ -188,8 +186,9 @@ BindGlobal("IncrementalSparse6String", function(G, H)
             fi;
         od;
     od;
-    if G.order in [2,4,8,16] and A[G.order-1] <> B[G.order-1]
-            and A[G.order] = B[G.order] and (-Length(b)) mod 6 > w then
+    if G.order in [2,4,8,16] and (-Length(b)) mod 6 > w
+            and Adjacency(G, G.order-1) = Adjacency(H, G.order-1)
+            and Adjacency(G, G.order) = Adjacency(H, G.order) then
         Add(b, 0);
     fi;
     return List(Concatenation([59], BitsToString(b, 1)), CharInt);
@@ -201,7 +200,7 @@ BindGlobal("GraphFromIncrementalSparse6String", function(s, H)
     if s[1] = ';' then
         s := s{[2..Length(s)]};
     fi;
-    B := CollapsedAdjacencyMat(Group(()), H);
+    B := List([1..H.order], j -> Adjacency(H, j));
     A := List(B, ShallowCopy);
     s := List(s, IntChar);
     w := Log2Int(H.order-1)+1;
@@ -221,12 +220,17 @@ BindGlobal("GraphFromIncrementalSparse6String", function(s, H)
         fi;
         if x > v then
             v := x;
+        elif x in A[v] then
+            Remove(A[x], Position(A[x], v));
+            if x <> v then
+                Remove(A[v], Position(A[v], x));
+            fi;
         else
-            A[x][v] := 1 - A[x][v];
-            A[v][x] := A[x][v];
+            Add(A[x], v);
+            Add(A[v], x);
         fi;
     od;
-    return AdjFunGraph([1..H.order], MatrixAdjacency(A));
+    return AdjFunGraph([1..H.order], ListAdjacency(A));
 end);
 
 # auto6 string

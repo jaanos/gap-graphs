@@ -458,6 +458,12 @@ BindGlobal("MatrixAdjacency",
         return M[x][y] = 1;
     end);
 
+# Adjacency function for adjacency lists.
+BindGlobal("ListAdjacency",
+    L -> function(x, y)
+        return y in L[x];
+    end);
+
 # Point-line incidence
 BindGlobal("PointLineIncidence", function(x, y)
     return x in y or y in x;
