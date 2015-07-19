@@ -155,6 +155,17 @@ BindGlobal("OnSetsSubspaces", function(V)
     end;
 end);
 
+# Action on the vertices of doubled Odd graphs.
+BindGlobal("OnDoubledOdd", function(n, dp)
+    local F, p1, p2;
+    F := [x -> x, x -> Difference([1..n], x)];
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    return function(s, g)
+        return F[1^Image(p2, g)](OnSets(s, Image(p1, g)));
+    end;
+end);
+
 # Action on the vertices of doubled Grassmann graphs.
 BindGlobal("OnDoubledGrassmann", function(V, dp)
     local A, F, p1, p2;
@@ -423,6 +434,11 @@ end);
 # Adjacency function for Kneser-type graphs.
 BindGlobal("DisjointSets", function(x, y)
     return Intersection(x, y) = [];
+end);
+
+# Adjacency function for doubled Odd and Grassmann graphs.
+BindGlobal("SymmetrizedInclusion", function(x, y)
+    return x <> y and (IsSubset(x, y) or IsSubset(y, x));
 end);
 
 # Adjacency function for roots of E_8.

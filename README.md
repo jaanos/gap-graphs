@@ -41,6 +41,7 @@ The following graphs are currently supported:
   * Folded Johnson graphs J̃(2d, d)
   * Folded cubes H̃(d, 2)
   * Folded halved cubes 1/2 H̃(2d, 2)
+  * Doubled Odd graphs 2J(2d+1, d)
   * Doubled Grassmann graphs 2J<sub>q</sub>(2d+1, d)
   * unitary nonisotropics graphs with intersection arrays {q<sup>2</sup>-q, q<sup>2</sup>-q-2, q+1; 1, 1, q<sup>2</sup>-2q}
   * the Brouwer "vector product" graphs Br(q) with intersection arrays {q<sup>3</sup>-1, q<sup>3</sup>-q, q<sup>3</sup>-q<sup>2</sup>+1; 1, q, q<sup>2</sup>-1}
@@ -69,6 +70,7 @@ The following graphs are currently supported:
   * the bipartite graph associated to Higman's design with intersection array {50, 49, 36; 1, 14, 50}
   * the Coxeter graph with intersection array {3, 2, 2, 1; 1, 1, 1, 2}
   * the doubly truncated Witt graph with intersection array {7, 6, 4, 4; 1, 1, 1, 6}
+  * the Desargues graph with intersection array {3, 2, 2, 1, 1; 1, 1, 2, 2, 3}
   * the Biggs-Smith graph with intersection array {3, 2, 2, 2, 1, 1, 1; 1, 1, 1, 1, 1, 1, 3}
 * Named strongly regular graphs:
   * the Petersen graph with v = 10, k = 3, λ = 0, μ = 1

@@ -117,6 +117,9 @@ BindGlobal("CoxeterGraph", PolarGraphNOorth(1, 3, 7));
 BindGlobal("Witt22Graph", Graph(MathieuGroup(22), [[1,2,3,4,5,10,18,21]],
                                 OnSets, DisjointSets));
 
+# The Desargues graph with intersection array {3,2,2,1,1; 1,1,2,2,3}.
+BindGlobal("DesarguesGraph", DoubledOddGraph(2));
+
 # The Biggs-Smith graph with intersection array {3,2,2,2,1,1,1; 1,1,1,1,1,1,3}.
 BindGlobal("BiggsSmithGraph", Graph(PSL(2, 17),
                     Elements(Filtered(ConjugacyClassesSubgroups(PSL(2, 17)),
