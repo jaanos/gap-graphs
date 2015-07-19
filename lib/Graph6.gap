@@ -253,8 +253,7 @@ BindGlobal("Auto6String", function(G)
                 Append(b, IntToBits(i^h - 1, w));
             od;
         od;
-        s := Log2Int(Maximum(G.schreierVector)) + 1;
-        Append(b, IntToBits(s, Log2Int(w)+1));
+        s := Log2Int(Length(g)) + 1;
         for i in [1..G.order] do
             if G.schreierVector[i] < 0 then
                 Append(b, IntToBits(0, s));
@@ -284,6 +283,9 @@ BindGlobal("GraphFromAuto6String", function(s)
     b := StringToBits(s{[i..Length(s)]});
     d := BitsToInt(b, w);
     r := d[1];
+    if r = 0 then
+        r := n;
+    fi;
     i := 2;
     R := [];
     A := [];
@@ -301,10 +303,9 @@ BindGlobal("GraphFromAuto6String", function(s)
             Add(G, PermList(d{[i..i+n-1]}+1));
             i := i+n;
         od;
-        k := w*(i-1) + 1;
-        w := Log2Int(w);
-        t := BitsToInt(b{[k..k+w]}, w+1);
-        v := BitsToInt(b{[k+w+1..k+w+n*t[1]]}, t[1]);
+        k := w*(i-1);
+        t := Log2Int(g)+1;
+        v := BitsToInt(b{[k+1..k+n*t]}, t);
         for j in [1..r] do
             v[R[j]] := -j;
         od;
