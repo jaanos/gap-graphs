@@ -35,8 +35,6 @@ The following graphs are currently supported:
   * collinearity graphs of derived generalized quadrangles T<sub>d</sub>(O) of order (q, q<sup>d-1</sup>)
   * collinearity graphs of derived generalized quadrangles T<sup>*</sup>(O) of order (2<sup>h</sup>-1, 2<sup>h</sup>+1)
   * collinearity graphs of derived generalized quadrangles P(S, x) of order (s-1, s+1)
-  * incidence graphs from files as listed on E. Moorhouse's webpage on [projective planes](http://www.uwyo.edu/moorhouse/pub/planes/) or [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
-  * collinearity graphs from files as listed on E. Moorhouse's webpage on [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
 * Other infinite families of distance-regular graphs:
   * Cycles C(n)
   * Odd graphs O(d)
@@ -95,6 +93,10 @@ The following graphs are currently supported:
   * Antipodal quotients
   * Clique graphs
   * Vertex-clique incidence graphs
+* Graphs from files:
+  * incidence graphs from files as listed on E. Moorhouse's webpage on [projective planes](http://www.uwyo.edu/moorhouse/pub/planes/) or [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
+  * collinearity graphs from files as listed on E. Moorhouse's webpage on [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
+  * graphs in [graph6, sparse6](https://cs.anu.edu.au/~bdm/data/formats.html) and [auto6](auto6.md) formats
 
 Some constructions, such as complete graphs, Johnson graphs and Cayley graphs,
 are already available in GRAPE.
