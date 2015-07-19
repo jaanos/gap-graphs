@@ -300,7 +300,7 @@ BindGlobal("GraphFromAuto6String", function(s)
     od;
     if g = 0 then
         G := ();
-        v := -[1..n];
+        v := List([1..n], x -> -Position(R, x));
     else
         G := [];
         for j in [1..g] do
