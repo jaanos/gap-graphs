@@ -251,12 +251,12 @@ BindGlobal("Auto6String", function(G)
             Append(b, IntToBits(x-1, w));
         od;
     od;
-    if Length(g) > 0 then
-        for h in g do
-            for i in [1..G.order] do
-                Append(b, IntToBits(i^h - 1, w));
-            od;
+    for h in g do
+        for i in [1..G.order] do
+            Append(b, IntToBits(i^h - 1, w));
         od;
+    od;
+    if Length(g) > 1 then
         s := Log2Int(Length(g)) + 1;
         for i in [1..G.order] do
             if G.schreierVector[i] < 0 then
@@ -300,19 +300,31 @@ BindGlobal("GraphFromAuto6String", function(s)
     od;
     if g = 0 then
         G := ();
-        v := -[1..n];
+        v := List([1..n], x -> -Position(R, x));
     else
         G := [];
         for j in [1..g] do
             Add(G, PermList(d{[i..i+n-1]}+1));
             i := i+n;
         od;
-        k := w*(i-1);
-        t := Log2Int(g)+1;
-        v := BitsToInt(b{[k+1..k+n*t]}, t);
-        for j in [1..r] do
-            v[R[j]] := -j;
-        od;
+        if g = 1 then
+            v := List([1..n], function(x)
+                local y;
+                y := Position(R, x);
+                if y = fail then
+                    return 1;
+                else
+                    return -y;
+                fi;
+            end);
+        else
+            k := w*(i-1);
+            t := Log2Int(g)+1;
+            v := BitsToInt(b{[k+1..k+n*t]}, t);
+            for j in [1..r] do
+                v[R[j]] := -j;
+            od;
+        fi;
     fi;
     return rec(
         isGraph := true,
