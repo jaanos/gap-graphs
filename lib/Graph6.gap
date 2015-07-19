@@ -134,7 +134,7 @@ BindGlobal("GraphFromSparse6String", function(s)
     n := t[2];
     w := Log2Int(n-1)+1;
     b := StringToBits(s{[i..Length(s)]});
-    A := NullMat(n, n);
+    A := List([1..n], j -> []);
     i := 1;
     v := 1;
     z := BitsToInt(b, w+1);
@@ -151,11 +151,11 @@ BindGlobal("GraphFromSparse6String", function(s)
         if x > v then
             v := x;
         else
-            A[x][v] := 1;
-            A[v][x] := 1;
+            Add(A[x], v);
+            Add(A[v], x);
         fi;
     od;
-    return AdjFunGraph([1..n], MatrixAdjacency(A));
+    return AdjFunGraph([1..n], ListAdjacency(A));
 end);
 
 # sparse6 string
@@ -200,7 +200,7 @@ BindGlobal("GraphFromIncrementalSparse6String", function(s, H)
     if s[1] = ';' then
         s := s{[2..Length(s)]};
     fi;
-    B := CollapsedAdjacencyMat(Group(()), H);
+    B := List([1..H.order], j -> Adjacency(H, j));
     A := List(B, ShallowCopy);
     s := List(s, IntChar);
     w := Log2Int(H.order-1)+1;
@@ -220,12 +220,17 @@ BindGlobal("GraphFromIncrementalSparse6String", function(s, H)
         fi;
         if x > v then
             v := x;
+        elif x in A[v] then
+            Remove(A[x], Position(A[x], v));
+            if x <> v then
+                Remove(A[v], Position(A[v], x));
+            fi;
         else
-            A[x][v] := 1 - A[x][v];
-            A[v][x] := A[x][v];
+            Add(A[x], v);
+            Add(A[v], x);
         fi;
     od;
-    return AdjFunGraph([1..H.order], MatrixAdjacency(A));
+    return AdjFunGraph([1..H.order], ListAdjacency(A));
 end);
 
 # auto6 string
