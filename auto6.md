@@ -113,10 +113,10 @@ The first nibble is the number of representatives `r = 1`.
 The only representative has index 0 and 3 neighbours, namely 2, 4, and 7.
 The next two lines are the two generators, namely the permutations
 
-    (0 1 2 4 6)(3 5 7 8 9)
-    (1 3)(5 8)(6 9)
+    a = (0 1 2 4 6)(3 5 7 8 9)
+    b = (1 3)(5 8)(6 9)
     
-The two permutations generate a group isomorphic to the symmetric group on 5 elements. The graph being defined here is the Petersen graph.
+The two permutations generate a group isomorphic to the symmetric group on 5 elements.
 
 Finally, `g` needs `t = 2` bits, so write the remaining bits in groups of `t`:
 
@@ -127,3 +127,25 @@ The Schreier vector with `n` elements is
     [-1, 1, 1, 2, 1, 1, 1, 1, 2, 2]
     
 The last two bits are just padding.
+
+From this information we can easily reconstruct the graph. The Schreier vector tells us:
+
+    0 = 0       1 = 0^a     2 = 1^a     3 = 1^b     4 = 2^a
+    5 = 3^a     6 = 4^a     7 = 5^a     8 = 5^b     9 = 6^b
+    
+Using these relations, we can determine the neighbours of each vertex:
+
+    0: 2, 4, 7
+    1: 4, 6, 8
+    2: 6, 0, 9
+    3: 4, 9, 5
+    4: 0, 1, 3
+    5: 6, 3, 7
+    6: 1, 2, 5
+    7: 0, 5, 8
+    8: 9, 1, 7
+    9: 3, 2, 8
+
+The graph being defined here is the Petersen graph.
+
+![Petersen graph](res/petersen.png)
