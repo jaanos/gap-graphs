@@ -91,14 +91,13 @@ end);
 
 # sparse6 string
 BindGlobal("Sparse6String", function(G)
-    local A, i, j, b, c, v, w;
-    A := CollapsedAdjacencyMat(Group(()), G);
+    local i, j, b, c, v, w;
     w := Log2Int(G.order-1)+1;
     b := [];
     v := 1;
     for i in [1..G.order] do
         for j in [1..i] do
-            if A[i][j] = 1 then
+            if Distance(G, i, j) = 1 then
                 if i = v+1 then
                     c := 1;
                 else
@@ -114,8 +113,9 @@ BindGlobal("Sparse6String", function(G)
             fi;
         od;
     od;
-    if G.order in [2,4,8,16] and 1 in A[G.order-1] and not (1 in A[G.order])
-            and (-Length(b)) mod 6 > w then
+    if G.order in [2,4,8,16] and (-Length(b)) mod 6 > w
+            and Length(Adjacency(G, G.order-1)) > 0
+            and Length(Adjacency(G, G.order)) = 0 then
         Add(b, 0);
     fi;
     return List(Concatenation([58], Graph6EncodeInteger(G.order),
@@ -160,19 +160,17 @@ end);
 
 # sparse6 string
 BindGlobal("IncrementalSparse6String", function(G, H)
-    local A, B, i, j, b, c, v, w;
+    local i, j, b, c, v, w;
     if G.order <> H.order then
-        Error("graphs have different order");
+        Error("graphs have different orders");
         return fail;
     fi;
-    A := CollapsedAdjacencyMat(Group(()), G);
-    B := CollapsedAdjacencyMat(Group(()), H);
     w := Log2Int(G.order-1)+1;
     b := [];
     v := 1;
     for i in [1..G.order] do
         for j in [1..i] do
-            if A[i][j] <> B[i][j] then
+            if (Distance(G, i, j) = 1) <> (Distance(H, i, j) = 1) then
                 if i = v+1 then
                     c := 1;
                 else
@@ -188,8 +186,9 @@ BindGlobal("IncrementalSparse6String", function(G, H)
             fi;
         od;
     od;
-    if G.order in [2,4,8,16] and A[G.order-1] <> B[G.order-1]
-            and A[G.order] = B[G.order] and (-Length(b)) mod 6 > w then
+    if G.order in [2,4,8,16] and (-Length(b)) mod 6 > w
+            and Adjacency(G, G.order-1) = Adjacency(H, G.order-1)
+            and Adjacency(G, G.order) = Adjacency(H, G.order) then
         Add(b, 0);
     fi;
     return List(Concatenation([59], BitsToString(b, 1)), CharInt);
