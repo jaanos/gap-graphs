@@ -18,7 +18,7 @@ BindGlobal("CompleteMultipartiteGraph", function(arg)
 end);
 
 # Cycle graphs.
-BindGlobal("CycleGraph", n -> Graph(CyclicGroup(IsPermGroup, n), [1..n],
+BindGlobal("CycleGraph", n -> Graph(DihedralGroup(IsPermGroup, 2*n), [1..n],
     OnPoints, function(x, y)
         return (x-y) mod n in [1,n-1];
     end, true));
