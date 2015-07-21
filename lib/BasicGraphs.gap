@@ -14,13 +14,13 @@ BindGlobal("CompleteMultipartiteGraph", function(arg)
     else
         m := arg[1];
         n := arg[2];
-        return Graph(WreathProduct(SymmetricGroup(n), SymmetricGroup(m)),
-                    Cartesian([1..m], [1..n]),
-                    function(x, g)
+        return Graph(WreathProductSymmetricGroups(n, m),
+                     Cartesian([1..m], [1..n]),
+                     function(x, g)
                         local y;
                         y := (n*(x[1]-1)+x[2])^g - 1;
                         return [Int(y/n)+1, y mod n + 1];
-                    end, F, true);
+                     end, F, true);
     fi;
 end);
 

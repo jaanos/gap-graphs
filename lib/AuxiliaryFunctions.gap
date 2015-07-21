@@ -627,6 +627,26 @@ BindGlobal("OnHughesPlane", function(q, div, dp)
     end;
 end);
 
+# The wreath product of two symmetric groups.
+BindGlobal("WreathProductSymmetricGroups", function(m, n)
+    local g;
+    if not (IsInt(m) and IsInt(n) and m >= 0 and n >= 0) then
+        Error("m or n not a nonnegative integer");
+        return fail;
+    fi;
+    if m <= 1 then
+        return SymmetricGroup(n);
+    elif n <= 1 then
+        return SymmetricGroup(m);
+    fi;
+    g := Concatenation(GeneratorsOfGroup(SymmetricGroup(m)),
+                        [PermList(Concatenation([m+1..2*m], [1..m]))]);
+    if n > 2 then
+        Add(g, PermList(Concatenation([m+1..n*m], [1..m])));
+    fi;
+    return Group(g);
+end);
+
 # The automorphism group of a (hyper)conic
 # in a Desarguesian projective plane of order q.
 BindGlobal("HyperconicAutomorphismGroup", q -> Group([
