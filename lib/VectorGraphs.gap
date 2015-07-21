@@ -89,16 +89,18 @@ end);
 # The multiplicative symplectic cover of the complete graph on q+1 vertices.
 # It is distance-regular when m divides q-1 and either q or m is even.
 BindGlobal("MultiplicativeSymplecticCoverGraph", function(q, m)
-    local B, F, G, K;
+    local B, F, G, K, dp;
     F := GF(q);
-    K := Elements(Group(Z(q)^((q-1)/m)));
+    K := Group(Z(q)^((q-1)/m));
     G := Sp(2, q);
-    B := InvariantBilinearForm(Sp(2, q)).matrix;
-    return Graph(G, Unique(List(Filtered(F^2, x -> x <> Zero(F^2)),
-                        v -> Set(List(K, g -> List(v, x -> g*x))))),
-                OnSets, function(x, y)
+    B := InvariantBilinearForm(G).matrix;
+    dp := DirectProduct(G, Group((1,2)),
+                        FieldExponentiationPermutationGroup(q));
+    return Graph(dp, Unique(List(Filtered(F^2, x -> x <> Zero(F^2)),
+                                 v -> Set(List(K, g -> List(v, x -> g*x))))),
+                 OnMultiplicativeSymplecticCover(q, dp), function(x, y)
                     return x <> y and x[1]*B*y[1] in K;
-                end, true);
+                 end, true);
 end);
 
 # The affine polar graph VO^{(+/-)}(d, q)

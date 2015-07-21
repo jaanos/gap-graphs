@@ -226,7 +226,7 @@ BindGlobal("OnKasami", function(q, s, dp)
     end;
 end);
 
-# Action on the vertices of additive symplectic covers of complete graphs.
+# Action on vertices of additive symplectic covers of complete graphs.
 BindGlobal("OnAdditiveSymplecticCover", function(q, m, B, dp)
     local F, N, p1, p2, pr;
     F := Elements(GF(q));
@@ -239,6 +239,23 @@ BindGlobal("OnAdditiveSymplecticCover", function(q, m, B, dp)
         z := List([1..m], i -> F[N^Image(pr[i], g)]);
         return [p[1] + F[N^Image(p2, g)] + p[2]*B*z,
                 p[2]*Image(p1, g) + z];
+    end;
+end);
+
+# Action on vertices of multiplicative symplectic covers of complete graphs.
+BindGlobal("OnMultiplicativeSymplecticCover", function(q, dp)
+    local F, p1, p2, p3;
+    F := Elements(GF(q));
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    p3 := Projection(dp, 3);
+    return function(s, g)
+        local g2, g3;
+        g2 := Image(p2, g);
+        g3 := Image(p3, g);
+        return OnSets(Set(List(s, p -> List([1,2],
+                                            i -> F[Position(F, p[i^g2])^g3]))),
+                      Image(p1, g));
     end;
 end);
 
