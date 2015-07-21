@@ -1,3 +1,9 @@
+# The tetrahedron with v=4, k=3, lm=2
+BindGlobal("TetrahedronGraph", CompleteGraph(SymmetricGroup(4)));
+
+# The octahedron with v=6, k=4, lm=2, mu=4
+BindGlobal("OctahedronGraph", CocktailPartyGraph(3));
+
 # The Petersen graph with v=10, k=3, lm=0, mu=1.
 BindGlobal("PetersenGraph", OddGraph(2));
 

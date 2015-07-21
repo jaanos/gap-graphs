@@ -73,6 +73,8 @@ The following graphs are currently supported:
   * the Desargues graph with intersection array {3, 2, 2, 1, 1; 1, 1, 2, 2, 3}
   * the Biggs-Smith graph with intersection array {3, 2, 2, 2, 1, 1, 1; 1, 1, 1, 1, 1, 1, 3}
 * Named strongly regular graphs:
+  * the tetrahedron with v = 4, k = 3, λ = 2
+  * the octahedron with v = 6, k = 4, λ = 2, μ = 4
   * the Petersen graph with v = 10, k = 3, λ = 0, μ = 1
   * the Shrikhande graph with v = 16, k = 6, λ = 2, μ = 2
   * the Clebsch graph with v = 16, k = 10, λ = 6, μ = 6

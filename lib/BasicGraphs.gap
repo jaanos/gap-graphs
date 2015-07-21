@@ -1,6 +1,6 @@
 # Complete multipartite graphs.
 BindGlobal("CompleteMultipartiteGraph", function(arg)
-    local sizes, dp, F, G;
+    local sizes, dp, F, G, m, n;
     F := function(x, y) return x[1] <> y[1]; end;
     if Length(arg) = 0 then
         Error("at least one argument expected");
@@ -12,8 +12,15 @@ BindGlobal("CompleteMultipartiteGraph", function(arg)
             i -> List([1..sizes[i]], j -> [i, j]))),
             OnSum(dp), F, true);
     else
-        return ProductGraph([CompleteGraph(SymmetricGroup(arg[1])),
-                            CompleteGraph(SymmetricGroup(arg[2]))], F);
+        m := arg[1];
+        n := arg[2];
+        return Graph(WreathProduct(SymmetricGroup(n), SymmetricGroup(m)),
+                    Cartesian([1..m], [1..n]),
+                    function(x, g)
+                        local y;
+                        y := (n*(x[1]-1)+x[2])^g - 1;
+                        return [Int(y/n)+1, y mod n + 1];
+                    end, F, true);
     fi;
 end);
 
