@@ -269,7 +269,7 @@ BindGlobal("GeneralizedQuadrangleAS",
     q -> GeneralizedQuadrangleP(GeneralizedQuadrangleW(q), 1));
 
 BindGlobal("GeneralizedHexagonG2", function(q)
-    local h, o, r, s, z, G, L, P, Q, T, V;
+    local h, o, r, s, z, G, L, P, Q, T, V, gr;
     o := Z(q)^0;
     z := 0*Z(q);
     if q mod 4 = 1 then
@@ -303,11 +303,14 @@ BindGlobal("GeneralizedHexagonG2", function(q)
     Q := InvariantQuadraticForm(G).matrix;
     L := Set(Filtered(Subspaces(V, 2),
                 l -> IsZero(T(Elements(l)[2], Elements(l)[q^2]))));
-    return Graph(Stabilizer(G, L, OnSetsSubspaces(V)),
+    gr := Graph(Stabilizer(G, L, OnSetsSubspaces(V)),
             IsotropicSpacesQuadraticForm(Q)(Subspaces(V, 1)), OnSubspaces(V),
             function(x,y)
                 return x <> y and IsZero(T(Elements(x)[2], Elements(y)[2]));
             end, true);
+    gr.duality := Sum;
+    gr.primality := Intersection;
+    return gr;
 end);
 
 # The incidence graph of a projective plane read from a file as on
