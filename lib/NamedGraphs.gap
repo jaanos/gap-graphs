@@ -67,7 +67,13 @@ BindGlobal("KlinGraph", List([function()
 BindGlobal("HeawoodGraph", DesarguesianPlaneIncidenceGraph(2));
 
 # The icosahedron with intersection array {5, 2, 1; 1, 2, 5}.
-BindGlobal("IcosahedronGraph", MultiplicativeSymplecticCoverGraph(5, 2));
+BindGlobal("IcosahedronGraph", Graph(DirectProduct(AlternatingGroup(5),
+                                                   Group((1, 2))),
+                                     [(1,3,5,2,4)], function(p, g)
+                                        return (p^g)^((-1)^(6^g));
+                                     end, function(x, y)
+                                        return Order(x*y) = 3;
+                                     end));
 
 # The Sylvester graph with intersection array {5, 4, 2; 1, 1, 4}
 BindGlobal("SylvesterGraph", Graph(SymmetricGroup(6),
