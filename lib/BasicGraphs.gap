@@ -92,3 +92,26 @@ BindGlobal("CompleteTaylorGraph", function(n)
     AssignVertexNames(G, Cartesian([1, 2], [1..n]));
     return G;
 end);
+
+# Hadamard graphs from Hadamard matrices.
+BindGlobal("HadamardGraph", function(M)
+    local F, H;
+    F := function(x)
+        if x = M[1][1] then
+            return 1;
+        else
+            return -1;
+        fi;
+    end;
+    H := List(M, l -> List(l, F));
+    return AdjFunGraph(Cartesian([1, 2], [-1, 1], [1..Length(H)]),
+        function(x, y)
+            local p;
+            if x[1] = y[1] then
+                return false;
+            fi;
+            p := [];
+            p{[x[1], y[1]]} := [x[3], y[3]];
+            return H[p[1]][p[2]] = x[2]*y[2];
+        end);
+end);
