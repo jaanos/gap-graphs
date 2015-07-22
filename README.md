@@ -70,11 +70,12 @@ The following graphs are currently supported:
   * the bipartite graph associated to Higman's design with intersection array {50, 49, 36; 1, 14, 50}
   * the Coxeter graph with intersection array {3, 2, 2, 1; 1, 1, 1, 2}
   * the doubly truncated Witt graph with intersection array {7, 6, 4, 4; 1, 1, 1, 6}
+  * the skeleton of the dodecahedron with intersection array {3, 2, 1, 1, 1; 1, 1, 1, 2, 3}
   * the Desargues graph with intersection array {3, 2, 2, 1, 1; 1, 1, 2, 2, 3}
   * the Biggs-Smith graph with intersection array {3, 2, 2, 2, 1, 1, 1; 1, 1, 1, 1, 1, 1, 3}
 * Named strongly regular graphs:
-  * the tetrahedron with v = 4, k = 3, λ = 2
-  * the octahedron with v = 6, k = 4, λ = 2, μ = 4
+  * the skeleton of the tetrahedron with v = 4, k = 3, λ = 2
+  * the skeleton of the octahedron with v = 6, k = 4, λ = 2, μ = 4
   * the Petersen graph with v = 10, k = 3, λ = 0, μ = 1
   * the Shrikhande graph with v = 16, k = 6, λ = 2, μ = 2
   * the Clebsch graph with v = 16, k = 10, λ = 6, μ = 6
