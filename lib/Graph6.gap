@@ -250,7 +250,7 @@ BindGlobal("Auto6String", function(G)
                                     if y < 0 then
                                         return y;
                                     else
-                                        return y - l[y];
+                                        return l[y];
                                     fi;
                                   end);
     g := Filtered(g, y -> y <> ());
