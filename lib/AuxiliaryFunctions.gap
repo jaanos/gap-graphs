@@ -253,8 +253,8 @@ BindGlobal("OnMultiplicativeSymplecticCover", function(q, dp)
         local g2, g3;
         g2 := Image(p2, g);
         g3 := Image(p3, g);
-        return OnSets(Set(List(s, p -> List([1,2],
-                                            i -> F[Position(F, p[i^g2])^g3]))),
+        return OnSets(Set(List(s, p -> List(Permuted([1,2], g2),
+                                            i -> F[Position(F, p[i])^g3]))),
                       Image(p1, g));
     end;
 end);
