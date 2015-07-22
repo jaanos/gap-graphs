@@ -82,3 +82,13 @@ BindGlobal("LatinSquareGraph", function(arg)
             end);
     fi;
 end);
+
+# Complete Taylor graphs, i.e. complete bipartite graphs minus a matching.
+BindGlobal("CompleteTaylorGraph", function(n)
+    local G;
+    G := EdgeOrbitsGraph(Group([(1,2)(n+1,n+2),
+                    PermList(Concatenation([2..n], [1], [n+2..2*n], [n+1])),
+                    PermList(Concatenation([n+1..2*n], [1..n]))]), [1, n+2]);
+    AssignVertexNames(G, Cartesian([1, 2], [1..n]));
+    return G;
+end);

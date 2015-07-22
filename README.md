@@ -37,6 +37,7 @@ The following graphs are currently supported:
   * collinearity graphs of derived generalized quadrangles P(S, x) of order (s-1, s+1)
 * Other infinite families of distance-regular graphs:
   * Cycles C(n)
+  * Complete Taylor graphs, i.e. K<sub>n,n</sub> minus a matching
   * Odd graphs O(d)
   * Folded Johnson graphs J̃(2d, d)
   * Folded cubes H̃(d, 2)
