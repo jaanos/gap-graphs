@@ -129,8 +129,7 @@ BindGlobal("DodecahedronGraph", List([function()
         p1 := Projection(dp, 1);
         p2 := Projection(dp, 2);
         act := function(t, g)
-            return OnTuples(List(Permuted([1,2], Image(p2, g)), i -> t[i]),
-                            Image(p1, g));
+            return OnTuples(t{Permuted([1,2], Image(p2, g))}, Image(p1, g));
         end;
         u := [1, 2];
         v := [3, 4];
