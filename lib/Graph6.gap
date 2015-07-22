@@ -235,12 +235,19 @@ end);
 
 # auto6 string
 BindGlobal("Auto6String", function(G)
-    local b, g, h, i, r, s, w, x;
-    if Order(G.group) = 1 then
-        g := [];
-    else
-        g := GeneratorsOfGroup(G.group);
-    fi;
+    local b, g, h, i, p, r, s, w, x, sch;
+    g := GeneratorsOfGroup(G.group);
+    sch := G.schreierVector;
+    for p in Reversed(Filtered([1..Length(g)], j -> g[j] = ())) do
+        sch := List(sch, function(y)
+                            if y > p then
+                                return y-1;
+                            else
+                                return y;
+                            fi;
+                         end);
+    od;
+    g := Filtered(g, y -> y <> ());
     w := Log2Int(G.order-1)+1;
     r := Length(G.representatives);
     b := IntToBits(r, w);
@@ -259,10 +266,10 @@ BindGlobal("Auto6String", function(G)
     if Length(g) > 1 then
         s := Log2Int(Length(g)) + 1;
         for i in [1..G.order] do
-            if G.schreierVector[i] < 0 then
+            if sch[i] < 0 then
                 Append(b, IntToBits(0, s));
             else
-                Append(b, IntToBits(G.schreierVector[i], s));
+                Append(b, IntToBits(sch[i], s));
             fi;
         od;
     fi;
