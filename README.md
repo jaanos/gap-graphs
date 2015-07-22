@@ -9,7 +9,7 @@ The GRAPE package for GAP is required.
 The following graphs are currently supported:
 
 * Classical distance-regular graphs:
-  * Hamming graphs H(d, e)
+  * Hamming graphs H(d, e) with hypercubes H(d, 2) as special cases
   * Halved cubes 1/2 H(d, 2)
   * Doob graphs Doob(n, d) of diameter 2n+d
   * Bilinear forms graphs H<sub>q</sub>(d, e)
@@ -62,6 +62,7 @@ The following graphs are currently supported:
   * affine polar graphs VNO<sup>±</sup>(2e, q)
 * Sporadic and other named distance-regular graphs:
   * the Heawood graph with intersection array {3, 2, 2; 1, 1, 3}
+  * the skeleton of the cube with intersection array {3, 2, 1; 1, 2, 3}
   * the skeleton of the icosahedron with intersection array {5, 2, 1; 1, 2, 5}
   * the Sylvester graph with intersection array {5, 4, 2; 1, 1, 4}
   * the Perkel graph with intersection array {6, 5, 2; 1, 1, 3}

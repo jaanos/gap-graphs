@@ -6,6 +6,9 @@ BindGlobal("HammingGraph", function(d, e)
         function(x, y) return WeightVecFFE(x-y) = 1; end, true);
 end);
 
+# The d-dimensional hypercube
+BindGlobal("HypercubeGraph", d -> HammingGraph(d, 2));
+
 # The Shrikhande graph with parameters v = 16, k = 6, lm = 2, mu = 2,
 # i.e., the same as H(2, 4), but not isomorphic to it.
 BindGlobal("ShrikhandeGraph",

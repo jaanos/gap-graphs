@@ -63,6 +63,9 @@ BindGlobal("KlinGraph", List([function()
         return G;
     end])[1]());
 
+# The cube with intersection array {3, 2, 1; 1, 2, 3}
+BindGlobal("CubeGraph", HammingGraph(3, 2));
+
 # The Heawood graph with intersection array {3, 2, 2; 1, 1, 3}.
 BindGlobal("HeawoodGraph", DesarguesianPlaneIncidenceGraph(2));
 
