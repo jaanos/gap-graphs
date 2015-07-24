@@ -329,8 +329,16 @@ end);
 # of a Kronecker product of Hadamard matrices
 BindGlobal("OnHadamardIndices", s -> function(t, g)
     local p;
-    p := List([1..Length(s)], i -> t[2][i]^g[i] - 1);
-    return [t[1]*(-1)^Sum(List([1..Length(s)], i -> Int(p[i]/s[i]))),
-            List([1..Length(s)],
-                    i -> (p[i] mod s[i]) + 2*Int(p[i]/(2*s[i]))*s[i] + 1)];
+    p := (t[3] + 2*(t[1]-1)*s)^g - 1;
+    return [Int(p/(2*s)) + 1, t[2]*(-1)^Int(p/s), (p mod s) + 1];
+end);
+
+# Action on signed tuples of indices of rows and columns
+# of a Kronecker product of Hadamard matrices
+BindGlobal("OnHadamardIndicesTuples", s -> function(t, g)
+    local p;
+    p := List([1..Length(s)], i -> (t[3][i] + 2*(t[1]-1)*s[i])^g[i] - 1);
+    return [Int(p[1]/(2*s[1])) + 1,
+            t[2]*(-1)^Sum(List([1..Length(s)], i -> Int(p[i]/s[i]))),
+            List([1..Length(s)], i -> (p[i] mod s[i]) + 1)];
 end);

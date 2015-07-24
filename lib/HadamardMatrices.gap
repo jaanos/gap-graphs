@@ -26,9 +26,8 @@ InstallGlobalFunction(SylvesterHadamardMatrix, function(n)
                    group := Action(Group(Union(List(GeneratorsOfGroup(H.group),
                                         g -> [DirectProductElement([g, ()]),
                                             DirectProductElement([(), g])]))),
-                                Concatenation(Cartesian([1, -1], R),
-                                                Cartesian([1, -1], R + 2^n)),
-                                OnHadamardIndices([2^m,2^m])),
+                                    Cartesian([1, 2], [1, -1], R),
+                                    OnHadamardIndicesTuples([2^m,2^m])),
                    transpose := T);
         else
             gens := Union(Union(List(GeneratorsOfGroup(H.group),
@@ -38,10 +37,8 @@ InstallGlobalFunction(SylvesterHadamardMatrix, function(n)
             R := Cartesian([1..2^m], [1..2^m], [1, 2]);
             return rec(matrix := ImmutableMatrix(Integers,
                                                  KroneckerProduct(M, H2)),
-                   group := Action(Group(gens),
-                                Concatenation(Cartesian([1, -1], R),
-                                        Cartesian([1, -1], R + [2^n, 2^n, 4])),
-                                OnHadamardIndices([2^m,2^m,2])),
+                   group := Action(Group(gens), Cartesian([1, 2], [1, -1], R),
+                                    OnHadamardIndicesTuples([2^m,2^m,2])),
                    transpose := T);
         fi;
     fi;

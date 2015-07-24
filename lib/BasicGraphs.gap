@@ -94,24 +94,29 @@ BindGlobal("CompleteTaylorGraph", function(n)
 end);
 
 # Hadamard graphs from Hadamard matrices.
-BindGlobal("HadamardGraph", function(M)
-    local F, H;
-    F := function(x)
-        if x = M[1][1] then
-            return 1;
-        else
-            return -1;
-        fi;
-    end;
-    H := List(M, l -> List(l, F));
-    return AdjFunGraph(Cartesian([1, 2], [-1, 1], [1..Length(H)]),
-        function(x, y)
-            local p;
-            if x[1] = y[1] then
-                return false;
+BindGlobal("HadamardGraph", function(H)
+    local F;
+    if IsMatrix(H) then
+        F := function(x)
+            if x = H[1][1] then
+                return 1;
+            else
+                return -1;
             fi;
-            p := [];
-            p{[x[1], y[1]]} := [x[3], y[3]];
-            return H[p[1]][p[2]] = x[2]*y[2];
-        end);
+        end;
+        H := rec(matrix := List(H, l -> List(l, F)),
+                 group := Group(()), transpose := ());
+    fi;
+    return Graph(Group(Union(GeneratorsOfGroup(H.group), [H.transpose])),
+                 Cartesian([1, 2], [1, -1], [1..Length(H.matrix)]),
+                 OnHadamardIndices(Length(H.matrix)),
+                 function(x, y)
+                    local p;
+                    if x[1] = y[1] then
+                        return false;
+                    fi;
+                    p := [];
+                    p{[x[1], y[1]]} := [x[3], y[3]];
+                    return H.matrix[p[1]][p[2]] = x[2]*y[2];
+                 end, true);
 end);
