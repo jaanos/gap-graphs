@@ -324,3 +324,13 @@ BindGlobal("OnHughesPlane", function(q, div, dp)
         return [p[1]^Image(p2, g), act(p[2], F[p[1]](Image(p1, g)))];
     end;
 end);
+
+# Action on signed indices of rows and columns
+# of a Kronecker product of Hadamard matrices
+BindGlobal("OnHadamardIndices", s -> function(t, g)
+    local p;
+    p := List([1..Length(s)], i -> t[2][i]^g[i] - 1);
+    return [t[1]*(-1)^Sum(List([1..Length(s)], i -> Int(p[i]/s[i]))),
+            List([1..Length(s)],
+                    i -> (p[i] mod s[i]) + 2*Int(p[i]/(2*s[i]))*s[i] + 1)];
+end);

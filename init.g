@@ -12,6 +12,7 @@ ReadPackage( "gap-graphs", "lib/GroupActions.gap" );
 ReadPackage( "gap-graphs", "lib/AuxiliaryGroups.gap" );
 ReadPackage( "gap-graphs", "lib/FormFunctions.gap" );
 ReadPackage( "gap-graphs", "lib/GeometricConfigurations.gap" );
+ReadPackage( "gap-graphs", "lib/HadamardMatrices.gap" );
 ReadPackage( "gap-graphs", "lib/AdjacencyFunctions.gap" );
 ReadPackage( "gap-graphs", "lib/DualityFunctions.gap" );
 
