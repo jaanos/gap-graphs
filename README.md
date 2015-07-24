@@ -9,7 +9,7 @@ The GRAPE package for GAP is required.
 The following graphs are currently supported:
 
 * Classical distance-regular graphs:
-  * Hamming graphs H(d, e)
+  * Hamming graphs H(d, e) with hypercubes H(d, 2) as special cases
   * Halved cubes 1/2 H(d, 2)
   * Doob graphs Doob(n, d) of diameter 2n+d
   * Bilinear forms graphs H<sub>q</sub>(d, e)
@@ -35,14 +35,14 @@ The following graphs are currently supported:
   * collinearity graphs of derived generalized quadrangles T<sub>d</sub>(O) of order (q, q<sup>d-1</sup>)
   * collinearity graphs of derived generalized quadrangles T<sup>*</sup>(O) of order (2<sup>h</sup>-1, 2<sup>h</sup>+1)
   * collinearity graphs of derived generalized quadrangles P(S, x) of order (s-1, s+1)
-  * incidence graphs from files as listed on E. Moorhouse's webpage on [projective planes](http://www.uwyo.edu/moorhouse/pub/planes/) or [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
-  * collinearity graphs from files as listed on E. Moorhouse's webpage on [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
 * Other infinite families of distance-regular graphs:
   * Cycles C(n)
+  * Complete Taylor graphs, i.e. K<sub>n,n</sub> minus a matching
   * Odd graphs O(d)
   * Folded Johnson graphs J̃(2d, d)
   * Folded cubes H̃(d, 2)
   * Folded halved cubes 1/2 H̃(2d, 2)
+  * Doubled Odd graphs 2J(2d+1, d)
   * Doubled Grassmann graphs 2J<sub>q</sub>(2d+1, d)
   * unitary nonisotropics graphs with intersection arrays {q<sup>2</sup>-q, q<sup>2</sup>-q-2, q+1; 1, 1, q<sup>2</sup>-2q}
   * the Brouwer "vector product" graphs Br(q) with intersection arrays {q<sup>3</sup>-1, q<sup>3</sup>-q, q<sup>3</sup>-q<sup>2</sup>+1; 1, q, q<sup>2</sup>-1}
@@ -53,6 +53,7 @@ The following graphs are currently supported:
   * multiplicative symplectic covers of complete graphs with intersection arrays {q, q-m-1, 1; 1, m, q} (q or m even, m divides q-1)
 * Families of strongly regular graphs:
   * Cocktail party graphs
+  * Paley graphs
   * Latin square graphs
   * polar graphs O<sup>(±)</sup>(d, q)
   * polar graphs NO<sup>±</sup><sub>⊥</sub>(d, q)
@@ -62,6 +63,7 @@ The following graphs are currently supported:
   * affine polar graphs VNO<sup>±</sup>(2e, q)
 * Sporadic and other named distance-regular graphs:
   * the Heawood graph with intersection array {3, 2, 2; 1, 1, 3}
+  * the skeleton of the cube with intersection array {3, 2, 1; 1, 2, 3}
   * the skeleton of the icosahedron with intersection array {5, 2, 1; 1, 2, 5}
   * the Sylvester graph with intersection array {5, 4, 2; 1, 1, 4}
   * the Perkel graph with intersection array {6, 5, 2; 1, 1, 3}
@@ -70,8 +72,12 @@ The following graphs are currently supported:
   * the bipartite graph associated to Higman's design with intersection array {50, 49, 36; 1, 14, 50}
   * the Coxeter graph with intersection array {3, 2, 2, 1; 1, 1, 1, 2}
   * the doubly truncated Witt graph with intersection array {7, 6, 4, 4; 1, 1, 1, 6}
+  * the skeleton of the dodecahedron with intersection array {3, 2, 1, 1, 1; 1, 1, 1, 2, 3}
+  * the Desargues graph with intersection array {3, 2, 2, 1, 1; 1, 1, 2, 2, 3}
   * the Biggs-Smith graph with intersection array {3, 2, 2, 2, 1, 1, 1; 1, 1, 1, 1, 1, 1, 3}
 * Named strongly regular graphs:
+  * the skeleton of the tetrahedron with v = 4, k = 3, λ = 2
+  * the skeleton of the octahedron with v = 6, k = 4, λ = 2, μ = 4
   * the Petersen graph with v = 10, k = 3, λ = 0, μ = 1
   * the Shrikhande graph with v = 16, k = 6, λ = 2, μ = 2
   * the Clebsch graph with v = 16, k = 10, λ = 6, μ = 6
@@ -94,6 +100,10 @@ The following graphs are currently supported:
   * Antipodal quotients
   * Clique graphs
   * Vertex-clique incidence graphs
+* Graphs from files:
+  * incidence graphs from files as listed on E. Moorhouse's webpage on [projective planes](http://www.uwyo.edu/moorhouse/pub/planes/) or [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
+  * collinearity graphs from files as listed on E. Moorhouse's webpage on [generalized polygons](http://www.uwyo.edu/moorhouse/pub/genpoly/)
+  * graphs in [graph6, sparse6](https://cs.anu.edu.au/~bdm/data/formats.html) and [auto6](auto6.md) formats
 
 Some constructions, such as complete graphs, Johnson graphs and Cayley graphs,
 are already available in GRAPE.

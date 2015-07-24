@@ -15,7 +15,7 @@ BindGlobal("ProductGraph", function(Gs, F)
         fi;
     od;
     AssignVertexNames(G, List(G.names,
-        f -> List([[1..Length(f)], i -> Gs[i].names[f[i]]])));
+        f -> List([1..Length(f)], i -> Gs[i].names[f[i]])));
     return G;
 end);
 

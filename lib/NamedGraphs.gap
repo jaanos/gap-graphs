@@ -1,3 +1,9 @@
+# The tetrahedron with v=4, k=3, lm=2.
+BindGlobal("TetrahedronGraph", CompleteGraph(SymmetricGroup(4)));
+
+# The octahedron with v=6, k=4, lm=2, mu=4.
+BindGlobal("OctahedronGraph", CocktailPartyGraph(3));
+
 # The Petersen graph with v=10, k=3, lm=0, mu=1.
 BindGlobal("PetersenGraph", OddGraph(2));
 
@@ -35,7 +41,6 @@ BindGlobal("HoffmanSingletonGraph", List([function()
             end, true);
     end])[1]());
 
-
 # The Gewirtz graph with v=56, k=10, lm=0, mu=2.
 BindGlobal("GewirtzGraph", Graph(MathieuGroup(21), [[1,2,3,7,10,20]],
                                     OnSets, DisjointSets));
@@ -58,11 +63,20 @@ BindGlobal("KlinGraph", List([function()
         return G;
     end])[1]());
 
+# The cube with intersection array {3, 2, 1; 1, 2, 3}
+BindGlobal("CubeGraph", HammingGraph(3, 2));
+
 # The Heawood graph with intersection array {3, 2, 2; 1, 1, 3}.
 BindGlobal("HeawoodGraph", DesarguesianPlaneIncidenceGraph(2));
 
 # The icosahedron with intersection array {5, 2, 1; 1, 2, 5}.
-BindGlobal("IcosahedronGraph", MultiplicativeSymplecticCoverGraph(5, 2));
+BindGlobal("IcosahedronGraph", Graph(DirectProduct(AlternatingGroup(5),
+                                                   Group((1, 2))),
+                                     [(1,3,5,2,4)], function(p, g)
+                                        return (p^g)^((-1)^(6^g));
+                                     end, function(x, y)
+                                        return Order(x*y) = 3;
+                                     end));
 
 # The Sylvester graph with intersection array {5, 4, 2; 1, 1, 4}
 BindGlobal("SylvesterGraph", Graph(SymmetricGroup(6),
@@ -116,6 +130,27 @@ BindGlobal("CoxeterGraph", PolarGraphNOorth(1, 3, 7));
 # The doubly truncated Witt graph with intersection array {7,6,4,4; 1,1,1,6}.
 BindGlobal("Witt22Graph", Graph(MathieuGroup(22), [[1,2,3,4,5,10,18,21]],
                                 OnSets, DisjointSets));
+
+# The dodecahedron with intersection array {3,2,1,1,1; 1,1,1,2,3}.
+BindGlobal("DodecahedronGraph", List([function()
+        local G, O, act, dp, p1, p2, u, v;
+        dp := DirectProduct(AlternatingGroup(5), Group((1, 2)));
+        p1 := Projection(dp, 1);
+        p2 := Projection(dp, 2);
+        act := function(t, g)
+            return OnTuples(t{Permuted([1,2], Image(p2, g))}, Image(p1, g));
+        end;
+        u := [1, 2];
+        v := [3, 4];
+        O := Arrangements([1..5], 2);
+        G := EdgeOrbitsGraph(Action(dp, O, act),
+                             [Position(O, u), Position(O, v)]);
+        AssignVertexNames(G, O);
+        return G;
+    end])[1]());
+
+# The Desargues graph with intersection array {3,2,2,1,1; 1,1,2,2,3}.
+BindGlobal("DesarguesGraph", DoubledOddGraph(2));
 
 # The Biggs-Smith graph with intersection array {3,2,2,2,1,1,1; 1,1,1,1,1,1,3}.
 BindGlobal("BiggsSmithGraph", Graph(PSL(2, 17),

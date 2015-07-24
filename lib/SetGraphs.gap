@@ -24,6 +24,15 @@ end);
 # The Odd graph of diameter d on 2*d+1 points.
 BindGlobal("OddGraph", d -> KneserGraph(2*d+1, d, false));
 
+# The doubled Odd graph on 2*d+1 points.
+BindGlobal("DoubledOddGraph", function(d)
+    local n, dp;
+    n := 2*d+1;
+    dp := DirectProduct(SymmetricGroup(n), SymmetricGroup(2));
+    return Graph(dp, Union(Combinations([1..n], d), Combinations([1..n], d+1)),
+                    OnDoubledOdd(n, dp), SymmetrizedInclusion, true);
+end);
+
 # The folded Johnson graph.
 BindGlobal("FoldedJohnsonGraph",
     d -> AntipodalQuotientGraph(JohnsonGraph(2*d, d))

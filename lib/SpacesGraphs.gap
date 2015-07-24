@@ -15,9 +15,7 @@ BindGlobal("DoubledGrassmannGraph", function(q, d)
     V := GF(q)^n;
     dp := DirectProduct(GL(n, q), Group((1, 2)));
     G := Graph(dp, Union(Subspaces(V, d), Subspaces(V, d+1)),
-                OnDoubledGrassmann(V, dp), function(x, y)
-                    return x <> y and (IsSubset(x, y) or IsSubset(y, x));
-                end, true);
+                OnDoubledGrassmann(V, dp), SymmetrizedInclusion, true);
     G.halfDuality := GrassmannDualityFunction;
     G.halfPrimality := GrassmannDualityFunction;
     return G;

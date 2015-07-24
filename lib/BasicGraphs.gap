@@ -1,6 +1,6 @@
 # Complete multipartite graphs.
 BindGlobal("CompleteMultipartiteGraph", function(arg)
-    local sizes, dp, F, G;
+    local sizes, dp, F, G, m, n;
     F := function(x, y) return x[1] <> y[1]; end;
     if Length(arg) = 0 then
         Error("at least one argument expected");
@@ -12,13 +12,20 @@ BindGlobal("CompleteMultipartiteGraph", function(arg)
             i -> List([1..sizes[i]], j -> [i, j]))),
             OnSum(dp), F, true);
     else
-        return ProductGraph([CompleteGraph(SymmetricGroup(arg[1])),
-                            CompleteGraph(SymmetricGroup(arg[2]))], F);
+        m := arg[1];
+        n := arg[2];
+        return Graph(WreathProductSymmetricGroups(n, m),
+                     Cartesian([1..m], [1..n]),
+                     function(x, g)
+                        local y;
+                        y := (n*(x[1]-1)+x[2])^g - 1;
+                        return [Int(y/n)+1, y mod n + 1];
+                     end, F, true);
     fi;
 end);
 
-# Cycle graphs
-BindGlobal("CycleGraph", n -> Graph(CyclicGroup(IsPermGroup, n), [1..n],
+# Cycle graphs.
+BindGlobal("CycleGraph", n -> Graph(DihedralGroup(IsPermGroup, 2*n), [1..n],
     OnPoints, function(x, y)
         return (x-y) mod n in [1,n-1];
     end, true));
@@ -27,6 +34,19 @@ BindGlobal("CycleGraph", n -> Graph(CyclicGroup(IsPermGroup, n), [1..n],
 BindGlobal("CocktailPartyGraph",
     n -> CompleteMultipartiteGraph(n, 2)
 );
+
+# Paley graphs.
+# For q = 1 (mod 4) a prime power, the graph is strongly regular.
+# For q = 3 (mod 4) a prime power, the graph is directed.
+BindGlobal("PaleyGraph", function(q)
+    local dp;
+    dp := DirectProduct(FieldAdditionPermutationGroup(q),
+        Group(GeneratorsOfGroup(FieldMultiplicationPermutationGroup(q))[1]^2));
+    return Graph(dp, Elements(GF(q)), OnPaley(q, dp),
+        function(x, y)
+            return IsOne((x-y)^((q-1)/2));
+        end, true);
+end);
 
 # Latin square graphs.
 BindGlobal("LatinSquareGraph", function(arg)
@@ -61,4 +81,14 @@ BindGlobal("LatinSquareGraph", function(arg)
                                 or G[x[1]][x[2]] = G[y[1]][y[2]]);
             end);
     fi;
+end);
+
+# Complete Taylor graphs, i.e. complete bipartite graphs minus a matching.
+BindGlobal("CompleteTaylorGraph", function(n)
+    local G;
+    G := EdgeOrbitsGraph(Group([(1,2)(n+1,n+2),
+                    PermList(Concatenation([2..n], [1], [n+2..2*n], [n+1])),
+                    PermList(Concatenation([n+1..2*n], [1..n]))]), [1, n+2]);
+    AssignVertexNames(G, Cartesian([1, 2], [1..n]));
+    return G;
 end);
