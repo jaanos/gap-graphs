@@ -3,20 +3,40 @@ BindGlobal("AdjFunGraph", function(E, F)
     return Graph(Group(()), E, function(x, y) return x; end, F, true);
 end);
 
+# A generic product graph, without naming vertices.
+InstallMethod(ProductGraphOp, "without names", true,
+                [NoVertexNames, IsList, IsFunction], 0,
+                function(filter, Gs, F)
+                    local dp;
+                    dp := DirectProduct(List(Gs, H -> H.group));
+                    return Graph(dp, Cartesian(List(Gs, H -> [1..H.order])),
+                        OnProduct(Length(Gs), dp), F, true);
+                end);
+
 # A generic product graph.
-BindGlobal("ProductGraph", function(Gs, F)
-    local G, GG, dp;
-    dp := DirectProduct(List(Gs, H -> H.group));
-    G := Graph(dp, Cartesian(List(Gs, H -> [1..H.order])),
-        OnProduct(Length(Gs), dp), F, true);
-    for GG in Gs do
-        if not "names" in RecNames(GG) then
-            GG.names := [1..GG.order];
-        fi;
-    od;
-    AssignVertexNames(G, List(G.names,
-        f -> List([1..Length(f)], i -> Gs[i].names[f[i]])));
-    return G;
+InstallMethod(ProductGraphOp, "with names", true,
+                [IsObject, IsList, IsFunction], 0,
+                function(filter, Gs, F)
+                    local G, GG;
+                    G := ProductGraphOp(NoVertexNames, Gs, F);
+                    for GG in Gs do
+                        if not "names" in RecNames(GG) then
+                            GG.names := [1..GG.order];
+                        fi;
+                    od;
+                    AssignVertexNames(G, List(G.names,
+                        f -> List([1..Length(f)], i -> Gs[i].names[f[i]])));
+                    return G;
+                end);
+
+BindGlobal("ProductGraph", function(arg)
+    if Length(arg) = 2 then
+        return ProductGraphOp(IsObject, arg[1], arg[2]);
+    elif Length(arg) = 3 then
+        return ProductGraphOp(arg[1], arg[2], arg[3]);
+    else
+        Error("usage: ProductGraph( [<filter>, ]<graphs>, <func> )");
+    fi;
 end);
 
 # The box product of two or more graphs.
