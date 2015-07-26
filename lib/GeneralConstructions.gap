@@ -4,7 +4,7 @@ BindGlobal("AdjFunGraph", function(E, F)
 end);
 
 # A generic product graph, without naming vertices.
-InstallMethod(ProductGraphOp, "without names", true,
+InstallMethod(ProductGraphCons, "without names", true,
                 [NoVertexNames, IsList, IsFunction], 0,
                 function(filter, Gs, F)
                     local dp;
@@ -14,11 +14,11 @@ InstallMethod(ProductGraphOp, "without names", true,
                 end);
 
 # A generic product graph.
-InstallMethod(ProductGraphOp, "with names", true,
+InstallMethod(ProductGraphCons, "with names", true,
                 [IsObject, IsList, IsFunction], 0,
                 function(filter, Gs, F)
                     local G, GG;
-                    G := ProductGraphOp(NoVertexNames, Gs, F);
+                    G := ProductGraphCons(NoVertexNames, Gs, F);
                     for GG in Gs do
                         if not "names" in RecNames(GG) then
                             GG.names := [1..GG.order];
@@ -31,9 +31,9 @@ InstallMethod(ProductGraphOp, "with names", true,
 
 BindGlobal("ProductGraph", function(arg)
     if Length(arg) = 2 then
-        return ProductGraphOp(IsObject, arg[1], arg[2]);
+        return ProductGraphCons(IsObject, arg[1], arg[2]);
     elif Length(arg) = 3 then
-        return ProductGraphOp(arg[1], arg[2], arg[3]);
+        return ProductGraphCons(arg[1], arg[2], arg[3]);
     else
         Error("usage: ProductGraph( [<filter>, ]<graphs>, <func> )");
     fi;

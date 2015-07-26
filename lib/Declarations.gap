@@ -1,3 +1,3 @@
 DeclareFilter("NoVertexNames");
 
-DeclareConstructor("ProductGraphOp", [IsObject, IsList, IsFunction]);
+DeclareConstructor("ProductGraphCons", [IsObject, IsList, IsFunction]);
