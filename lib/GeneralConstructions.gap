@@ -41,13 +41,20 @@ end);
 
 # The box product of two or more graphs.
 BindGlobal("BoxProductGraph", function(arg)
-    local Gs;
-    if Length(arg) = 1 then
-        Gs := arg[1];
+    local Gs, j, filt;
+    if arg[1] = NoVertexNames then
+        filt := arg[1];
+        j := 2;
     else
-        Gs := arg;
+        filt := IsObject;
+        j := 1;
     fi;
-    return ProductGraph(Gs, function(x, y)
+    if Length(arg) = j then
+        Gs := arg[j];
+    else
+        Gs := arg{[j..Length(arg)]};
+    fi;
+    return ProductGraph(filt, Gs, function(x, y)
         local l;
         l := List([1..Length(Gs)], i -> Distance(Gs[i], x[i], y[i]));
         return WeightVecFFE(l) = 1 and Sum(l) = 1;
@@ -56,13 +63,20 @@ end);
 
 # The cross product of two or more graphs.
 BindGlobal("CrossProductGraph", function(arg)
-    local Gs;
-    if Length(arg) = 1 then
-        Gs := arg[1];
+    local Gs, j, filt;
+    if arg[1] = NoVertexNames then
+        filt := arg[1];
+        j := 2;
     else
-        Gs := arg;
+        filt := IsObject;
+        j := 1;
     fi;
-    return ProductGraph(Gs, function(x, y)
+    if Length(arg) = j then
+        Gs := arg[j];
+    else
+        Gs := arg{[j..Length(arg)]};
+    fi;
+    return ProductGraph(filt, Gs, function(x, y)
         local l;
         l := List([1..Length(Gs)], i -> Distance(Gs[i], x[i], y[i]));
         return Minimum(l) = 1 and Maximum(l) = 1;
@@ -71,13 +85,20 @@ end);
 
 # The strong product of two or more graphs.
 BindGlobal("StrongProductGraph", function(arg)
-    local Gs;
-    if Length(arg) = 1 then
-        Gs := arg[1];
+    local Gs, j, filt;
+    if arg[1] = NoVertexNames then
+        filt := arg[1];
+        j := 2;
     else
-        Gs := arg;
+        filt := IsObject;
+        j := 1;
     fi;
-    return ProductGraph(Gs, function(x, y)
+    if Length(arg) = j then
+        Gs := arg[j];
+    else
+        Gs := arg{[j..Length(arg)]};
+    fi;
+    return ProductGraph(filt, Gs, function(x, y)
         return Maximum(List([1..Length(Gs)],
             i -> Distance(Gs[i], x[i], y[i]))) = 1;
     end);
