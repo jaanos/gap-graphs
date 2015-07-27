@@ -5,29 +5,27 @@ end);
 
 # A generic product graph, without naming vertices.
 InstallMethod(ProductGraphCons, "without names", true,
-                [NoVertexNames, IsList, IsFunction], 0,
-                function(filter, Gs, F)
-                    local dp;
-                    dp := DirectProduct(List(Gs, H -> H.group));
-                    return Graph(dp, Cartesian(List(Gs, H -> [1..H.order])),
-                        OnProduct(Length(Gs), dp), F, true);
-                end);
+    [NoVertexNames, IsList, IsFunction], 0, function(filter, Gs, F)
+        local dp;
+        dp := DirectProduct(List(Gs, H -> H.group));
+        return Graph(dp, Cartesian(List(Gs, H -> [1..H.order])),
+            OnProduct(Length(Gs), dp), F, true);
+    end);
 
 # A generic product graph.
 InstallMethod(ProductGraphCons, "with names", true,
-                [IsObject, IsList, IsFunction], 0,
-                function(filter, Gs, F)
-                    local G, GG;
-                    G := ProductGraphCons(NoVertexNames, Gs, F);
-                    for GG in Gs do
-                        if not "names" in RecNames(GG) then
-                            GG.names := [1..GG.order];
-                        fi;
-                    od;
-                    AssignVertexNames(G, List(G.names,
-                        f -> List([1..Length(f)], i -> Gs[i].names[f[i]])));
-                    return G;
-                end);
+    [IsObject, IsList, IsFunction], 0, function(filter, Gs, F)
+        local G, GG;
+        G := ProductGraphCons(NoVertexNames, Gs, F);
+        for GG in Gs do
+            if not "names" in RecNames(GG) then
+                GG.names := [1..GG.order];
+            fi;
+        od;
+        AssignVertexNames(G, List(G.names,
+            f -> List([1..Length(f)], i -> Gs[i].names[f[i]])));
+        return G;
+    end);
 
 BindGlobal("ProductGraph", function(arg)
     if Length(arg) = 2 then
@@ -114,22 +112,49 @@ BindGlobal("BipartiteDoubleGraph", function(G)
     return H;
 end);
 
+# The extended bipartite double of a graph, without naming vertices.
+InstallMethod(ExtendedBipartiteDoubleGraphCons, "without names", true,
+    [NoVertexNames, IsRecord], 0, function(filter, G)
+        local H, dp, signs;
+        if not IsGraph(G) then
+            TryNextMethod();
+        fi;
+        signs := ["+", "-"];
+        dp := DirectProduct(G.group, SymmetricGroup(2));
+        H := Graph(dp, Cartesian(G.representatives, signs),
+            OnSignedPoints(dp, signs), function(x, y)
+                return x[2] <> y[2] and Distance(G, x[1], y[1]) <= 1;
+            end);
+        H.halfDuality := BipartiteDoubleDualityFunction(DefaultDualityFunction);
+        H.halfPrimality := BipartiteDoubleDualityFunction(DefaultPrimalityFunction);
+        return H;
+    end);
+
 # The extended bipartite double of a graph.
-BindGlobal("ExtendedBipartiteDoubleGraph", function(G)
-    local dp, signs, H;
-    signs := ["+", "-"];
-    dp := DirectProduct(G.group, SymmetricGroup(2));
-    H := Graph(dp, Cartesian(G.representatives, signs),
-        OnSignedPoints(dp, signs), function(x, y)
-            return x[2] <> y[2] and Distance(G, x[1], y[1]) <= 1;
-        end);
-    if "names" in RecNames(G) then
-        AssignVertexNames(H, List(H.names, x -> [G.names[x[1]], x[2]]));
+InstallMethod(ExtendedBipartiteDoubleGraphCons, "with names", true,
+    [IsObject, IsRecord], 0, function(filter, G)
+        local H;
+        if not IsGraph(G) then
+            TryNextMethod();
+        fi;
+        H := ExtendedBipartiteDoubleGraphCons(NoVertexNames, G);
+        if "names" in RecNames(G) then
+            AssignVertexNames(H, List(H.names, x -> [G.names[x[1]], x[2]]));
+        fi;
+        CheckDualityFunctions(G);
+        H.halfDuality := BipartiteDoubleDualityFunction(G.duality);
+        H.halfPrimality := BipartiteDoubleDualityFunction(G.primality);
+        return H;
+    end);
+
+BindGlobal("ExtendedBipartiteDoubleGraph", function(arg)
+    if Length(arg) = 1 then
+        return ExtendedBipartiteDoubleGraphCons(IsObject, arg[1]);
+    elif Length(arg) = 2 then
+        return ExtendedBipartiteDoubleGraphCons(arg[1], arg[2]);
+    else
+        Error("usage: ExtendedBipartiteDoubleGraph( [<filter>, ]<graph> )");
     fi;
-    CheckDualityFunctions(G);
-    H.halfDuality := BipartiteDoubleDualityFunction(G.duality);
-    H.halfPrimality := BipartiteDoubleDualityFunction(G.primality);
-    return H;
 end);
 
 # The halved graph of a bipartite graph. The optional second argument
@@ -159,11 +184,7 @@ BindGlobal("HalvedGraph", function(arg)
     if n = 2 then
         vs := Difference([1..G.order], vs);
     fi;
-    H := Graph(Stabilizer(G.group, vs, OnSets), vs, OnPoints,
-        function(x, y) return Distance(G2, x, y) = 1; end, true);
-    if "names" in RecNames(G) then
-        AssignVertexNames(H, G.names{vs});
-    fi;
+    H := InducedSubgraph(G2, vs, Stabilizer(G.group, vs, OnSets));
     if "halfDuality" in RecNames(G) then
         if n = 2 then
             H.primality := G.halfDuality;
@@ -181,23 +202,47 @@ BindGlobal("HalvedGraph", function(arg)
     return H;
 end);
 
+# The antipodal quotient of an antipodal cover, without naming vertices.
+InstallMethod(AntipodalQuotientGraphCons, "without names", true,
+    [NoVertexNames, IsRecord], 0, function(filter, G)
+        local d;
+        if not IsGraph(G) then
+            TryNextMethod();
+        fi;
+        if not IsAntipodalCover(G) then
+            Error("not an antipodal cover");
+            return fail;
+        fi;
+        d := Diameter(G);
+        return Graph(G.group,
+            Set(List(G.representatives, x -> DistanceSet(G, [0, d], x))),
+            OnSets, function(x, y)
+                return IsSubset(DistanceSet(G, 1, x), y);
+            end);
+    end);
+
 # The antipodal quotient of an antipodal cover.
-BindGlobal("AntipodalQuotientGraph", function(G)
-    local d, H;
-    if not IsAntipodalCover(G) then
-        Error("not an antipodal cover");
-        return fail;
+InstallMethod(AntipodalQuotientGraphCons, "with names", true,
+    [IsObject, IsRecord], 0, function(filter, G)
+        local H;
+        if not IsGraph(G) then
+            TryNextMethod();
+        fi;
+        H := AntipodalQuotientGraphCons(NoVertexNames, G);
+        if "names" in RecNames(G) then
+            AssignVertexNames(H, List(H.names, f -> G.names{f}));
+        fi;
+        return H;
+    end);
+
+BindGlobal("AntipodalQuotientGraph", function(arg)
+    if Length(arg) = 1 then
+        return AntipodalQuotientGraphCons(IsObject, arg[1]);
+    elif Length(arg) = 2 then
+        return AntipodalQuotientGraphCons(arg[1], arg[2]);
+    else
+        Error("usage: AntipodalQuotientGraph( [<filter>, ]<graph> )");
     fi;
-    d := Diameter(G);
-    H := Graph(G.group,
-        Set(List(G.representatives, x -> DistanceSet(G, [0, d], x))),
-        OnSets, function(x, y)
-            return IsSubset(DistanceSet(G, 1, x), y);
-        end);
-    if "names" in RecNames(G) then
-        AssignVertexNames(H, List(H.names, f -> G.names{f}));
-    fi;
-    return H;
 end);
 
 # A graph with the set of d-dimensional subspaces of V filtered by S
@@ -231,81 +276,138 @@ BindGlobal("SubspaceGraph", function(arg)
     return H;
 end);
 
-# The clique (dual geometry) graph of a collinearity graph. The optional second
-# argument allows choosing a connected component of the resulting graph.
-BindGlobal("CliqueGraph", function(arg)
-    local C, G, H, n;
-    if Length(arg) < 1 then
-        Error("at least one argument expected");
-        return fail;
-    fi;
-    G := arg[1];
-    C := Cliques(G);
-    if Length(arg) > 1 then
-        n := arg[2];
-        if not IsList(n) then
-            n := [n];
+# The clique graph of a collinearity graph, without naming vertices.
+InstallMethod(CliqueGraphCons, "without names", true,
+    [NoVertexNames, IsRecord, IsList], 0, function(filter, G, C)
+        local H;
+        if not (IsGraph(G) and ForAll(C, IsList)) then
+            TryNextMethod();
         fi;
-    else
-        n := [1..Length(C)];
-    fi;
-    H := Graph(G.group, C{n}, OnSets,
+        H := Graph(G.group, C, OnSets,
                 function(x, y)
                     return Size(Intersection(x,y)) = 1;
                 end);
-    if "names" in RecNames(G) then
-        CheckDualityFunctions(G);
-        H.duality := G.primality;
-        H.primality := G.duality;
-        AssignVertexNames(H, List(H.names, f -> G.duality(G.names{f})));
-        if "halfDuality" in RecNames(G) then
-            H.halfDuality := G.halfDuality;
-        fi;
-        if "halfPrimality" in RecNames(G) then
-            H.halfPrimality := G.halfPrimality;
-        fi;
-    fi;
-    return H;
-end);
+        H.duality := DefaultPrimalityFunction;
+        H.primality := DefaultDualityFunction;
+        return H;
+    end);
 
-# The incidence graph of a collinearity graph.
-BindGlobal("IncidenceGraph", function(arg)
-    local C, G, H, n;
-    if Length(arg) < 1 then
-        Error("at least one argument expected");
-        return fail;
+# The clique graph of a collinearity graph given a list of cliques.
+InstallMethod(CliqueGraphCons, "with names", true,
+    [IsObject, IsRecord, IsList], 0, function(filter, G, C)
+        local H;
+        if not (IsGraph(G) and ForAll(C, IsList)) then
+            TryNextMethod();
+        fi;
+        H := CliqueGraphCons(NoVertexNames, G, C);
+        if "names" in RecNames(G) then
+            CheckDualityFunctions(G);
+            H.duality := G.primality;
+            H.primality := G.duality;
+            AssignVertexNames(H, List(H.names, f -> G.duality(G.names{f})));
+            if "halfDuality" in RecNames(G) then
+                H.halfDuality := G.halfDuality;
+            fi;
+            if "halfPrimality" in RecNames(G) then
+                H.halfPrimality := G.halfPrimality;
+            fi;
+        fi;
+        return H;
+    end);
+
+# The clique (dual geometry) graph of a collinearity graph. The optional second
+# argument allows choosing a connected component of the resulting graph.
+BindGlobal("CliqueGraph", function(arg)
+    local C, G, H, j, n, filt;
+    if arg[1] = NoVertexNames then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
     fi;
-    G := arg[1];
+    G := arg[j];
     C := Cliques(G);
-    if Length(arg) > 1 then
-        n := arg[2];
+    if Length(arg) > j then
+        n := arg[j+1];
         if not IsList(n) then
             n := [n];
         fi;
     else
         n := [1..Length(C)];
     fi;
-    H := Graph(G.group, Union(G.representatives, C{n}),
+    return CliqueGraphCons(filt, G, C{n});
+end);
+
+# The incidence graph of a collinearity graph, without naming vertices.
+InstallMethod(IncidenceGraphCons, "without names", true,
+    [NoVertexNames, IsRecord, IsList], 0, function(filter, G, C)
+        local H;
+        if not (IsGraph(G) and ForAll(C, IsList)) then
+            TryNextMethod();
+        fi;
+        H := Graph(G.group, Union(G.representatives, C),
                 OnPointsOrLines(OnPoints, IsList),
                 function(x, y)
                     return (IsList(y) and x in y) or (IsList(x) and y in x);
-                end);
-    if "names" in RecNames(G) and G.order > 0 then
-        CheckDualityFunctions(G);
-        if IsList(H.names[1]) then
-            H.halfDuality := G.primality;
-            H.halfPrimality := G.duality;
+                end);;
+        if H.order > 0 and IsList(H.names[1]) then
+            H.halfDuality := DefaultPrimalityFunction;
+            H.halfPrimality := DefaultDualityFunction;
         else
-            H.halfDuality := G.duality;
-            H.halfPrimality := G.primality;
+            H.halfDuality := DefaultDualityFunction;
+            H.halfPrimality := DefaultPrimalityFunction;
         fi;
-        AssignVertexNames(H, List(H.names, function(f)
+        return H;
+    end);
+
+# The incidence graph of a collinearity graph given a list of cliques.
+InstallMethod(IncidenceGraphCons, "with names", true,
+    [IsObject, IsRecord, IsList], 0, function(filter, G, C)
+        local H;
+        if not (IsGraph(G) and ForAll(C, IsList)) then
+            TryNextMethod();
+        fi;
+        H := IncidenceGraphCons(NoVertexNames, G, C);
+        if "names" in RecNames(G) and G.order > 0 then
+            CheckDualityFunctions(G);
+            if IsList(H.names[1]) then
+                H.halfDuality := G.primality;
+                H.halfPrimality := G.duality;
+            else
+                H.halfDuality := G.duality;
+                H.halfPrimality := G.primality;
+            fi;
+            AssignVertexNames(H, List(H.names, function(f)
                                             if IsList(f) then
                                                 return G.duality(G.names{f});
                                             else
                                                 return G.names[f];
                                             fi;
-        end));
+            end));
+        fi;
+        return H;
+    end);
+
+# The incidence graph of a collinearity graph.
+BindGlobal("IncidenceGraph", function(arg)
+    local C, G, H, j, n, filt;
+    if arg[1] = NoVertexNames then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
     fi;
-    return H;
+    G := arg[j];
+    C := Cliques(G);
+    if Length(arg) > j then
+        n := arg[j+1];
+        if not IsList(n) then
+            n := [n];
+        fi;
+    else
+        n := [1..Length(C)];
+    fi;
+    return IncidenceGraphCons(filt, G, C{n});
 end);
