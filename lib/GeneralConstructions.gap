@@ -28,10 +28,16 @@ InstallMethod(ProductGraphCons, "with names", true,
     end);
 
 BindGlobal("ProductGraph", function(arg)
-    if Length(arg) = 2 then
-        return ProductGraphCons(IsObject, arg[1], arg[2]);
-    elif Length(arg) = 3 then
-        return ProductGraphCons(arg[1], arg[2], arg[3]);
+    local j, filt;
+    if IsFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        return ProductGraphCons(filt, arg[j], arg[j+1]);
     else
         Error("usage: ProductGraph( [<filter>, ]<graphs>, <func> )");
     fi;
@@ -40,7 +46,7 @@ end);
 # The box product of two or more graphs.
 BindGlobal("BoxProductGraph", function(arg)
     local Gs, j, filt;
-    if arg[1] = NoVertexNames then
+    if IsFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -62,7 +68,7 @@ end);
 # The cross product of two or more graphs.
 BindGlobal("CrossProductGraph", function(arg)
     local Gs, j, filt;
-    if arg[1] = NoVertexNames then
+    if IsFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -84,7 +90,7 @@ end);
 # The strong product of two or more graphs.
 BindGlobal("StrongProductGraph", function(arg)
     local Gs, j, filt;
-    if arg[1] = NoVertexNames then
+    if IsFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -100,6 +106,48 @@ BindGlobal("StrongProductGraph", function(arg)
         return Maximum(List([1..Length(Gs)],
             i -> Distance(Gs[i], x[i], y[i]))) = 1;
     end);
+end);
+
+# The join of a list of graphs, without naming vertices.
+InstallMethod(GraphJoinCons, "without names", true,
+    [NoVertexNames, IsList], 0, function(filter, Gs)
+        local dp;
+        dp := DirectProduct(List(Gs, H -> H.group));
+        return Graph(dp, Union(List([1..Length(Gs)],
+                                    i -> List([1..Gs[i].order], j -> [i, j]))),
+                     OnSum(dp), GraphJoinAdjacency(Gs), true);
+    end);
+
+# The join of a list of graphs.
+InstallMethod(GraphJoinCons, "with names", true,
+    [IsObject, IsList], 0, function(filter, Gs)
+        local G, GG;
+        G := GraphJoinCons(NoVertexNames, Gs);
+        for GG in Gs do
+            if not "names" in RecNames(GG) then
+                GG.names := [1..GG.order];
+            fi;
+        od;
+        AssignVertexNames(G, List(G.names, f -> [f[1], Gs[f[1]].names[f[2]]]));
+        return G;
+    end);
+
+# The join of two or more graphs.
+BindGlobal("GraphJoin", function(arg)
+    local Gs, j, filt;
+    if IsFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        Gs := arg[j];
+    else
+        Gs := arg{[j..Length(arg)]};
+    fi;
+    return GraphJoinCons(filt, Gs);
 end);
 
 # The bipartite double of a graph.
@@ -148,10 +196,16 @@ InstallMethod(ExtendedBipartiteDoubleGraphCons, "with names", true,
     end);
 
 BindGlobal("ExtendedBipartiteDoubleGraph", function(arg)
-    if Length(arg) = 1 then
-        return ExtendedBipartiteDoubleGraphCons(IsObject, arg[1]);
-    elif Length(arg) = 2 then
-        return ExtendedBipartiteDoubleGraphCons(arg[1], arg[2]);
+    local j, filt;
+    if IsFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return ExtendedBipartiteDoubleGraphCons(IsObject, arg[j]);
     else
         Error("usage: ExtendedBipartiteDoubleGraph( [<filter>, ]<graph> )");
     fi;
@@ -236,10 +290,16 @@ InstallMethod(AntipodalQuotientGraphCons, "with names", true,
     end);
 
 BindGlobal("AntipodalQuotientGraph", function(arg)
-    if Length(arg) = 1 then
-        return AntipodalQuotientGraphCons(IsObject, arg[1]);
-    elif Length(arg) = 2 then
-        return AntipodalQuotientGraphCons(arg[1], arg[2]);
+    local j, filt;
+    if IsFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return AntipodalQuotientGraphCons(IsObject, arg[j]);
     else
         Error("usage: AntipodalQuotientGraph( [<filter>, ]<graph> )");
     fi;
@@ -319,7 +379,7 @@ InstallMethod(CliqueGraphCons, "with names", true,
 # argument allows choosing a connected component of the resulting graph.
 BindGlobal("CliqueGraph", function(arg)
     local C, G, H, j, n, filt;
-    if arg[1] = NoVertexNames then
+    if IsFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -392,7 +452,7 @@ InstallMethod(IncidenceGraphCons, "with names", true,
 # The incidence graph of a collinearity graph.
 BindGlobal("IncidenceGraph", function(arg)
     local C, G, H, j, n, filt;
-    if arg[1] = NoVertexNames then
+    if IsFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else

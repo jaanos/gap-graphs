@@ -1,3 +1,14 @@
+# Adjacency function for complete multipartite graphs
+BindGlobal("DifferentParts", function(x, y)
+    return x[1] <> y[1];
+end);
+
+# Adjacency function graph joins
+BindGlobal("GraphJoinAdjacency", Gs -> function(x, y)
+    return x[1] <> y[1] or (x[1] = y[1] and
+                            IsVertexPairEdge(Gs[x[1]], x[2], y[2]));
+end);
+
 # Adjacency function for Kneser-type graphs.
 BindGlobal("DisjointSets", function(x, y)
     return Intersection(x, y) = [];

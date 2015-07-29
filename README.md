@@ -94,6 +94,7 @@ The following graphs are currently supported:
   * Box (Cartesian) product
   * Cross (tensor) product
   * Strong product
+  * Graph join
   * Bipartite double
   * Extended bipartite double
   * Halved graphs

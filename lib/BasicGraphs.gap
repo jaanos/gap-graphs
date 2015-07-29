@@ -1,26 +1,65 @@
-# Complete multipartite graphs.
-BindGlobal("CompleteMultipartiteGraph", function(arg)
-    local sizes, dp, F, G, m, n;
-    F := function(x, y) return x[1] <> y[1]; end;
-    if Length(arg) = 0 then
-        Error("at least one argument expected");
-        return fail;
-    elif Length(arg) = 1 then
-        sizes := arg[1];
+# Complete multipartite graphs given a list of part sizes
+# with the full automorphism group.
+InstallOtherMethod(CompleteMultipartiteGraphCons,
+    "for a list of part sizes with full automorphism group", true,
+    [FullAutomorphismGroup, IsList], 0, function(filter, sizes)
+        local H, Gs, dp, l, p;
+        l := Set(sizes);
+        p := List(l, i -> Filtered([1..Length(sizes)], j -> sizes[j] = i));
+        Gs := List([1..Length(l)],
+                    i -> CompleteMultipartiteGraphCons(FullAutomorphismGroup,
+                                                        Length(p[i]), l[i]));
+        H := GraphJoin(NoVertexNames, Gs);
+        AssignVertexNames(H, List(H.names, function(t)
+                                                local tt;
+                                                tt := Gs[t[1]].names[t[2]];
+                                                return [p[t[1]][tt[1]], tt[2]];
+                                            end));
+        return H;
+    end);
+
+# Complete multipartite graphs given a list of part sizes,
+InstallOtherMethod(CompleteMultipartiteGraphCons, "for a list of part sizes",
+    true, [IsObject, IsList], 0, function(filter, sizes)
+        local dp;
         dp := DirectProduct(List(sizes, i -> SymmetricGroup(i)));
         return Graph(dp, Union(List([1..Length(sizes)],
             i -> List([1..sizes[i]], j -> [i, j]))),
-            OnSum(dp), F, true);
-    else
-        m := arg[1];
-        n := arg[2];
+            OnSum(dp), DifferentParts, true);
+    end);
+
+InstallMethod(CompleteMultipartiteGraphCons,
+    "for equal part sizes with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt], 0, function(filter, m, n)
         return Graph(WreathProductSymmetricGroups(n, m),
                      Cartesian([1..m], [1..n]),
                      function(x, g)
                         local y;
                         y := (n*(x[1]-1)+x[2])^g - 1;
                         return [Int(y/n)+1, y mod n + 1];
-                     end, F, true);
+                     end, DifferentParts, true);
+    end);
+
+InstallMethod(CompleteMultipartiteGraphCons, "for equal part sizes",
+    true, [IsObject, IsInt, IsInt], 0, function(filter, m, n)
+        return CompleteMultipartiteGraphCons(FullAutomorphismGroup, m, n);
+    end);
+
+BindGlobal("CompleteMultipartiteGraph", function(arg)
+    local j, filt;
+    if IsFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return CompleteMultipartiteGraphCons(filt, arg[j]);
+    elif Length(arg) = j+1 then
+        return CompleteMultipartiteGraphCons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: CompleteMultipartiteGraph( [<filter>, ]{<list> |<int>, <int> })");
     fi;
 end);
 
