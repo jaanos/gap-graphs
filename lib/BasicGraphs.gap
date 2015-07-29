@@ -80,7 +80,8 @@ BindGlobal("CocktailPartyGraph",
 BindGlobal("PaleyGraph", function(q)
     local dp;
     dp := DirectProduct(FieldAdditionPermutationGroup(q),
-        Group(GeneratorsOfGroup(FieldMultiplicationPermutationGroup(q))[1]^2));
+        Group(GeneratorsOfGroup(FieldMultiplicationPermutationGroup(q))[1]^2),
+        FieldExponentiationPermutationGroup(q));
     return Graph(dp, Elements(GF(q)), OnPaley(q, dp),
         function(x, y)
             return IsOne((x-y)^((q-1)/2));
