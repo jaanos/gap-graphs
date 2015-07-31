@@ -1,3 +1,6 @@
+# Check whether we are given a filter (including IsObject)
+BindGlobal("IsAFilter", x -> IsFilter(x) or x = IsObject);
+
 # A bijective map from elements of F_q to integers from [0..q-1].
 BindGlobal("FFEToInt", function(x, q)
     if IsZero(x) then

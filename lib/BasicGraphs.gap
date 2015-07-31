@@ -47,7 +47,7 @@ InstallMethod(CompleteMultipartiteGraphCons, "for equal part sizes",
 
 BindGlobal("CompleteMultipartiteGraph", function(arg)
     local j, filt;
-    if IsFilter(arg[1]) then
+    if IsAFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else

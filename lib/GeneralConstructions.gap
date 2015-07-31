@@ -29,7 +29,7 @@ InstallMethod(ProductGraphCons, "with names", true,
 
 BindGlobal("ProductGraph", function(arg)
     local j, filt;
-    if IsFilter(arg[1]) then
+    if IsAFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -46,7 +46,7 @@ end);
 # The box product of two or more graphs.
 BindGlobal("BoxProductGraph", function(arg)
     local Gs, j, filt;
-    if IsFilter(arg[1]) then
+    if IsAFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -68,7 +68,7 @@ end);
 # The cross product of two or more graphs.
 BindGlobal("CrossProductGraph", function(arg)
     local Gs, j, filt;
-    if IsFilter(arg[1]) then
+    if IsAFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -90,7 +90,7 @@ end);
 # The strong product of two or more graphs.
 BindGlobal("StrongProductGraph", function(arg)
     local Gs, j, filt;
-    if IsFilter(arg[1]) then
+    if IsAFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -135,7 +135,7 @@ InstallMethod(GraphJoinCons, "with names", true,
 # The join of two or more graphs.
 BindGlobal("GraphJoin", function(arg)
     local Gs, j, filt;
-    if IsFilter(arg[1]) then
+    if IsAFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -197,7 +197,7 @@ InstallMethod(ExtendedBipartiteDoubleGraphCons, "with names", true,
 
 BindGlobal("ExtendedBipartiteDoubleGraph", function(arg)
     local j, filt;
-    if IsFilter(arg[1]) then
+    if IsAFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -291,7 +291,7 @@ InstallMethod(AntipodalQuotientGraphCons, "with names", true,
 
 BindGlobal("AntipodalQuotientGraph", function(arg)
     local j, filt;
-    if IsFilter(arg[1]) then
+    if IsAFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -379,7 +379,7 @@ InstallMethod(CliqueGraphCons, "with names", true,
 # argument allows choosing a connected component of the resulting graph.
 BindGlobal("CliqueGraph", function(arg)
     local C, G, H, j, n, filt;
-    if IsFilter(arg[1]) then
+    if IsAFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
@@ -452,7 +452,7 @@ InstallMethod(IncidenceGraphCons, "with names", true,
 # The incidence graph of a collinearity graph.
 BindGlobal("IncidenceGraph", function(arg)
     local C, G, H, j, n, filt;
-    if IsFilter(arg[1]) then
+    if IsAFilter(arg[1]) then
         filt := arg[1];
         j := 2;
     else
