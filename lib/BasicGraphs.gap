@@ -88,21 +88,38 @@ BindGlobal("PaleyGraph", function(q)
         end, true);
 end);
 
-# Latin square graphs.
-BindGlobal("LatinSquareGraph", function(arg)
-    local dim, dp, G, invt, vcs;
-    if Length(arg) = 0 then
-        Error("at least one argument expected");
-        return fail;
-    fi;
-    G := arg[1];
-    if Length(arg) > 1 then
-        invt := arg[2];
-    else
-        invt := true;
-    fi;
-    if IsGroup(G) then
-        dp := DirectProduct(G, G);
+# Latin square graphs from Cayley tables.
+InstallMethod(LatinSquareGraphCons,
+    "for Cayley tables", true,
+    [IsObject, IsList, IsBool], 0, function(filter, M, invt)
+        local G, dim;
+        if not ForAll(M, IsList) then
+            TryNextMethod();
+        fi;
+        dim := DimensionsMat(M);
+        if M = TransposedMat(M) then
+            G := Group((1,2));
+        else
+            G := Group(());
+        fi;
+        return Graph(G, Cartesian([1..dim[1]], [1..dim[2]]), Permuted,
+                    function(x, y)
+                        return x <> y and (x[1] = y[1] or x[2] = y[2]
+                                        or M[x[1]][x[2]] = M[y[1]][y[2]]);
+                    end, true);
+    end);
+
+# Latin square graphs from groups.
+InstallMethod(LatinSquareGraphCons,
+    "for groups", true,
+    [IsObject, IsGroup, IsBool], 0, function(filter, G, invt)
+        local A, dp, vcs;
+        if IsAbelian(G) then
+            A := Group((1,2));
+        else
+            A := Group(());
+        fi;
+        dp := DirectProduct(G, G, AutomorphismGroup(G), A);
         if invt then
             vcs := Cartesian(G, G);
         else
@@ -113,13 +130,23 @@ BindGlobal("LatinSquareGraph", function(arg)
                 return x <> y and (x[1] = y[1] or x[2] = y[2]
                                 or x[1]*x[2] = y[1]*y[2]);
             end, invt);
+    end);
+
+BindGlobal("LatinSquareGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
     else
-        dim := DimensionsMat(G);
-        return AdjFunGraph(Cartesian([1..dim[1]], [1..dim[2]]),
-            function(x, y)
-                return x <> y and (x[1] = y[1] or x[2] = y[2]
-                                or G[x[1]][x[2]] = G[y[1]][y[2]]);
-            end);
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return LatinSquareGraphCons(filt, arg[j], true);
+    elif Length(arg) = j+1 then
+        return LatinSquareGraphCons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: LatinSquareGraph( [<filter>, ]{<mat> |<grp> }[, <bool> ])");
     fi;
 end);
 

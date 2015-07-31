@@ -27,11 +27,16 @@ BindGlobal("OnSum", dp -> function(e, g)
 
 # Action of a product group on the multiplication table of its factors.
 BindGlobal("OnLatinSquare", function(dp)
-    local p1, p2;
+    local p1, p2, p3, p4;
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
+    p3 := Projection(dp, 3);
+    p4 := Projection(dp, 4);
     return function(e, g)
-        return [Image(p1, g) * e[1], e[2] * Image(p2, g)];
+        local g3;
+        g3 := Image(p3, g);
+        return Permuted([Image(p1, g) * e[1]^g3, e[2]^g3 * Image(p2, g)],
+                Image(p4, g));
     end;
 end);
 

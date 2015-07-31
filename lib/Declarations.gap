@@ -12,3 +12,4 @@ DeclareConstructor("IncidenceGraphCons", [IsObject, IsRecord, IsList]);
 
 # Basic graphs
 DeclareConstructor("CompleteMultipartiteGraphCons", [IsObject, IsInt, IsInt]);
+DeclareConstructor("LatinSquareGraphCons", [IsObject, IsObject, IsBool]);

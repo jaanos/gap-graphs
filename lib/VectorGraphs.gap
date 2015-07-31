@@ -11,8 +11,7 @@ BindGlobal("HypercubeGraph", d -> HammingGraph(d, 2));
 
 # The Shrikhande graph with parameters v = 16, k = 6, lm = 2, mu = 2,
 # i.e., the same as H(2, 4), but not isomorphic to it.
-BindGlobal("ShrikhandeGraph",
-    ComplementGraph(LatinSquareGraph(CyclicGroup(4))));
+BindGlobal("ShrikhandeGraph", ComplementGraph(LatinSquareGraph(Group(Z(5)))));
     
 # The Doob graph Doob(n, d) of diameter 2*n+d
 # as a box product of n copies of the Shrikhande graph and H(d, 4).
