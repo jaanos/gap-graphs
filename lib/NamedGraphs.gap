@@ -7,6 +7,13 @@ BindGlobal("OctahedronGraph", CocktailPartyGraph(3));
 # The Petersen graph with v=10, k=3, lm=0, mu=1.
 BindGlobal("PetersenGraph", OddGraph(2));
 
+# The Shrikhande graph with parameters v=16, k=6, lm=2, mu=2,
+# i.e., the same as H(2, 4), but not isomorphic to it.
+InstallMethod(ShrikhandeGraphCons, "as a vector graph", true, [IsVectorGraph],
+                0, filter -> ComplementGraph(LatinSquareGraph(Group(Z(5)))));
+
+BindGlobal("ShrikhandeGraph", ShrikhandeGraphCons(IsVectorGraph));
+
 # The Clebsch graph with v=16, k=10, lm=6, mu=6.
 BindGlobal("ClebschGraph", HalvedCubeGraph(5));
 

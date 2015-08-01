@@ -109,6 +109,48 @@ InstallMethod(LatinSquareGraphCons,
                     end, true);
     end);
 
+# Latin square graphs from groups with full automorphism group.
+InstallMethod(LatinSquareGraphCons,
+    "for groups", true,
+    [FullAutomorphismGroup, IsGroup, IsBool], 0, function(filter, G, invt)
+        local A, F, H, dp, vcs;
+        if Order(G) = 3 then
+            H := Graph(WreathProductSymmetricGroups(3, 3), [1..9], OnPoints,
+                function(x, y)
+                    return Int(x/3) <> Int(y/3);
+                end, true);
+            AssignVertexNames(H, Cartesian(G, G){[1,5,9,2,6,7,3,4,8]});
+            return H;
+        elif Order(G) = 4 and RankPGroup(G) = 2 then
+            F := Elements(G);
+            A := Filtered(AutomorphismGroup(G), g -> Order(g) = 3);
+            H := ComplementGraph(HammingGraphCons(IsVectorGraph, 2, 4));
+            AssignVertexNames(H, List(List(H.names,
+                                           t -> List(t, x -> F[Int(x)+1])),
+                                      t -> [t[1]^A[1] * t[2]^A[2],
+                                            t[1]^A[2] * t[2]^A[1]]));
+            return H;
+        else
+            if IsAbelian(G) then
+                A := Group((1,2));
+            else
+                A := Group(());
+            fi;
+            dp := DirectProduct(G, G, AutomorphismGroup(G),
+                                A, SymmetricGroup(3));
+            if invt then
+                vcs := Cartesian(G, G);
+            else
+                vcs := [[One(G), One(G)]];
+            fi;
+            return Graph(dp, vcs, OnLatinSquare(dp),
+                function(x, y)
+                    return x <> y and (x[1] = y[1] or x[2] = y[2]
+                                    or x[1]*x[2] = y[1]*y[2]);
+                end, invt);
+        fi;
+    end);
+
 # Latin square graphs from groups.
 InstallMethod(LatinSquareGraphCons,
     "for groups", true,
@@ -119,7 +161,8 @@ InstallMethod(LatinSquareGraphCons,
         else
             A := Group(());
         fi;
-        dp := DirectProduct(G, G, AutomorphismGroup(G), A);
+        dp := DirectProduct(G, G, Group(IdentityMapping(G)),
+                            A, SymmetricGroup(3));
         if invt then
             vcs := Cartesian(G, G);
         else
