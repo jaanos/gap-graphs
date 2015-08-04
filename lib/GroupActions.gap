@@ -41,8 +41,7 @@ BindGlobal("OnLatinSquare", function(dp)
         t := Permuted([Image(p1, g) * e[1]^g3, e[2]^g3 * Image(p2, g)],
                         Image(p4, g));
         t[3] := (t[1]*t[2])^-1;
-        t := List(Permuted(t, g5), x -> x^s);
-        return t{[1,2]};
+        return List(Permuted(t, g5){[1,2]}, x -> x^s);
     end;
 end);
 
