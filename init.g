@@ -24,6 +24,7 @@ ReadPackage( "gap-graphs", "lib/Graph6.gap" );
 
 # Dependencies with other packages
 ReadPackage( "gap-graphs", "lib/DependencyLoops.gap" );
+ReadPackage( "gap-graphs", "lib/DependencyTomlib.gap" );
 
 # Specific graph constructions
 ReadPackage( "gap-graphs", "lib/BasicGraphs.gap" );

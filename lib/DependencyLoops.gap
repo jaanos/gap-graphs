@@ -1,4 +1,4 @@
-if LoadPackage("loops") then
+if LoadPackage("loops") = true then
     # Action of a product group on the Cayley table of a loop.
     BindGlobal("OnLatinSquareFromLoop", function(dp)
         local p1, p2, p3, p4, p5;

@@ -14,6 +14,11 @@ BindGlobal("DisjointSets", function(x, y)
     return Intersection(x, y) = [];
 end);
 
+# Adjacency function for conjugacy class graphs.
+BindGlobal("GroupIntersection", n -> function(x, y)
+    return Order(Intersection(x, y)) = n;
+end);
+
 # Adjacency function for doubled Odd and Grassmann graphs.
 BindGlobal("SymmetrizedInclusion", function(x, y)
     return x <> y and (IsSubset(x, y) or IsSubset(y, x));

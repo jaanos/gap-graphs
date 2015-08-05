@@ -101,13 +101,17 @@ BindGlobal("SylvesterGraph", Graph(SymmetricGroup(6),
                     end));
 
 # The Perkel graph with intersection array {6, 5, 2; 1, 1, 3}.
-BindGlobal("PerkelGraph", Graph(PSL(2, 19),
-                    Elements(Filtered(ConjugacyClassesSubgroups(PSL(2, 19)),
-                        x -> Size(x) = 57 and Order(x[1]) = 60)[1]),
-                    ConjugateGroup, function(x, y)
-                        return Order(Intersection(x, y)) = 10;
-                    end, true));
+InstallMethod(PerkelGraphCons, "as a conjugacy class graph", true,
+    [IsConjugacyClassGraph], 0, function(filter)
+            local G;
+            G := PSL(2, 19);
+            return Graph(G,
+Elements(Group( [ ( 2,12,15)( 3,17,16)( 4, 8,10)( 5, 6,13)( 9,20,18)(11,19,14),
+( 1, 2)( 3,20)( 4,19)( 5,18)( 6,17)( 7,16)( 8,15)( 9,14)(10,13)(11,12) ] )^G),
+                    ConjugateGroup, GroupIntersection(10), true);
+        end);
 
+BindGlobal("PerkelGraph", PerkelGraphCons(IsConjugacyClassGraph));
 
 # The Gosset graph with intersection array {27, 10, 1; 1, 10, 27}.
 BindGlobal("GossetGraph",
@@ -160,9 +164,16 @@ BindGlobal("DodecahedronGraph", List([function()
 BindGlobal("DesarguesGraph", DoubledOddGraph(2));
 
 # The Biggs-Smith graph with intersection array {3,2,2,2,1,1,1; 1,1,1,1,1,1,3}.
-BindGlobal("BiggsSmithGraph", Graph(PSL(2, 17),
-                    Elements(Filtered(ConjugacyClassesSubgroups(PSL(2, 17)),
-                        x -> Size(x) = 102 and Order(x[1]) = 24)[1]),
-                    ConjugateGroup, function(x, y)
-                        return Order(Intersection(x, y)) = 8;
-                    end, true));
+InstallMethod(BiggsSmithGraphCons, "as a conjugacy class graph", true,
+    [IsConjugacyClassGraph], 0, function(filter)
+            local G;
+            G := PSL(2, 17);
+            return Graph(G,
+    Elements(Group( [ ( 3,11)( 4,12)( 5,13)( 6,14)( 7,15)( 8,16)( 9,17)(10,18),
+                ( 1, 2)( 3, 5)( 6,18)( 7,17)( 8,16)( 9,15)(10,14)(11,13),
+                ( 1, 4,16)( 2,12, 8)( 3, 9, 6)( 5, 7,14)(10,11,15)(13,17,18),
+                ( 3, 7,11,15)( 4, 8,12,16)( 5, 9,13,17)( 6,10,14,18) ] )^G),
+                        ConjugateGroup, GroupIntersection(8), true);
+        end);
+
+BindGlobal("BiggsSmithGraph", BiggsSmithGraphCons(IsConjugacyClassGraph));

@@ -2,6 +2,7 @@
 DeclareFilter("NoVertexNames");
 DeclareFilter("FullAutomorphismGroup");
 DeclareFilter("IsVectorGraph");
+DeclareFilter("IsConjugacyClassGraph");
 
 # General constructions
 DeclareConstructor("ProductGraphCons", [IsObject, IsList, IsFunction]);
@@ -17,4 +18,8 @@ DeclareConstructor("LatinSquareGraphCons", [IsObject, IsObject, IsBool]);
 
 # Vector graphs
 DeclareConstructor("HammingGraphCons", [IsObject, IsInt, IsInt]);
+
+# Named graphs
 DeclareConstructor("ShrikhandeGraphCons", [IsObject]);
+DeclareConstructor("PerkelGraphCons", [IsObject]);
+DeclareConstructor("BiggsSmithGraphCons", [IsObject]);
