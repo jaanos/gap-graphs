@@ -25,7 +25,7 @@ BindGlobal("OnSum", dp -> function(e, g)
     end
 );
 
-# Action of a product group on the multiplication table of its factors.
+# Action of a product group on the Cayley table of its first factor.
 BindGlobal("OnLatinSquare", function(dp)
     local p1, p2, p3, p4, p5;
     p1 := Projection(dp, 1);

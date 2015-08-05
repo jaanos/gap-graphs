@@ -111,7 +111,7 @@ InstallMethod(LatinSquareGraphCons,
 
 # Latin square graphs from groups with full automorphism group.
 InstallMethod(LatinSquareGraphCons,
-    "for groups", true,
+    "for groups with full automorphism group", true,
     [FullAutomorphismGroup, IsGroup, IsBool], 0, function(filter, G, invt)
         local A, F, H, dp, vcs;
         if Order(G) = 3 then
@@ -168,11 +168,7 @@ InstallMethod(LatinSquareGraphCons,
         else
             vcs := [[One(G), One(G)]];
         fi;
-        return Graph(dp, vcs, OnLatinSquare(dp),
-            function(x, y)
-                return x <> y and (x[1] = y[1] or x[2] = y[2]
-                                or x[1]*x[2] = y[1]*y[2]);
-            end, invt);
+        return Graph(dp, vcs, OnLatinSquare(dp), LatinSquareAdjacency, invt);
     end);
 
 BindGlobal("LatinSquareGraph", function(arg)

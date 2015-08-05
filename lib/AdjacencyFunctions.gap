@@ -36,6 +36,13 @@ BindGlobal("MatrixAdjacency",
         return M[x][y] = 1;
     end);
 
+# Adjacency function for Latin square graphs.
+BindGlobal("LatinSquareAdjacency",
+    function(x, y)
+        return x <> y and (x[1] = y[1] or x[2] = y[2]
+                            or x[1]*x[2] = y[1]*y[2]);
+    end);
+
 # Adjacency function for adjacency lists.
 BindGlobal("ListAdjacency",
     L -> function(x, y)

@@ -196,7 +196,7 @@ Dependencies := rec(
   NeededOtherPackages := [["GRAPE", ">= 4.3"]],
   # without these the package will issue a warning while loading
   # SuggestedOtherPackages := [],
-  SuggestedOtherPackages := [],
+  SuggestedOtherPackages := [["tomlib", ">= 1.2.5"], ["loops", ">= 2.2.0"]],
   # needed external conditions (programs, operating system, ...)  provide 
   # just strings as text or
   # pairs [text, URL] where URL  provides further information

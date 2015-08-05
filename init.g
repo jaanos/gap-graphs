@@ -22,6 +22,9 @@ ReadPackage( "gap-graphs", "lib/GraphInfo.gap" );
 ReadPackage( "gap-graphs", "lib/GeneralConstructions.gap" );
 ReadPackage( "gap-graphs", "lib/Graph6.gap" );
 
+# Dependencies with other packages
+ReadPackage( "gap-graphs", "lib/DependencyLoops.gap" );
+
 # Specific graph constructions
 ReadPackage( "gap-graphs", "lib/BasicGraphs.gap" );
 ReadPackage( "gap-graphs", "lib/SetGraphs.gap" );
