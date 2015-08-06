@@ -45,6 +45,17 @@ BindGlobal("OnLatinSquare", function(dp)
     end;
 end);
 
+# Action on the vertices of the Johnson graph J(2d, d).
+BindGlobal("OnJohnson", function(n, dp)
+    local p1, p2, F;
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    F := [s -> s, s -> Difference([1..n], s)];
+    return function(s, g)
+        return F[1^Image(p2, g)](OnSets(s, Image(p1, g)));
+    end;
+end);
+
 # Action of a wreath product on vectors over a ring.
 BindGlobal("OnZmodnZVectors", function(d, e)
     local ij;

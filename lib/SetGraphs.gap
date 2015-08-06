@@ -1,6 +1,6 @@
 # The Kneser graph on k-subsets of a set with n elements.
 BindGlobal("KneserGraph", function(arg)
-    local G, n, h, k, invt, vcs;
+    local G, n, k, invt, vcs;
     if Length(arg) < 2 then
         Error("at least two arguments expected");
         return fail;
@@ -13,21 +13,23 @@ BindGlobal("KneserGraph", function(arg)
             invt := true;
         fi;
     fi;
-    if invt then
-        vcs := Combinations([1..n], k);
-    else
-        vcs := [[1..k]];
-    fi;
     if n = 2*k then
-        G := ComplementGraph(CocktailPartyGraph(Length(vcs)/2));
-        h := List(Filtered(vcs, s -> 1 in s),
-                    s -> [s, Difference([1..n], s)]);
-        AssignVertexNames(G, List(G.names, t -> h[t[1]][t[2]]));
-    elif n < 2*k then
-        G := NullGraph(SymmetricGroup(Length(vcs)), Length(vcs));
-        AssignVertexNames(G, vcs);
+        vcs := List(Combinations([2..n], k),
+                    s -> [Difference([1..n], s), s]);
+        G := ComplementGraph(CocktailPartyGraph(Length(vcs)));
+        AssignVertexNames(G, List(G.names, t -> vcs[t[1]][t[2]]));
     else
-        G := Graph(SymmetricGroup(n), vcs, OnSets, DisjointSets, invt);
+        if invt then
+            vcs := Combinations([1..n], k);
+        else
+            vcs := [[1..k]];
+        fi;
+        if n < 2*k then
+            G := NullGraph(SymmetricGroup(Length(vcs)), Length(vcs));
+            AssignVertexNames(G, vcs);
+        else
+            G := Graph(SymmetricGroup(n), vcs, OnSets, DisjointSets, invt);
+        fi;
     fi;
     return G;
 end);
@@ -44,10 +46,80 @@ BindGlobal("DoubledOddGraph", function(d)
                     OnDoubledOdd(n, dp), SymmetrizedInclusion, true);
 end);
 
+# The Johnson graph on d-subsets of a set with n elements.
+InstallMethod(JohnsonGraphCons, "as a set graph with full automorphism group",
+    true, [IsSetGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
+    function(filter, n, d)
+        local dp;
+        if n = 2*d then
+            dp := DirectProduct(SymmetricGroup(n), Group((1,2)));
+            return Graph(dp, Combinations([1..n], d), OnJohnson(n, dp),
+                         SetIntersection(d-1), true);
+        else
+            return JohnsonGraphCons(IsSetGraph, n, d);
+        fi;
+    end);
+
+InstallMethod(JohnsonGraphCons, "as a set graph", true,
+    [IsSetGraph, IsInt, IsInt], 0, function(filter, n, d)
+        return JohnsonGraph(n, d);
+    end);
+
+InstallMethod(JohnsonGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt], 0, function(filter, n, d)
+        return JohnsonGraphCons(IsSetGraph and FullAutomorphismGroup, n, d);
+    end);
+
+InstallMethod(JohnsonGraphCons, "default", true,
+    [IsObject, IsInt, IsInt], 0, function(filter, n, d)
+        return JohnsonGraphCons(IsSetGraph, n, d);
+    end);
+
 # The folded Johnson graph.
-BindGlobal("FoldedJohnsonGraph",
-    d -> AntipodalQuotientGraph(JohnsonGraph(2*d, d))
-);
+InstallMethod(FoldedJohnsonGraphCons,
+    "as a set graph with full automorphism group", true,
+    [IsSetGraph and FullAutomorphismGroup, IsInt], 0, function(filter, d)
+        local G;
+        if d = 3 then
+            G := CompleteGraph(SymmetricGroup(10));
+            AssignVertexNames(G, List(Combinations([2..6], 3),
+                                        s -> [Difference([1..6], s), s]));
+            return G;
+        else
+            return FoldedJohnsonGraphCons(IsSetGraph, d);
+        fi;
+    end);
+
+InstallMethod(FoldedJohnsonGraphCons, "as a set graph", true,
+    [IsSetGraph, IsInt], 0, function(filter, d)
+        return AntipodalQuotientGraph(JohnsonGraphCons(IsSetGraph, 2*d, d));
+    end);
+
+InstallMethod(FoldedJohnsonGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt], 0, function(filter, d)
+        return FoldedJohnsonGraphCons(IsSetGraph and FullAutomorphismGroup, d);
+    end);
+
+InstallMethod(FoldedJohnsonGraphCons, "default", true,
+    [IsObject, IsInt], 0, function(filter, d)
+        return FoldedJohnsonGraphCons(IsSetGraph, d);
+    end);
+
+BindGlobal("FoldedJohnsonGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return FoldedJohnsonGraphCons(filt, arg[j]);
+    else
+        Error("usage: FoldedJohnsonGraph( [<filter>, ]<int> )");
+    fi;
+end);
 
 # The three Chang graphs with v=28, k=12, lm=6, mu=4
 BindGlobal("ChangGraph", function(j)
