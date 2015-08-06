@@ -1,13 +1,13 @@
 # The Kneser graph on k-subsets of a set with n elements.
 BindGlobal("KneserGraph", function(arg)
-    local n, k, invt, vcs;
+    local G, n, h, k, invt, vcs;
     if Length(arg) < 2 then
         Error("at least two arguments expected");
         return fail;
     else
         n := arg[1];
         k := arg[2];
-        if Length(arg) > 2 then
+        if Length(arg) > 2 and 2*k < n then
             invt := arg[3];
         else
             invt := true;
@@ -18,7 +18,18 @@ BindGlobal("KneserGraph", function(arg)
     else
         vcs := [[1..k]];
     fi;
-    return Graph(SymmetricGroup(n), vcs, OnSets, DisjointSets);
+    if n = 2*k then
+        G := ComplementGraph(CocktailPartyGraph(Length(vcs)/2));
+        h := List(Filtered(vcs, s -> 1 in s),
+                    s -> [s, Difference([1..n], s)]);
+        AssignVertexNames(G, List(G.names, t -> h[t[1]][t[2]]));
+    elif n < 2*k then
+        G := NullGraph(SymmetricGroup(Length(vcs)), Length(vcs));
+        AssignVertexNames(G, vcs);
+    else
+        G := Graph(SymmetricGroup(n), vcs, OnSets, DisjointSets, invt);
+    fi;
+    return G;
 end);
 
 # The Odd graph of diameter d on 2*d+1 points.
