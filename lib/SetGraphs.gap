@@ -122,13 +122,52 @@ BindGlobal("FoldedJohnsonGraph", function(arg)
 end);
 
 # The three Chang graphs with v=28, k=12, lm=6, mu=4
-BindGlobal("ChangGraph", function(j)
-    local J, S, Ss;
-    Ss := [List([1..4], i -> [i, i+4]),
-           Set(List([1..8], i -> Set([i, (i mod 8)+1]))),
-           Union(List([1..3], i -> Set([i, (i mod 3)+1])),
-                 List([1..5], i -> Set([i+3, (i mod 5)+4])))];
-    J := JohnsonGraph(8, 2);
-    S := List(Ss[j], x -> Position(J.names, x));
-    return SwitchedGraph(J, S, Stabilizer(J.group, S, OnSets));
+InstallMethod(ChangGraphCons,
+    "as a set graph with full automorphism group", true,
+    [IsSetGraph and FullAutomorphismGroup, IsInt], 0, function(filter, j)
+        local J, S, dp;
+        if j = 1 then
+            return ChangGraphCons(IsSetGraph, 1);
+        fi;
+        J := JohnsonGraphCons(IsSetGraph, 8, 2);
+        S := List(ChangGraphSwitchingSet[j], x -> Position(J.names, x));
+        dp := DirectProduct(Stabilizer(SymmetricGroup(8),
+                                    ChangGraphSwitchingSet[j], OnSetsSets),
+                            Group((1,2)));
+        return SwitchedGraph(J, S, Action(dp, J.names,
+                                        OnChang(ChangGraphInvolution[j], dp)));
+    end);
+
+InstallMethod(ChangGraphCons, "as a set graph", true,
+    [IsSetGraph, IsInt], 0, function(filter, j)
+        local J, S;
+        J := JohnsonGraphCons(IsSetGraph, 8, 2);
+        S := List(ChangGraphSwitchingSet[j], x -> Position(J.names, x));
+        return SwitchedGraph(J, S, Stabilizer(J.group, S, OnSets));
+    end);
+
+InstallMethod(ChangGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt], 0, function(filter, j)
+        return ChangGraphCons(IsSetGraph and FullAutomorphismGroup, j);
+    end);
+
+InstallMethod(ChangGraphCons, "default", true,
+    [IsObject, IsInt], 0, function(filter, j)
+        return ChangGraphCons(IsSetGraph, j);
+    end);
+
+BindGlobal("ChangGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return ChangGraphCons(filt, arg[j]);
+    else
+        Error("usage: ChangGraph( [<filter>, ]<int> )");
+    fi;
 end);

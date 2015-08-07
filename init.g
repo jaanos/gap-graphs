@@ -6,6 +6,7 @@
 ##
 
 ReadPackage( "gap-graphs", "lib/Declarations.gap" );
+ReadPackage( "gap-graphs", "lib/Constants.gap" );
 
 # Auxiliary functions
 ReadPackage( "gap-graphs", "lib/AuxiliaryFunctions.gap" );

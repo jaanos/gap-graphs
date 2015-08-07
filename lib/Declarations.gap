@@ -20,6 +20,7 @@ DeclareConstructor("LatinSquareGraphCons", [IsObject, IsObject, IsBool]);
 # Set graphs
 DeclareConstructor("JohnsonGraphCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("FoldedJohnsonGraphCons", [IsObject, IsInt]);
+DeclareConstructor("ChangGraphCons", [IsObject, IsInt]);
 
 # Vector graphs
 DeclareConstructor("HammingGraphCons", [IsObject, IsInt, IsInt]);
