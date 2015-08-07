@@ -18,6 +18,8 @@ DeclareConstructor("CompleteMultipartiteGraphCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("LatinSquareGraphCons", [IsObject, IsObject, IsBool]);
 
 # Set graphs
+DeclareConstructor("KneserGraphCons", [IsObject, IsInt, IsInt, IsBool]);
+DeclareConstructor("DoubledOddGraphCons", [IsObject, IsInt]);
 DeclareConstructor("JohnsonGraphCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("FoldedJohnsonGraphCons", [IsObject, IsInt]);
 DeclareConstructor("ChangGraphCons", [IsObject, IsInt]);

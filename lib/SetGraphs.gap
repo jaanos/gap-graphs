@@ -1,49 +1,125 @@
 # The Kneser graph on k-subsets of a set with n elements.
-BindGlobal("KneserGraph", function(arg)
-    local G, n, k, invt, vcs;
-    if Length(arg) < 2 then
-        Error("at least two arguments expected");
-        return fail;
-    else
-        n := arg[1];
-        k := arg[2];
-        if Length(arg) > 2 and 2*k < n then
-            invt := arg[3];
-        else
+InstallMethod(KneserGraphCons, "as a set graph with full automorphism group",
+    true, [IsSetGraph and FullAutomorphismGroup, IsInt, IsInt, IsBool], 0,
+    function(filter, n, k, invt)
+        local G, vcs;
+        if n < 2*k then
             invt := true;
         fi;
-    fi;
-    if n = 2*k then
-        vcs := List(Combinations([2..n], k),
-                    s -> [Difference([1..n], s), s]);
-        G := ComplementGraph(CocktailPartyGraph(Length(vcs)));
-        AssignVertexNames(G, List(G.names, t -> vcs[t[1]][t[2]]));
+        if n = 2*k then
+            vcs := List(Combinations([2..n], k),
+                        s -> [Difference([1..n], s), s]);
+            G := ComplementGraph(CocktailPartyGraph(Length(vcs)));
+            AssignVertexNames(G, List(G.names, t -> vcs[t[1]][t[2]]));
+        else
+            if invt then
+                vcs := Combinations([1..n], k);
+            else
+                vcs := [[1..k]];
+            fi;
+            if n < 2*k then
+                G := NullGraph(SymmetricGroup(Length(vcs)), Length(vcs));
+                AssignVertexNames(G, vcs);
+            else
+                G := Graph(SymmetricGroup(n), vcs, OnSets, DisjointSets, invt);
+            fi;
+        fi;
+        return G;
+    end);
+
+InstallMethod(KneserGraphCons, "as a set graph", true,
+    [IsSetGraph, IsInt, IsInt, IsBool], 0, function(filter, n, k, invt)
+        return KneserGraphCons(IsSetGraph and FullAutomorphismGroup,
+                                n, k, invt);
+    end);
+
+InstallMethod(KneserGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt, IsBool], 0,
+    function(filter, n, k, invt)
+        return KneserGraphCons(IsSetGraph and FullAutomorphismGroup,
+                                n, k, invt);
+    end);
+
+InstallMethod(KneserGraphCons, "default", true,
+    [IsObject, IsInt, IsInt, IsBool], 0, function(filter, n, k, invt)
+        return KneserGraphCons(IsSetGraph, n, k, invt);
+    end);
+
+BindGlobal("KneserGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
     else
-        if invt then
-            vcs := Combinations([1..n], k);
-        else
-            vcs := [[1..k]];
-        fi;
-        if n < 2*k then
-            G := NullGraph(SymmetricGroup(Length(vcs)), Length(vcs));
-            AssignVertexNames(G, vcs);
-        else
-            G := Graph(SymmetricGroup(n), vcs, OnSets, DisjointSets, invt);
-        fi;
+        filt := IsObject;
+        j := 1;
     fi;
-    return G;
+    if Length(arg) = j+1 then
+        return KneserGraphCons(filt, arg[j], arg[j+1], true);
+    elif Length(arg) = j+2 then
+        return KneserGraphCons(filt, arg[j], arg[j+1], arg[j+2]);
+    else
+        Error("usage: KneserGraph( [<filter>, ]<int>, <int>[, <bool>] )");
+    fi;
 end);
 
-# The Odd graph of diameter d on 2*d+1 points.
-BindGlobal("OddGraph", d -> KneserGraph(2*d+1, d, false));
+BindGlobal("OddGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return KneserGraphCons(filt, 2*arg[j]+1, arg[j], false);
+    else
+        Error("usage: OddGraph( [<filter>, ]<int> )");
+    fi;
+end);
 
 # The doubled Odd graph on 2*d+1 points.
-BindGlobal("DoubledOddGraph", function(d)
-    local n, dp;
-    n := 2*d+1;
-    dp := DirectProduct(SymmetricGroup(n), SymmetricGroup(2));
-    return Graph(dp, Union(Combinations([1..n], d), Combinations([1..n], d+1)),
-                    OnDoubledOdd(n, dp), SymmetrizedInclusion, true);
+InstallMethod(DoubledOddGraphCons,
+    "as a set graph with full automorphism group", true,
+    [IsSetGraph and FullAutomorphismGroup, IsInt], 0, function(filter, d)
+        local n, dp;
+        n := 2*d+1;
+        dp := DirectProduct(SymmetricGroup(n), SymmetricGroup(2));
+        return Graph(dp, Union(Combinations([1..n], d),
+                               Combinations([1..n], d+1)),
+                        OnDoubledOdd(n, dp), SymmetrizedInclusion, true);
+    end);
+
+InstallMethod(DoubledOddGraphCons, "as a set graph", true,
+    [IsSetGraph, IsInt], 0, function(filter, d)
+        return DoubledOddGraphCons(IsSetGraph and FullAutomorphismGroup, d);
+    end);
+
+InstallMethod(DoubledOddGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt], 0, function(filter, d)
+        return DoubledOddGraphCons(IsSetGraph and FullAutomorphismGroup, d);
+    end);
+
+InstallMethod(DoubledOddGraphCons, "default", true,
+    [IsObject, IsInt], 0, function(filter, d)
+        return DoubledOddGraphCons(IsSetGraph, d);
+    end);
+
+BindGlobal("DoubledOddGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return DoubledOddGraphCons(filt, arg[j]);
+    else
+        Error("usage: DoubledOddGraph( [<filter>, ]<int> )");
+    fi;
 end);
 
 # The Johnson graph on d-subsets of a set with n elements.
