@@ -125,17 +125,14 @@ end);
 InstallMethod(ChangGraphCons,
     "as a set graph with full automorphism group", true,
     [IsSetGraph and FullAutomorphismGroup, IsInt], 0, function(filter, j)
-        local J, S, dp;
-        if j = 1 then
-            return ChangGraphCons(IsSetGraph, 1);
-        fi;
+        local J, dp;
         J := JohnsonGraphCons(IsSetGraph, 8, 2);
-        S := List(ChangGraphSwitchingSet[j], x -> Position(J.names, x));
         dp := DirectProduct(Stabilizer(SymmetricGroup(8),
                                     ChangGraphSwitchingSet[j], OnSetsSets),
-                            Group((1,2)));
-        return SwitchedGraph(J, S, Action(dp, J.names,
-                                        OnChang(ChangGraphInvolution[j], dp)));
+                            Group(ChangGraphInvolution[j]));
+        return SwitchedGraph(J, List(ChangGraphSwitchingSet[j],
+                                        x -> Position(J.names, x)),
+                                Action(dp, J.names, OnChang(dp)));
     end);
 
 InstallMethod(ChangGraphCons, "as a set graph", true,

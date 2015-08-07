@@ -57,23 +57,21 @@ BindGlobal("OnJohnson", function(n, dp)
 end);
 
 # Action on the vertices of the Chang graphs.
-BindGlobal("OnChang", function(h, dp)
-    local p1, p2, F, S;
+BindGlobal("OnChang", function(dp)
+    local p1, p2;
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
-    S := [[1..4], [5..8]];
-    F := [s -> s, function(s)
-                    local t;
-                    s := OnSets(s, h);
-                    t := First(S, x -> IsSubset(x, s));
-                    if t = fail then
-                        return s;
-                    else
-                        return Difference(t, s);
-                    fi;
-                end];
     return function(s, g)
-        return F[1^Image(p2, g)](OnSets(s, Image(p1, g)));
+        local g2, t;
+        g2 := Image(p2, g);
+        s := OnSets(s, Image(p1, g) * g2);
+        if Order(g2) = 2 then
+            t := First([[1..4], [5..8]], x -> IsSubset(x, s));
+            if t <> fail then
+                s := Difference(t, s);
+            fi;
+        fi;
+        return s;
     end;
 end);
 
