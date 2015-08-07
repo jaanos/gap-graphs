@@ -1,18 +1,61 @@
 # The Hamming graph H(d, e) of vectors with d elements
 # over an alphabet with e elements.
-InstallMethod(HammingGraphCons, "as a vector graph", true,
-    [IsVectorGraph, IsInt, IsInt], 0, function(filter, d, e)
+InstallMethod(HammingGraphCons,
+    "as a vector graph with full automorphism group", true,
+    [IsVectorGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
+    function(filter, d, e)
         return Graph(WreathProductSymmetricGroups(e, d),
-        Elements(ZmodnZ(e)^d), OnZmodnZVectors(d, e),
-        function(x, y) return WeightVecFFE(x-y) = 1; end, true);
+                    Elements(ZmodnZ(e)^d), OnZmodnZVectors(d, e),
+                    function(x, y) return WeightVecFFE(x-y) = 1; end, true);
     end);
 
-BindGlobal("HammingGraph", function(d, e)
-    return HammingGraphCons(IsVectorGraph, d, e);
+InstallMethod(HammingGraphCons, "as a vector graph", true,
+    [IsVectorGraph, IsInt, IsInt], 0, function(filter, d, e)
+        return HammingGraphCons(IsVectorGraph and FullAutomorphismGroup, d, e);
+    end);
+
+InstallMethod(HammingGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt], 0, function(filter, d, e)
+        return HammingGraphCons(IsVectorGraph and FullAutomorphismGroup, d, e);
+    end);
+
+InstallMethod(HammingGraphCons, "default", true,
+    [IsObject, IsInt, IsInt], 0, function(filter, d, e)
+        return HammingGraphCons(IsVectorGraph, d, e);
+    end);
+
+BindGlobal("HammingGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        return HammingGraphCons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: HammingGraph( [<filter>, ]<int>, <int> )");
+    fi;
 end);
 
 # The d-dimensional hypercube
-BindGlobal("HypercubeGraph", d -> HammingGraph(d, 2));
+BindGlobal("HypercubeGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return HammingGraphCons(filt, arg[j], 2);
+    else
+        Error("usage: HypercubeGraph( [<filter>, ]<int> )");
+    fi;
+end);
     
 # The Doob graph Doob(n, d) of diameter 2*n+d
 # as a box product of n copies of the Shrikhande graph and H(d, 4).
@@ -26,14 +69,10 @@ BindGlobal("DoobGraph", function(n, d)
 end);
 
 # The halved d-cube.
-BindGlobal("HalvedCubeGraph",
-    d -> HalvedGraph(HammingGraph(d, 2))
-);
+BindGlobal("HalvedCubeGraph", d -> HalvedGraph(HammingGraph(d, 2)));
 
 # The folded d-cube.
-BindGlobal("FoldedCubeGraph",
-    d -> AntipodalQuotientGraph(HammingGraph(d, 2))
-);
+BindGlobal("FoldedCubeGraph", d -> AntipodalQuotientGraph(HammingGraph(d, 2)));
 
 # The folded halved 2d-cube.
 BindGlobal("FoldedHalvedCubeGraph",
