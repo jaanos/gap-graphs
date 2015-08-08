@@ -196,16 +196,59 @@ DeclareSynonym("HalvedFoldedCubeGraph", FoldedHalvedCubeGraph);
 # The Brouwer graph Br(q) of pairs of 3-dimensional vectors over F_q,
 # with two pairs being adjacent whenever the difference of the first vectors
 # equals the cross product of the second vectors.
+InstallMethod(BrouwerGraphCons,
+    "as a vector graph with full automorphism group", true,
+    [IsVectorGraph and FullAutomorphismGroup, IsInt], 0, function(filter, q)
+        local G, dp, wp;
+        if q = 2 then
+            G := FoldedCubeGraph(IsVectorGraph and FullAutomorphismGroup, 7);
+            AssignVertexNames(G, List(G.names, function(p)
+                                    local t, u, v;
+                                    v := First(p, s -> WeightVecFFE(s-1) <= 3);
+                                    t := List(Filtered([1..7], i -> v[i] = 2),
+                                                j -> IntToBits(j, 3)*Z(2)^0);
+                                    if Length(t) <= 1 then
+                                        u := [0*Z(2), 0*Z(2), 0*Z(2)];
+                                    elif Length(t) = 2 then
+                                        u := VectorProduct(t[1], t[2]);
+                                    else
+                                        u := VectorProduct(t[1], t[2])
+                                            + VectorProduct(t[1], t[3])
+                                            + VectorProduct(t[2], t[3]);
+                                    fi;
+                                    if Length(t) = 0 then
+                                        t[1] := u;
+                                    fi;
+                                    return [u, Sum(t)];
+                                end));
+            return G;
+        else
+            wp := WreathProduct(FieldAdditionPermutationGroup(q),
+                                MatrixColumnEvenPermutationGroup(2, 3));
+            dp := DirectProduct(wp, GL(3, q),
+                                FieldExponentiationPermutationGroup(q));
+            return Graph(dp, Elements(GF(q)^[2,3]), OnVectorPairs(q, dp, wp),
+                function(x, y)
+                    return x <> y and x[1] - y[1] = VectorProduct(x[2], y[2]);
+                end, true);
+        fi;
+    end);
+
 InstallMethod(BrouwerGraphCons, "as a vector graph", true,
     [IsVectorGraph, IsInt], 0, function(filter, q)
         local dp, wp;
         wp := WreathProduct(FieldAdditionPermutationGroup(q),
                             MatrixColumnEvenPermutationGroup(2, 3));
-        dp := DirectProduct(wp, GL(3, q));
+        dp := DirectProduct(wp, Group(IdentityMat(3, GF(q))), Group(()));
         return Graph(dp, Elements(GF(q)^[2,3]), OnVectorPairs(q, dp, wp),
             function(x, y)
                 return x <> y and x[1] - y[1] = VectorProduct(x[2], y[2]);
             end, true);
+    end);
+
+InstallMethod(BrouwerGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt], 0, function(filter, q)
+        return BrouwerGraphCons(IsVectorGraph and FullAutomorphismGroup, q);
     end);
 
 InstallMethod(BrouwerGraphCons, "as a vector graph", true,

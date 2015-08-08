@@ -85,20 +85,22 @@ BindGlobal("OnWreathProduct", function(d, e, wp)
     end;
 end);
 
-# Action of a wreath product on pairs of vectors with 3 elements.
+# Action on pairs of vectors with 3 elements.
 BindGlobal("OnVectorPairs", function(q, dp, wp)
-    local A, p, p1, p2;
+    local A, F, p, p1, p2, p3;
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
+    p3 := Projection(dp, 3);
     p := Projection(wp);
     A := OnWreathProduct(6, q, wp);
+    F := Elements(GF(q));
     return function(M, g)
-        local v, w, g1, g2;
+        local u, v, w, g1, g2;
         g1 := Image(p1, g);
         g2 := Image(p2, g);
-        v := Permuted(Concatenation(M), Image(p, g1));
-        w := List(A(Concatenation(List(M, r -> List(r, x -> FFEToInt(x, q)))),
-                    g1), y -> IntToFFE(y, q));
+        u := List(Concatenation(M), x -> Position(F, x)^Image(p3, g));
+        v := Permuted(List(u, x -> F[x]), Image(p, g1));
+        w := List(A(u, g1), y -> F[y]);
         return [Determinant(g2)^-1 * g2 *
                     (w{[1..3]} + VectorProduct(v{[4..6]}, w{[4..6]})),
                 TransposedMat(g2)^-1 * w{[4..6]}];
