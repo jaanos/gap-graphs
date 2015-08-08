@@ -99,15 +99,99 @@ BindGlobal("DoobGraph", function(arg)
 end);
 
 # The halved d-cube.
-BindGlobal("HalvedCubeGraph", d -> HalvedGraph(HammingGraph(d, 2)));
+BindGlobal("HalvedCubeGraph", function(arg)
+    local G, j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        if arg[j] = 4 then
+            G := CocktailPartyGraph(4);
+            AssignVertexNames(G, List(G.names,
+                t -> List([1..4], function(i)
+                                    if t[1] = 1 or i = 1 or i = t[1] then
+                                        return t[2];
+                                    else
+                                        return 3 - t[2];
+                                    fi;
+                                  end)));
+            return G;
+        else
+            return HalvedGraph(HammingGraphCons(filt, arg[j], 2));
+        fi;
+    else
+        Error("usage: HalvedCubeGraph( [<filter>, ]<int> )");
+    fi;
+end);
 
 # The folded d-cube.
-BindGlobal("FoldedCubeGraph", d -> AntipodalQuotientGraph(HammingGraph(d, 2)));
+BindGlobal("FoldedCubeGraph", function(arg)
+    local G, j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        if arg[j] = 4 then
+            G := CompleteMultipartiteGraph(2, 4);
+            AssignVertexNames(G, List(List(G.names, t -> List([1..4],
+                        function(i)
+                            if t[1] = 1 and (t[2] = 1 or i = 1 or i = t[2])
+                                or t[1] = 2 and i <> t[2] then
+                                    return 1;
+                            else
+                                    return 2;
+                            fi;
+                        end)), s -> Set([s, 3-s])));
+            return G;
+        else
+            return AntipodalQuotientGraph(HammingGraphCons(filt, arg[j], 2));
+        fi;
+    else
+        Error("usage: FoldedCubeGraph( [<filter>, ]<int> )");
+    fi;
+end);
 
 # The folded halved 2d-cube.
-BindGlobal("FoldedHalvedCubeGraph",
-    d -> AntipodalQuotientGraph(HalvedGraph(HammingGraph(2*d, 2)))
-);
+BindGlobal("FoldedHalvedCubeGraph", function(arg)
+    local G, j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        if arg[j] = 3 then
+            G := CompleteGraph(SymmetricGroup(16));
+            AssignVertexNames(G, List(Tuples([1,2], 4), function(t)
+                    if WeightVecFFE(t-1) mod 2 = 0 then
+                        return [Concatenation([1,1], t),
+                                Concatenation([2,2], 3-t)];
+                    else
+                        return [Concatenation([1,2], t),
+                                Concatenation([2,1], 3-t)];
+                    fi;
+                end));
+            return G;
+        else
+            return AntipodalQuotientGraph(HalvedGraph(HammingGraphCons(filt,
+                                                                2*arg[j], 2)));
+        fi;
+    else
+        Error("usage: FoldedHalvedCubeGraph( [<filter>, ]<int> )");
+    fi;
+end);
+
+DeclareSynonym("HalvedFoldedCubeGraph", FoldedHalvedCubeGraph);
 
 # The Brouwer graph Br(q) of pairs of 3-dimensional vectors over F_q,
 # with two pairs being adjacent whenever the difference of the first vectors
