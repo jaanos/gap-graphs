@@ -7,6 +7,9 @@ end);
 InstallMethod(ProductGraphCons, "without names", true,
     [NoVertexNames, IsList, IsFunction], 0, function(filter, Gs, F)
         local dp;
+        if not ForAll(Gs, IsGraph) then
+            TryNextMethod();
+        fi;
         dp := DirectProduct(List(Gs, H -> H.group));
         return Graph(dp, Cartesian(List(Gs, H -> [1..H.order])),
             OnProduct(Length(Gs), dp), F, true);
@@ -43,6 +46,46 @@ BindGlobal("ProductGraph", function(arg)
     fi;
 end);
 
+# A generic power graph, without naming vertices.
+InstallMethod(PowerGraphCons, "without names", true,
+    [NoVertexNames, IsRecord, IsInt, IsFunction], 0, function(filter, G, n, F)
+        local wp;
+        if not IsGraph(G) then
+            TryNextMethod();
+        fi;
+        wp := WreathProduct(G.group, SymmetricGroup(n));
+        return Graph(wp, Tuples([1..G.order], n),
+                     OnWreathProduct(n, G.order, wp), F, true);
+    end);
+
+# A generic power graph.
+InstallMethod(PowerGraphCons, "with names", true,
+    [IsObject, IsRecord, IsInt, IsFunction], 0, function(filter, G, n, F)
+        local H;
+        H := PowerGraphCons(NoVertexNames, G, n, F);
+        if not "names" in RecNames(G) then
+            G.names := [1..G.order];
+        fi;
+        AssignVertexNames(H, List(H.names, f -> G.names{f}));
+        return H;
+    end);
+
+BindGlobal("PowerGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+2 then
+        return PowerGraphCons(filt, arg[j], arg[j+1], arg[j+2]);
+    else
+        Error("usage: PowerGraph( [<filter>, ]<graph>, <int>, <func> )");
+    fi;
+end);
+
 # The box product of two or more graphs.
 BindGlobal("BoxProductGraph", function(arg)
     local Gs, j, filt;
@@ -61,8 +104,31 @@ BindGlobal("BoxProductGraph", function(arg)
     return ProductGraph(filt, Gs, function(x, y)
         local l;
         l := List([1..Length(Gs)], i -> Distance(Gs[i], x[i], y[i]));
-        return WeightVecFFE(l) = 1 and Sum(l) = 1;
+        return WeightVecFFE(l) = 1 and 1 in l;
     end);
+end);
+
+# The box power of a graph.
+BindGlobal("BoxPowerGraph", function(arg)
+    local G, Gs, j, n, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        G := arg[j];
+        n := arg[j+1];
+        return PowerGraphCons(filt, G, n, function(x, y)
+            local l;
+            l := List([1..n], i -> Distance(G, x[i], y[i]));
+            return WeightVecFFE(l) = 1 and 1 in l;
+        end);
+    else
+        Error("usage: BoxPowerGraph( [<filter>, ]<graph>, <int> )");
+    fi;
 end);
 
 # The cross product of two or more graphs.
@@ -81,10 +147,30 @@ BindGlobal("CrossProductGraph", function(arg)
         Gs := arg{[j..Length(arg)]};
     fi;
     return ProductGraph(filt, Gs, function(x, y)
-        local l;
-        l := List([1..Length(Gs)], i -> Distance(Gs[i], x[i], y[i]));
-        return Minimum(l) = 1 and Maximum(l) = 1;
+        return ForAll([1..Length(Gs)],
+                        i -> IsVertexPairEdge(Gs[i], x[i], y[i]));
     end);
+end);
+
+# The cross power of a graph.
+BindGlobal("CrossPowerGraph", function(arg)
+    local G, Gs, j, n, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        G := arg[j];
+        n := arg[j+1];
+        return PowerGraphCons(filt, G, n, function(x, y)
+            return ForAll([1..n], i -> IsVertexPairEdge(G, x[i], y[i]));
+        end);
+    else
+        Error("usage: CrossPowerGraph( [<filter>, ]<graph>, <int> )");
+    fi;
 end);
 
 # The strong product of two or more graphs.
@@ -104,8 +190,29 @@ BindGlobal("StrongProductGraph", function(arg)
     fi;
     return ProductGraph(filt, Gs, function(x, y)
         return Maximum(List([1..Length(Gs)],
-            i -> Distance(Gs[i], x[i], y[i]))) = 1;
+                            i -> Distance(Gs[i], x[i], y[i]))) = 1;
     end);
+end);
+
+# The strong power of a graph.
+BindGlobal("StrongPowerGraph", function(arg)
+    local G, Gs, j, n, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        G := arg[j];
+        n := arg[j+1];
+        return PowerGraphCons(filt, G, n, function(x, y)
+            return Maximum(List([1..n], i -> Distance(G, x[i], y[i]))) = 1;
+        end);
+    else
+        Error("usage: StrongPowerGraph( [<filter>, ]<graph>, <int> )");
+    fi;
 end);
 
 # The join of a list of graphs, without naming vertices.

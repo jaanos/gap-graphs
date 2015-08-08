@@ -7,6 +7,7 @@ DeclareFilter("IsConjugacyClassGraph");
 
 # General constructions
 DeclareConstructor("ProductGraphCons", [IsObject, IsList, IsFunction]);
+DeclareConstructor("PowerGraphCons", [IsObject, IsRecord, IsInt, IsFunction]);
 DeclareConstructor("GraphJoinCons", [IsObject, IsList]);
 DeclareConstructor("ExtendedBipartiteDoubleGraphCons", [IsObject, IsRecord]);
 DeclareConstructor("AntipodalQuotientGraphCons", [IsObject, IsRecord]);

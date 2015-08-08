@@ -91,9 +91,9 @@ The following graphs are currently supported:
   * Complete multipartite graphs
   * Kneser graphs Kn(n, k)
 * Graph derivation:
-  * Box (Cartesian) product
-  * Cross (tensor) product
-  * Strong product
+  * Box (Cartesian) product and power
+  * Cross (tensor) product and power
+  * Strong product and power
   * Graph join
   * Bipartite double
   * Extended bipartite double

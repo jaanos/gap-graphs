@@ -76,16 +76,12 @@ BindGlobal("OnChang", function(dp)
 end);
 
 # Action of a wreath product on vectors over a ring.
-BindGlobal("OnZmodnZVectors", function(d, e)
-    local ij;
-    ij := Cartesian([1..d], [0..e-1]);
-    return function(vec, g)
-        local ji, v, w, vw;
-        ji := ij{OnTuples([1..d*e], g)};
-        vw := List([1..d], i -> ji[Int(vec[i])+(i-1)*e+1]);
-        v := List(vw, x -> ZmodnZObj(x[2], e));
-        w := List(vw, x -> x[1]);
-        return v{List([1..d], i -> Position(w, i))};
+BindGlobal("OnWreathProduct", function(d, e, wp)
+    local p, q;
+    p := Projection(wp);
+    q := [0..d-1]*e;
+    return function(v, g)
+        return Permuted(List([0..d-1], i -> (v[i+1]+i*e)^g), Image(p, g)) - q;
     end;
 end);
 

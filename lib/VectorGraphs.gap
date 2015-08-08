@@ -4,9 +4,8 @@ InstallMethod(HammingGraphCons,
     "as a vector graph with full automorphism group", true,
     [IsVectorGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
     function(filter, d, e)
-        return Graph(WreathProductSymmetricGroups(e, d),
-                    Elements(ZmodnZ(e)^d), OnZmodnZVectors(d, e),
-                    function(x, y) return WeightVecFFE(x-y) = 1; end, true);
+        return BoxPowerGraph(NoVertexNames,
+                             CompleteGraph(SymmetricGroup(e), e), d);
     end);
 
 InstallMethod(HammingGraphCons, "as a vector graph", true,
