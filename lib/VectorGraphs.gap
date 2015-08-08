@@ -58,13 +58,44 @@ end);
     
 # The Doob graph Doob(n, d) of diameter 2*n+d
 # as a box product of n copies of the Shrikhande graph and H(d, 4).
-BindGlobal("DoobGraph", function(n, d)
-    local l;
-    l := ListWithIdenticalEntries(n, ShrikhandeGraphCons(IsVectorGraph));
-    if d > 0 then
-        Add(l, HammingGraph(d, 4));
+InstallMethod(DoobGraphCons,
+    "as a vector graph with full automorphism group", true,
+    [IsVectorGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
+    function(filter, n, d)
+        return BoxProductGraph(
+            BoxPowerGraph(ShrikhandeGraphCons(IsVectorGraph), n),
+            HammingGraphCons(IsVectorGraph and FullAutomorphismGroup, d, 4));
+    end);
+
+InstallMethod(DoobGraphCons, "as a vector graph", true,
+    [IsVectorGraph, IsInt, IsInt], 0, function(filter, n, d)
+        return DoobGraphCons(IsVectorGraph and FullAutomorphismGroup, n, d);
+    end);
+
+InstallMethod(DoobGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt], 0, function(filter, n, d)
+        return DoobGraphCons(IsVectorGraph and FullAutomorphismGroup, n, d);
+    end);
+
+InstallMethod(DoobGraphCons, "default", true,
+    [IsObject, IsInt, IsInt], 0, function(filter, n, d)
+        return DoobGraphCons(IsVectorGraph, n, d);
+    end);
+
+BindGlobal("DoobGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
     fi;
-    return BoxProductGraph(l);
+    if Length(arg) = j+1 then
+        return DoobGraphCons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: DoobGraph( [<filter>, ]<int>, <int> )");
+    fi;
 end);
 
 # The halved d-cube.

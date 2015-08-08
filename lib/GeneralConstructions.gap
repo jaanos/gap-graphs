@@ -10,6 +10,9 @@ InstallMethod(ProductGraphCons, "without names", true,
         if not ForAll(Gs, IsGraph) then
             TryNextMethod();
         fi;
+        if Length(Gs) = 0 then
+            return AdjFunGraph([[]], ReturnFalse);
+        fi;
         dp := DirectProduct(List(Gs, H -> H.group));
         return Graph(dp, Cartesian(List(Gs, H -> [1..H.order])),
             OnProduct(Length(Gs), dp), F, true);
@@ -52,6 +55,9 @@ InstallMethod(PowerGraphCons, "without names", true,
         local wp;
         if not IsGraph(G) then
             TryNextMethod();
+        fi;
+        if n = 0 then
+            return AdjFunGraph([[]], ReturnFalse);
         fi;
         wp := WreathProduct(G.group, SymmetricGroup(n));
         return Graph(wp, Tuples([1..G.order], n),
