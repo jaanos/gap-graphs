@@ -196,19 +196,67 @@ DeclareSynonym("HalvedFoldedCubeGraph", FoldedHalvedCubeGraph);
 # The Brouwer graph Br(q) of pairs of 3-dimensional vectors over F_q,
 # with two pairs being adjacent whenever the difference of the first vectors
 # equals the cross product of the second vectors.
-BindGlobal("BrouwerGraph", function(q)
-    return Graph(WreathProduct(FieldAdditionPermutationGroup(q),
-            MatrixColumnEvenPermutationGroup(2, 3)), Elements(GF(q)^[2,3]),
-        OnVectorPairs(q), function(x, y)
-            return x <> y and x[1] - y[1] = VectorProduct(x[2], y[2]);
-        end, true);
+InstallMethod(BrouwerGraphCons, "as a vector graph", true,
+    [IsVectorGraph, IsInt], 0, function(filter, q)
+        local dp, wp;
+        wp := WreathProduct(FieldAdditionPermutationGroup(q),
+                            MatrixColumnEvenPermutationGroup(2, 3));
+        dp := DirectProduct(wp, GL(3, q));
+        return Graph(dp, Elements(GF(q)^[2,3]), OnVectorPairs(q, dp, wp),
+            function(x, y)
+                return x <> y and x[1] - y[1] = VectorProduct(x[2], y[2]);
+            end, true);
+    end);
+
+InstallMethod(BrouwerGraphCons, "as a vector graph", true,
+    [IsObject, IsInt], 0, function(filter, q)
+        return BrouwerGraphCons(IsVectorGraph, q);
+    end);
+
+BindGlobal("BrouwerGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return BrouwerGraphCons(filt, arg[j]);
+    else
+        Error("usage: BrouwerGraph( [<filter>, ]<int> )");
+    fi;
 end);
 
 # The Pasechnik graph Pa(q) as the extended bipartite double
 # of the Brouwer graph Br(q).
-BindGlobal("PasechnikGraph",
-    q -> ExtendedBipartiteDoubleGraph(BrouwerGraph(q))
-);
+InstallMethod(PasechnikGraphCons, "as a vector graph", true,
+    [IsVectorGraph, IsInt], 0, function(filter, q)
+        return ExtendedBipartiteDoubleGraph(BrouwerGraphCons(IsVectorGraph,
+                                                             q));
+    end);
+
+InstallMethod(PasechnikGraphCons, "as a vector graph", true,
+    [IsObject, IsInt], 0, function(filter, q)
+        return PasechnikGraphCons(IsVectorGraph, q);
+    end);
+
+BindGlobal("PasechnikGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return PasechnikGraphCons(filt, arg[j]);
+    else
+        Error("usage: PasechnikGraph( [<filter>, ]<int> )");
+    fi;
+end);
 
 # The additive symplectic cover of the complete graph on q^{2n} vertices.
 BindGlobal("AdditiveSymplecticCoverGraph", function(arg)

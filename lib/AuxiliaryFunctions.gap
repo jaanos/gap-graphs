@@ -4,18 +4,18 @@ BindGlobal("IsAFilter", x -> IsFilter(x) or x = IsObject);
 # A bijective map from elements of F_q to integers from [0..q-1].
 BindGlobal("FFEToInt", function(x, q)
     if IsZero(x) then
-        return 0;
+        return 1;
     else
-        return LogFFE(x, Z(q))+1;
+        return LogFFE(x, Z(q))+2;
     fi;
 end);
 
 # A bijective map from integers from [0..q-1] to elements of F_q.
 BindGlobal("IntToFFE", function(x, q)
-    if x = 0 then
+    if x = 1 then
         return 0*Z(q);
     else
-        return Z(q)^(x-1);
+        return Z(q)^(x-2);
     fi;
 end);
 

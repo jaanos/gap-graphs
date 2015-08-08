@@ -86,20 +86,22 @@ BindGlobal("OnWreathProduct", function(d, e, wp)
 end);
 
 # Action of a wreath product on pairs of vectors with 3 elements.
-BindGlobal("OnVectorPairs", function(q)
-    local ij;
-    ij := Cartesian([1..2], [1..3], [0..q-1]);
+BindGlobal("OnVectorPairs", function(q, dp, wp)
+    local A, p, p1, p2;
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    p := Projection(wp);
+    A := OnWreathProduct(6, q, wp);
     return function(M, g)
-        local ji, v, w, vw;
-        ji := ij{OnTuples([1..6*q], g)};
-        vw := List([1..2],
-            i -> List([1..3],
-                j -> ji[FFEToInt(M[i][j], q)+(j-1)*q+(i-1)*q*3+1]));
-        v := List(vw, r -> List(r, x -> IntToFFE(x[3], q)));
-        w := List(vw, r -> List(r, x -> x[2]));
-        v := List([1..2], i -> v[i]{List([1..3], j -> Position(w[i], j))});
-        w := List([1..2], i -> M[i]{List([1..3], j -> Position(w[i], j))});
-        return [v[1] + VectorProduct(w[2], v[2]), v[2]];
+        local v, w, g1, g2;
+        g1 := Image(p1, g);
+        g2 := Image(p2, g);
+        v := Permuted(Concatenation(M), Image(p, g1));
+        w := List(A(Concatenation(List(M, r -> List(r, x -> FFEToInt(x, q)))),
+                    g1), y -> IntToFFE(y, q));
+        return [Determinant(g2)^-1 * g2 *
+                    (w{[1..3]} + VectorProduct(v{[4..6]}, w{[4..6]})),
+                TransposedMat(g2)^-1 * w{[4..6]}];
     end;
 end);
 

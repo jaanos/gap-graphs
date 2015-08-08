@@ -28,6 +28,8 @@ DeclareConstructor("ChangGraphCons", [IsObject, IsInt]);
 # Vector graphs
 DeclareConstructor("HammingGraphCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("DoobGraphCons", [IsObject, IsInt, IsInt]);
+DeclareConstructor("BrouwerGraphCons", [IsObject, IsInt]);
+DeclareConstructor("PasechnikGraphCons", [IsObject, IsInt]);
 
 # Named graphs
 DeclareConstructor("ShrikhandeGraphCons", [IsObject]);
