@@ -318,7 +318,7 @@ BindGlobal("ExtendedBipartiteDoubleGraph", function(arg)
         j := 1;
     fi;
     if Length(arg) = j then
-        return ExtendedBipartiteDoubleGraphCons(IsObject, arg[j]);
+        return ExtendedBipartiteDoubleGraphCons(filt, arg[j]);
     else
         Error("usage: ExtendedBipartiteDoubleGraph( [<filter>, ]<graph> )");
     fi;
@@ -412,7 +412,7 @@ BindGlobal("AntipodalQuotientGraph", function(arg)
         j := 1;
     fi;
     if Length(arg) = j then
-        return AntipodalQuotientGraphCons(IsObject, arg[j]);
+        return AntipodalQuotientGraphCons(filt, arg[j]);
     else
         Error("usage: AntipodalQuotientGraph( [<filter>, ]<graph> )");
     fi;
