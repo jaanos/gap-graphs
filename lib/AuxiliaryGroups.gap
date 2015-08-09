@@ -1,7 +1,7 @@
 # The field addition group as a permutation group.
 BindGlobal("FieldAdditionPermutationGroup",
     q -> Group(List(Elements(Basis(GF(q))),
-        g -> Permutation(g, GF(q), function(x, y) return x+y; end)))
+        g -> Permutation(g, FiniteFieldCanonicalOrdering(q), \+)))
 );
 
 # The field multiplication group as a permutation group.
@@ -11,7 +11,8 @@ BindGlobal("FieldMultiplicationPermutationGroup",
 
 # The field exponentiation group as a permutation group.
 BindGlobal("FieldExponentiationPermutationGroup",
-    q -> Action(Group(FrobeniusAutomorphism(GF(q))), GF(q))
+    q -> Action(Group(FrobeniusAutomorphism(GF(q))),
+                FiniteFieldCanonicalOrdering(q))
 );
 
 # The group of even permutations of columns of a matrix

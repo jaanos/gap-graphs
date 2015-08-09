@@ -1,3 +1,8 @@
+# Action on a finite field element.
+BindGlobal("OnFFE", q -> function(x, g)
+    return IntToFFE(FFEToInt(x, q)^g, q);
+end);
+
 # Action of a group on a signed point.
 BindGlobal("OnSignedPoints", function(dp, signs)
     local p1, p2;
@@ -87,45 +92,42 @@ end);
 
 # Action on pairs of vectors with 3 elements.
 BindGlobal("OnVectorPairs", function(q, dp, wp)
-    local A, F, p, p1, p2, p3;
+    local A, p, p1, p2, p3;
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     p3 := Projection(dp, 3);
     p := Projection(wp);
     A := OnWreathProduct(6, q, wp);
-    F := Elements(GF(q));
     return function(M, g)
         local u, v, w, g1, g2;
         g1 := Image(p1, g);
         g2 := Image(p2, g);
-        u := List(Concatenation(M), x -> Position(F, x)^Image(p3, g));
-        v := Permuted(List(u, x -> F[x]), Image(p, g1));
-        w := List(A(u, g1), y -> F[y]);
+        u := List(Concatenation(M), x -> FFEToInt(x, q)^Image(p3, g));
+        v := Permuted(List(u, x -> IntToFFE(x, q)), Image(p, g1));
+        w := List(A(u, g1), x -> IntToFFE(x, q));
         return [Determinant(g2)^-1 * g2 *
                     (w{[1..3]} + VectorProduct(v{[4..6]}, w{[4..6]})),
                 TransposedMat(g2)^-1 * w{[4..6]}];
     end;
 end);
 
-# Action of a wreath product on matrices over a field.
+# Action on matrices over a field.
 BindGlobal("OnMatrices", function(q, d, e, dp)
-    local F, N, p1, p2, pm;
-    F := Elements(GF(q));
-    N := Position(F, 0*Z(q));
+    local F, p1, p2, pm;
+    F := OnFFE(q);
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     pm := List([0..d-1], i -> List([1..e], j -> Projection(dp, e*i+j+2)));
     return function(M, g)
         return Image(p1, g)*M*Image(p2, g) +
-            List(pm, r -> List(r, p -> F[N^Image(p, g)]));
+            List(pm, r -> List(r, p -> F(0*Z(q), Image(p, g))));
     end;
 end);
 
-# Action of a wreath product on Hermitean matrices over a field.
+# Action on Hermitean matrices over a field.
 BindGlobal("OnHermiteanMatrices", function(r, d, dp)
-    local C, F, K, N, p1, pm;
-    F := Elements(GF(r));
-    N := Position(F, 0*Z(r));
+    local C, F, K, p1, pm;
+    F := OnFFE(r);
     K := Elements(GF(r^2));
     C := List(K, x -> Conjugates(GF(r^2), GF(r), x)[2]);
     p1 := Projection(dp, 1);
@@ -133,8 +135,9 @@ BindGlobal("OnHermiteanMatrices", function(r, d, dp)
     return function(M, g)
         local H;
         H := Image(p1, g);
-        return List(H, r -> List(r, x -> C[Position(K, x)]))*M*TransposedMat(H)
-            + ToHermitean(List(pm, r -> List(r, p -> F[N^Image(p, g)])), r);
+        return List(H, v -> List(v, x -> C[Position(K, x)]))*M*TransposedMat(H)
+            + ToHermitean(List(pm, v -> List(v, p -> F(0*Z(r), Image(p, g)))),
+                            r);
     end;
 end);
 
@@ -179,66 +182,57 @@ end);
 
 # Action on the vertices of Paley graphs.
 BindGlobal("OnPaley", function(q, dp)
-    local F, N, p1, p2, p3;
-    F := Elements(GF(q));
-    N := Position(F, 0*Z(q));
+    local F, p1, p2, p3;
+    F := OnFFE(q);
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     p3 := Projection(dp, 3);
     return function(x, g)
-        return (F[Position(F, x)^Image(p3, g)] + F[N^Image(p1, g)])
-                * Z(q)^((q-1)^Image(p2, g));
+        return (F(x, Image(p3, g) * Image(p1, g))) * Z(q)^((q-1)^Image(p2, g));
     end;
 end);
 
 # Action on the vertices of Preparata graphs.
 BindGlobal("OnPreparata", function(q, s, dp)
-    local F, N, p1, p2, p3, p4;
-    F := Elements(GF(q));
-    N := Position(F, 0*Z(q));
+    local F, p1, p2, p3, p4;
+    F := OnFFE(q);
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     p3 := Projection(dp, 3);
     p4 := Projection(dp, 4);
     return function(t, g)
-        local w, z;
+        local z;
         z := Z(q)^((q-1)^Image(p1, g));
-        w := [z*t[1], t[2] + 2^Image(p2, g),
-              t[3]*z^(s+1) + F[N^Image(p3, g)]];
-        return List(w, x -> F[Position(F, x)^Image(p4, g)]);
+        return List([z*t[1], t[2] + 2^Image(p2, g),
+                     F(t[3]*z^(s+1), Image(p3, g))], x -> F(x, Image(p4, g)));
     end;
 end);
 
 # Action on the vertices of Kasami graphs.
 BindGlobal("OnKasami", function(q, s, dp)
-    local Fq, Fs, Nq, Ns, p1, p2, p3;
-    Fq := Elements(GF(q));
-    Nq := Position(Fq, 0*Z(q));
-    Fs := Elements(GF(s));
-    Ns := Position(Fs, 0*Z(s));
+    local Fq, Fs, p1, p2, p3;
+    Fq := OnFFE(q);
+    Fs := OnFFE(s);
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     p3 := Projection(dp, 3);
     return function(v, g)
-        local w;
-        w := [v[1] + Fq[Nq^Image(p1, g)],
-              v[2] + Fs[Ns^Image(p2, g)]];
-        return List(w, x -> Fs[Position(Fs, x)^Image(p3, g)]);
+        return List([v[1] + Fq(0*Z(q), Image(p1, g)), Fs(v[2], Image(p2, g))],
+                    x -> Fs(x, Image(p3, g)));
     end;
 end);
 
 # Action on vertices of additive symplectic covers of complete graphs.
 BindGlobal("OnAdditiveSymplecticCover", function(q, m, B, dp)
-    local F, N, p1, p2, pr;
-    F := Elements(GF(q));
-    N := Position(F, 0*Z(q));
+    local F, p1, p2, pr;
+    F := OnFFE(q);
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     pr := List([1..m], i -> Projection(dp, i+2));
     return function(p, g)
         local z;
-        z := List([1..m], i -> F[N^Image(pr[i], g)]);
-        return [p[1] + F[N^Image(p2, g)] + p[2]*B*z,
+        z := List([1..m], i -> F(0*Z(q), Image(pr[i], g)));
+        return [p[1] + F(0*Z(q), Image(p2, g)) + p[2]*B*z,
                 p[2]*Image(p1, g) + z];
     end;
 end);
@@ -246,7 +240,7 @@ end);
 # Action on vertices of multiplicative symplectic covers of complete graphs.
 BindGlobal("OnMultiplicativeSymplecticCover", function(q, dp)
     local F, p1, p2, p3;
-    F := Elements(GF(q));
+    F := OnFFE(q);
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     p3 := Projection(dp, 3);
@@ -255,20 +249,19 @@ BindGlobal("OnMultiplicativeSymplecticCover", function(q, dp)
         g2 := Image(p2, g);
         g3 := Image(p3, g);
         return OnSets(Set(List(s, p -> List(Permuted([1,2], g2),
-                                            i -> F[Position(F, p[i])^g3]))),
+                                            i -> F(p[i], g3)))),
                       Image(p1, g));
     end;
 end);
 
 # Action on the vertices of affine polar graphs.
 BindGlobal("OnAffine", function(q, d, dp)
-    local F, N, p1, pr;
-    F := Elements(GF(q));
-    N := Position(F, 0*Z(q));
+    local F, p1, pr;
+    F := OnFFE(q);
     p1 := Projection(dp, 1);
     pr := List([1..d], i -> Projection(dp, i+1));
     return function(v, g)
-        return v^Image(p1, g) + List([1..d], i -> F[N^Image(pr[i], g)]);;
+        return v^Image(p1, g) + List([1..d], i -> F(0*Z(q), Image(pr[i], g)));;
     end;
 end);
 
@@ -320,17 +313,16 @@ end);
 
 # Action on points and lines of Hall planes.
 BindGlobal("OnHallPlane", function(q, dp)
-    local p5, p6, p7, p8, pr, A, F, N;
+    local p5, p6, p7, p8, pr, A, F;
     pr := List([0,1], i -> List([1,2], j -> Projection(dp, 2*i+j)));
     p5 := Projection(dp, 5);
     p6 := Projection(dp, 6);
     p7 := Projection(dp, 7);
-    F := Elements(GF(q));
-    N := Position(F, 0*Z(q));
+    F := OnFFE(q);
     A := function(p, g)
         local s, M;
         M := Image(p7, g);
-        p := List(p, z -> [z[1] + F[N^Image(p5, g)]*z[2],
+        p := List(p, z -> [z[1] + F(0*Z(q), Image(p5, g))*z[2],
                             z[2]*(Z(q)^((q-1)^Image(p6, g)))]);
         if p = [] then
             if IsZero(M[2][1]) then
@@ -349,7 +341,7 @@ BindGlobal("OnHallPlane", function(q, dp)
                 return [[(M[2][1] + p[1][1]*M[2][2])/s, 0*Z(q)]];
             fi;
         else
-            return M*p + List(pr, r -> List(r, e -> F[N^Image(e, g)]));
+            return M*p + List(pr, r -> List(r, e -> F(0*Z(q), Image(e, g))));
         fi;
     end;
     return OnPointsOrLines(A, x -> Length(x) > 2);
