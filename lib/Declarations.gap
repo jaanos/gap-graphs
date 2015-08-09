@@ -28,6 +28,9 @@ DeclareConstructor("ChangGraphCons", [IsObject, IsInt]);
 # Vector graphs
 DeclareConstructor("HammingGraphCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("DoobGraphCons", [IsObject, IsInt, IsInt]);
+DeclareConstructor("HalvedCubeGraphCons", [IsObject, IsInt]);
+DeclareConstructor("FoldedCubeGraphCons", [IsObject, IsInt]);
+DeclareConstructor("FoldedHalvedCubeGraphCons", [IsObject, IsInt]);
 DeclareConstructor("BrouwerGraphCons", [IsObject, IsInt]);
 DeclareConstructor("PasechnikGraphCons", [IsObject, IsInt]);
 

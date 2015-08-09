@@ -99,17 +99,11 @@ BindGlobal("DoobGraph", function(arg)
 end);
 
 # The halved d-cube.
-BindGlobal("HalvedCubeGraph", function(arg)
-    local G, j, filt;
-    if IsAFilter(arg[1]) then
-        filt := arg[1];
-        j := 2;
-    else
-        filt := IsObject;
-        j := 1;
-    fi;
-    if Length(arg) = j then
-        if arg[j] = 4 then
+InstallMethod(HalvedCubeGraphCons,
+    "as a vector graph with full automorphism group", true,
+    [IsVectorGraph and FullAutomorphismGroup, IsInt], 0, function(filter, d)
+        local G;
+        if d = 4 then
             G := CocktailPartyGraph(4);
             AssignVertexNames(G, List(G.names,
                 t -> List([1..4], function(i)
@@ -121,15 +115,26 @@ BindGlobal("HalvedCubeGraph", function(arg)
                                   end)));
             return G;
         else
-            return HalvedGraph(HammingGraphCons(filt, arg[j], 2));
+            return HalvedCubeGraphCons(IsVectorGraph, d);
         fi;
-    else
-        Error("usage: HalvedCubeGraph( [<filter>, ]<int> )");
-    fi;
-end);
+    end);
 
-# The folded d-cube.
-BindGlobal("FoldedCubeGraph", function(arg)
+InstallMethod(HalvedCubeGraphCons, "as a vector graph", true,
+    [IsVectorGraph, IsInt], 0, function(filter, d)
+        return HalvedGraph(HammingGraphCons(IsVectorGraph, d, 2));
+    end);
+
+InstallMethod(HalvedCubeGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt], 0, function(filter, d)
+        return HalvedCubeGraphCons(IsVectorGraph and FullAutomorphismGroup, d);
+    end);
+
+InstallMethod(HalvedCubeGraphCons, "as a vector graph", true,
+    [IsObject, IsInt], 0, function(filter, d)
+        return HalvedCubeGraphCons(IsVectorGraph, d);
+    end);
+
+BindGlobal("HalvedCubeGraph", function(arg)
     local G, j, filt;
     if IsAFilter(arg[1]) then
         filt := arg[1];
@@ -139,7 +144,18 @@ BindGlobal("FoldedCubeGraph", function(arg)
         j := 1;
     fi;
     if Length(arg) = j then
-        if arg[j] = 4 then
+        return HalvedCubeGraphCons(filt, arg[j]);
+    else
+        Error("usage: HalvedCubeGraph( [<filter>, ]<int> )");
+    fi;
+end);
+
+# The folded d-cube.
+InstallMethod(FoldedCubeGraphCons,
+    "as a vector graph with full automorphism group", true,
+    [IsVectorGraph and FullAutomorphismGroup, IsInt], 0, function(filter, d)
+        local G;
+        if d = 4 then
             G := CompleteMultipartiteGraph(2, 4);
             AssignVertexNames(G, List(List(G.names, t -> List([1..4],
                         function(i)
@@ -152,15 +168,26 @@ BindGlobal("FoldedCubeGraph", function(arg)
                         end)), s -> Set([s, 3-s])));
             return G;
         else
-            return AntipodalQuotientGraph(HammingGraphCons(filt, arg[j], 2));
+            return FoldedCubeGraphCons(IsVectorGraph, d);
         fi;
-    else
-        Error("usage: FoldedCubeGraph( [<filter>, ]<int> )");
-    fi;
-end);
+    end);
 
-# The folded halved 2d-cube.
-BindGlobal("FoldedHalvedCubeGraph", function(arg)
+InstallMethod(FoldedCubeGraphCons, "as a vector graph", true,
+    [IsVectorGraph, IsInt], 0, function(filter, d)
+        return AntipodalQuotientGraph(HammingGraphCons(IsVectorGraph, d, 2));
+    end);
+
+InstallMethod(FoldedCubeGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt], 0, function(filter, d)
+        return FoldedCubeGraphCons(IsVectorGraph and FullAutomorphismGroup, d);
+    end);
+
+InstallMethod(FoldedCubeGraphCons, "as a vector graph", true,
+    [IsObject, IsInt], 0, function(filter, d)
+        return FoldedCubeGraphCons(IsVectorGraph, d);
+    end);
+
+BindGlobal("FoldedCubeGraph", function(arg)
     local G, j, filt;
     if IsAFilter(arg[1]) then
         filt := arg[1];
@@ -170,7 +197,18 @@ BindGlobal("FoldedHalvedCubeGraph", function(arg)
         j := 1;
     fi;
     if Length(arg) = j then
-        if arg[j] = 3 then
+        return FoldedCubeGraphCons(filt, arg[j]);
+    else
+        Error("usage: FoldedCubeGraph( [<filter>, ]<int> )");
+    fi;
+end);
+
+# The folded halved 2d-cube.
+InstallMethod(FoldedHalvedCubeGraphCons,
+    "as a vector graph with full automorphism group", true,
+    [IsVectorGraph and FullAutomorphismGroup, IsInt], 0, function(filter, d)
+        local G;
+        if d = 3 then
             G := CompleteGraph(SymmetricGroup(16));
             AssignVertexNames(G, List(Tuples([1,2], 4), function(t)
                     if WeightVecFFE(t-1) mod 2 = 0 then
@@ -183,9 +221,38 @@ BindGlobal("FoldedHalvedCubeGraph", function(arg)
                 end));
             return G;
         else
-            return AntipodalQuotientGraph(HalvedGraph(HammingGraphCons(filt,
-                                                                2*arg[j], 2)));
+            return FoldedHalvedCubeGraphCons(IsVectorGraph, d);
         fi;
+    end);
+
+InstallMethod(FoldedHalvedCubeGraphCons, "as a vector graph", true,
+    [IsVectorGraph, IsInt], 0, function(filter, d)
+        return AntipodalQuotientGraph(HalvedGraph(
+                                    HammingGraphCons(IsVectorGraph, 2*d, 2)));
+    end);
+
+InstallMethod(FoldedHalvedCubeGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt], 0, function(filter, d)
+        return FoldedHalvedCubeGraphCons(
+                                IsVectorGraph and FullAutomorphismGroup, d);
+    end);
+
+InstallMethod(FoldedHalvedCubeGraphCons, "as a vector graph", true,
+    [IsObject, IsInt], 0, function(filter, d)
+        return FoldedHalvedCubeGraphCons(IsVectorGraph, d);
+    end);
+
+BindGlobal("FoldedHalvedCubeGraph", function(arg)
+    local G, j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+            return FoldedHalvedCubeGraphCons(filt, arg[j]);
     else
         Error("usage: FoldedHalvedCubeGraph( [<filter>, ]<int> )");
     fi;
