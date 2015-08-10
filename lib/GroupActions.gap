@@ -111,6 +111,28 @@ BindGlobal("OnVectorPairs", function(q, dp, wp)
     end;
 end);
 
+# Action on the vertices of Pasechnik graphs.
+BindGlobal("OnPasechnik", function(q, dp, df, wp)
+    local A, F, pr, p1, p2;
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    pr := List([3..5], i -> Projection(dp, i));
+    A := OnVectorPairs(q, df, wp);
+    F := OnFFE(q);
+    return function(t, g)
+        local M, w;
+        M := A(t[1], Image(p1, g));
+        M[2] := M[2] * Z(q)^(t[2] * (q-1)^Image(p2, g));
+        w := List(pr, p -> F(0*Z(q), Image(p, g)));
+        if t[2] = 1 then
+            M[1] := M[1] + VectorProduct(M[2], w);
+        else
+            M[2] := M[2] + w;
+        fi;
+        return [M, t[2]];
+    end;
+end);
+
 # Action on matrices over a field.
 BindGlobal("OnMatrices", function(q, d, e, dp)
     local F, p1, p2, pm;

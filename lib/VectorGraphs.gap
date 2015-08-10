@@ -341,13 +341,37 @@ end);
 
 # The Pasechnik graph Pa(q) as the extended bipartite double
 # of the Brouwer graph Br(q).
+InstallMethod(PasechnikGraphCons,
+    "as a vector graph with full automorphism group", true,
+    [IsVectorGraph and FullAutomorphismGroup, IsInt], 0, function(filter, q)
+        local G, df, dp, wp;
+        wp := WreathProduct(FieldAdditionPermutationGroup(q),
+                            MatrixColumnEvenPermutationGroup(2, 3));
+        df := DirectProduct(wp, GL(3, q),
+                            FieldExponentiationPermutationGroup(q));
+        dp := DirectProduct(Concatenation([df,
+                                FieldMultiplicationPermutationGroup(q)],
+                            ListWithIdenticalEntries(3,
+                                    FieldAdditionPermutationGroup(q))));
+        return Graph(dp, Cartesian(Elements(GF(q)^[2,3]), [1, -1]),
+            OnPasechnik(q, dp, df, wp), function(x, y)
+                return x[2] <> y[2] and
+                    x[1][1] - y[1][1] = VectorProduct(x[1][2], y[1][2]);
+            end, true);
+    end);
+
 InstallMethod(PasechnikGraphCons, "as a vector graph", true,
     [IsVectorGraph, IsInt], 0, function(filter, q)
         return ExtendedBipartiteDoubleGraph(BrouwerGraphCons(IsVectorGraph,
                                                              q));
     end);
 
-InstallMethod(PasechnikGraphCons, "as a vector graph", true,
+InstallMethod(PasechnikGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt], 0, function(filter, q)
+        return PasechnikGraphCons(IsVectorGraph and FullAutomorphismGroup, q);
+    end);
+
+InstallMethod(PasechnikGraphCons, "default", true,
     [IsObject, IsInt], 0, function(filter, q)
         return PasechnikGraphCons(IsVectorGraph, q);
     end);
