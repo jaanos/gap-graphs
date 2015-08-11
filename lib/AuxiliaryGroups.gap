@@ -4,11 +4,6 @@ BindGlobal("FieldAdditionPermutationGroup",
         g -> Permutation(g, FiniteFieldCanonicalOrdering(q), \+)))
 );
 
-# The field multiplication group as a permutation group.
-BindGlobal("FieldMultiplicationPermutationGroup",
-    q -> CyclicGroup(IsPermGroup, q-1)
-);
-
 # The field exponentiation group as a permutation group.
 BindGlobal("FieldExponentiationPermutationGroup",
     q -> Action(Group(FrobeniusAutomorphism(GF(q))),

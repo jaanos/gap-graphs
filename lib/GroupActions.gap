@@ -188,7 +188,7 @@ BindGlobal("OnPaley", function(q, dp)
     p2 := Projection(dp, 2);
     p3 := Projection(dp, 3);
     return function(x, g)
-        return (F(x, Image(p3, g) * Image(p1, g))) * Z(q)^((q-1)^Image(p2, g));
+        return F(x, Image(p3, g) * Image(p1, g)) * Image(p2, g);
     end;
 end);
 
@@ -201,10 +201,10 @@ BindGlobal("OnPreparata", function(q, s, dp)
     p3 := Projection(dp, 3);
     p4 := Projection(dp, 4);
     return function(t, g)
-        local z;
-        z := Z(q)^((q-1)^Image(p1, g));
-        return List([z*t[1], t[2] + 2^Image(p2, g),
-                     F(t[3]*z^(s+1), Image(p3, g))], x -> F(x, Image(p4, g)));
+        local g1;
+        g1 := Image(p1, g);
+        return List([g1*t[1], t[2] + 2^Image(p2, g),
+                     F(t[3]*g1^(s+1), Image(p3, g))], x -> F(x, Image(p4, g)));
     end;
 end);
 
@@ -223,7 +223,7 @@ BindGlobal("OnKasami", function(q, s, dp)
 end);
 
 # Action on vertices of additive symplectic covers of complete graphs.
-BindGlobal("OnAdditiveSymplecticCover", function(q, r, m, B, K, dp)
+BindGlobal("OnAdditiveSymplecticCover", function(q, m, B, K, dp)
     local F, p1, p2, p3, p4, p5, pr;
     F := OnFFE(q);
     p1 := Projection(dp, 1);
@@ -233,15 +233,15 @@ BindGlobal("OnAdditiveSymplecticCover", function(q, r, m, B, K, dp)
     p5 := Projection(dp, 5);
     pr := List([1..m], i -> Projection(dp, i+5));
     return function(p, g)
-        local h, k, y, z, g4;
+        local y, z, g2, g3, g4;
+        g2 := Image(p2, g);
+        g3 := Image(p3, g);
         g4 := Image(p4, g);
         z := List([1..m], i -> F(0*Z(q), Image(pr[i], g)));
-        h := Z(q)^((q-1)^Image(p3, g));
-        y := List(Concatenation(h*p[2]{[1..m/2]}, p[2]{[m/2+1..m]}),
+        y := List(Concatenation(g3*p[2]{[1..m/2]}, p[2]{[m/2+1..m]}),
                     x -> F(x, g4));
-        k := Z(r)^((r-1)^Image(p2, g));
-        return [K + k^2 * (F(h*Elements(p[1])[1], g4*Image(p5, g)) + y*B*z),
-                k * (y*Image(p1, g) + z)];
+        return [K + g2^2 * (F(g3*Elements(p[1])[1], g4*Image(p5, g)) + y*B*z),
+                g2 * (y*Image(p1, g) + z)];
     end;
 end);
 
@@ -333,7 +333,7 @@ BindGlobal("OnHallPlane", function(q, dp)
         local s, M;
         M := Image(p7, g);
         p := List(p, z -> [z[1] + F(0*Z(q), Image(p5, g))*z[2],
-                            z[2]*(Z(q)^((q-1)^Image(p6, g)))]);
+                            z[2]*Image(p6, g)]);
         if p = [] then
             if IsZero(M[2][1]) then
                 return [];

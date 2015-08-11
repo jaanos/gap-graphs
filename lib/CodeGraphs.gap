@@ -14,8 +14,7 @@ BindGlobal("PreparataGraph", function(arg)
     q := 2^(2*t-1);
     s := 2^e;
     F := GF(q);
-    dp := DirectProduct(FieldMultiplicationPermutationGroup(q),
-                        FieldAdditionPermutationGroup(2),
+    dp := DirectProduct(Group(Z(q)), FieldAdditionPermutationGroup(2),
                         FieldAdditionPermutationGroup(q),
                         FieldExponentiationPermutationGroup(q));
     return Graph(dp, Cartesian(F, GF(2), F), OnPreparata(q, s, dp),

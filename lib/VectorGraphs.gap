@@ -397,23 +397,23 @@ InstallMethod(AdditiveSymplecticCoverGraphCons, "as a vector graph", true,
         if h = 0 then
             r := q;
             K := [0*Z(q)];
-            M := FieldMultiplicationPermutationGroup(q);
+            M := Group(Z(q));
             X := FieldExponentiationPermutationGroup(q);
         elif Dimension(F) mod h = 0 then
             r := Characteristic(F)^h;
             K := GF(r);
-            M := FieldMultiplicationPermutationGroup(r);
+            M := Group(Z(r));
             X := FieldExponentiationPermutationGroup(q);
         else
             r := q;
             K := AdditiveGroup(BasisVectors(Basis(F)){[1..h]});
-            M := Group(());
-            X := M;
+            M := Group(Z(q)^0);
+            X := Group(());
         fi;
         dp := DirectProduct(Concatenation([G, M, M, X],
             ListWithIdenticalEntries(m+1, FieldAdditionPermutationGroup(q))));
         return Graph(dp, Cartesian(Unique(List(F, x -> x+K)), F^m),
-            OnAdditiveSymplecticCover(q, r, m, B, K, dp),
+            OnAdditiveSymplecticCover(q, m, B, K, dp),
             function(x, y)
                 return x <> y and x[2]*B*y[2]+y[1]-Elements(x[1])[1] = K;
             end, true);

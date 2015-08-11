@@ -79,9 +79,8 @@ BindGlobal("CocktailPartyGraph",
 # For q = 3 (mod 4) a prime power, the graph is directed.
 BindGlobal("PaleyGraph", function(q)
     local dp;
-    dp := DirectProduct(FieldAdditionPermutationGroup(q),
-        Group(GeneratorsOfGroup(FieldMultiplicationPermutationGroup(q))[1]^2),
-        FieldExponentiationPermutationGroup(q));
+    dp := DirectProduct(FieldAdditionPermutationGroup(q), Group(Z(q)^2),
+                        FieldExponentiationPermutationGroup(q));
     return Graph(dp, Elements(GF(q)), OnPaley(q, dp),
         function(x, y)
             return IsOne((x-y)^((q-1)/2));
