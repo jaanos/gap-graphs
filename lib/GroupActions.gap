@@ -113,21 +113,19 @@ end);
 
 # Action on matrices over a field.
 BindGlobal("OnMatrices", function(q, d, e, dp)
-    local F, p1, p2, pm;
-    F := OnFFE(q);
+    local p1, p2, pm;
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     pm := List([0..d-1], i -> List([1..e], j -> Projection(dp, e*i+j+2)));
     return function(M, g)
         return Image(p1, g)*M*Image(p2, g) +
-            List(pm, r -> List(r, p -> F(0*Z(q), Image(p, g))));
+            List(pm, r -> List(r, p -> IntToFFE(1^Image(p, g), q)));
     end;
 end);
 
 # Action on Hermitean matrices over a field.
 BindGlobal("OnHermiteanMatrices", function(r, d, dp)
-    local C, F, K, p1, pm;
-    F := OnFFE(r);
+    local C, K, p1, pm;
     K := Elements(GF(r^2));
     C := List(K, x -> Conjugates(GF(r^2), GF(r), x)[2]);
     p1 := Projection(dp, 1);
@@ -136,8 +134,8 @@ BindGlobal("OnHermiteanMatrices", function(r, d, dp)
         local H;
         H := Image(p1, g);
         return List(H, v -> List(v, x -> C[Position(K, x)]))*M*TransposedMat(H)
-            + ToHermitean(List(pm, v -> List(v, p -> F(0*Z(r), Image(p, g)))),
-                            r);
+            + ToHermitean(List(pm, v -> List(v,
+                                        p -> IntToFFE(1^Image(p, g), r))), r);
     end;
 end);
 
@@ -210,15 +208,14 @@ end);
 
 # Action on the vertices of Kasami graphs.
 BindGlobal("OnKasami", function(q, s, dp)
-    local Fq, Fs, p1, p2, p3;
-    Fq := OnFFE(q);
-    Fs := OnFFE(s);
+    local F, p1, p2, p3;
+    F := OnFFE(s);
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     p3 := Projection(dp, 3);
     return function(v, g)
-        return List([v[1] + Fq(0*Z(q), Image(p1, g)), Fs(v[2], Image(p2, g))],
-                    x -> Fs(x, Image(p3, g)));
+        return List([v[1] + IntToFFE(1^Image(p1, g), q),
+                     F(v[2], Image(p2, g))], x -> F(x, Image(p3, g)));
     end;
 end);
 
@@ -237,7 +234,7 @@ BindGlobal("OnAdditiveSymplecticCover", function(q, m, B, K, dp)
         g2 := Image(p2, g);
         g3 := Image(p3, g);
         g4 := Image(p4, g);
-        z := List([1..m], i -> F(0*Z(q), Image(pr[i], g)));
+        z := List([1..m], i -> IntToFFE(1^Image(pr[i], g), q));
         y := List(Concatenation(g3*p[2]{[1..m/2]}, p[2]{[m/2+1..m]}),
                     x -> F(x, g4));
         return [K + g2^2 * (F(g3*Elements(p[1])[1], g4*Image(p5, g)) + y*B*z),
@@ -266,12 +263,12 @@ end);
 
 # Action on the vertices of affine polar graphs.
 BindGlobal("OnAffine", function(q, d, dp)
-    local F, p1, pr;
-    F := OnFFE(q);
+    local p1, pr;
     p1 := Projection(dp, 1);
     pr := List([1..d], i -> Projection(dp, i+1));
     return function(v, g)
-        return v^Image(p1, g) + List([1..d], i -> F(0*Z(q), Image(pr[i], g)));;
+        return v^Image(p1, g) + List([1..d],
+                                        i -> IntToFFE(1^Image(pr[i], g), q));;
     end;
 end);
 
@@ -323,16 +320,15 @@ end);
 
 # Action on points and lines of Hall planes.
 BindGlobal("OnHallPlane", function(q, dp)
-    local p5, p6, p7, p8, pr, A, F;
+    local p5, p6, p7, p8, pr, A;
     pr := List([0,1], i -> List([1,2], j -> Projection(dp, 2*i+j)));
     p5 := Projection(dp, 5);
     p6 := Projection(dp, 6);
     p7 := Projection(dp, 7);
-    F := OnFFE(q);
     A := function(p, g)
         local s, M;
         M := Image(p7, g);
-        p := List(p, z -> [z[1] + F(0*Z(q), Image(p5, g))*z[2],
+        p := List(p, z -> [z[1] + IntToFFE(1^Image(p5, g), q)*z[2],
                             z[2]*Image(p6, g)]);
         if p = [] then
             if IsZero(M[2][1]) then
@@ -351,7 +347,8 @@ BindGlobal("OnHallPlane", function(q, dp)
                 return [[(M[2][1] + p[1][1]*M[2][2])/s, 0*Z(q)]];
             fi;
         else
-            return M*p + List(pr, r -> List(r, e -> F(0*Z(q), Image(e, g))));
+            return M*p + List(pr, r -> List(r,
+                                            e -> IntToFFE(1^Image(e, g), q)));
         fi;
     end;
     return OnPointsOrLines(A, x -> Length(x) > 2);
