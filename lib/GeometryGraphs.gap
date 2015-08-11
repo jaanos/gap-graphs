@@ -268,6 +268,51 @@ end);
 BindGlobal("GeneralizedQuadrangleAS",
     q -> GeneralizedQuadrangleP(GeneralizedQuadrangleW(q), 1));
 
+BindGlobal("GeneralizedHexagonG2", function(q)
+    local h, o, r, s, z, G, L, P, Q, T, V, gr;
+    o := Z(q)^0;
+    z := 0*Z(q);
+    if q mod 4 = 1 then
+        h := o/2;
+        r := Z(q)^((q-1)/4)/2;
+        P := [[o,z,z,z,z,z,z],
+              [z,z,z,z,o,z,z],
+              [z,z,z,2*r,z,z,z],
+              [z,h,z,z,z,h,z],
+              [z,-r,z,z,z,r,z],
+              [z,z,h,z,z,z,h],
+              [z,z,-r,z,z,z,r]];
+    elif q mod 4 = 3 then
+        h := o/2;
+        r := Z(q)^((q-3)/4)/2;
+        s := AsSumOfSquares(Z(q)^((q-3)/4), q);
+    else
+        T := function(x, y)
+            return [x[3]*y[4]+x[1]*y[5]-x[5]*y[1]-x[4]*y[3],
+                    x[4]*y[2]+x[1]*y[6]-x[6]*y[1]-x[2]*y[4],
+                    x[2]*y[3]+x[1]*y[7]-x[7]*y[1]-x[3]*y[2],
+                    x[5]*y[2]+x[6]*y[3]+x[7]*y[4]-x[1]*y[1],
+                    x[6]*y[7]+x[2]*y[1]-x[1]*y[2]-x[7]*y[6],
+                    x[7]*y[5]+x[3]*y[1]-x[1]*y[3]-x[5]*y[7],
+                    x[5]*y[6]+x[4]*y[1]-x[1]*y[4]-x[6]*y[5],
+                    x[2]*y[5]+x[3]*y[6]+x[4]*y[7]-x[1]*y[1]];
+        end;
+    fi;
+    G := GO(7, q);
+    V := GF(q)^7;
+    Q := InvariantQuadraticForm(G).matrix;
+    L := Set(Filtered(Subspaces(V, 2),
+                l -> IsZero(T(Elements(l)[2], Elements(l)[q^2]))));
+    gr := Graph(Stabilizer(G, L, OnSetsSubspaces(V)),
+            IsotropicSpacesQuadraticForm(Q)(Subspaces(V, 1)), OnSubspaces(V),
+            function(x,y)
+                return x <> y and IsZero(T(Elements(x)[2], Elements(y)[2]));
+            end, true);
+    gr.duality := Sum;
+    gr.primality := Intersection;
+    return gr;
+end);
+
 # The incidence graph of a projective plane read from a file as on
 #   http://www.uwyo.edu/moorhouse/pub/planes/       or
 #   http://www.uwyo.edu/moorhouse/pub/genpoly/
