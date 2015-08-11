@@ -369,46 +369,85 @@ BindGlobal("PasechnikGraph", function(arg)
 end);
 
 # The additive symplectic cover of the complete graph on q^{2n} vertices.
+InstallMethod(AdditiveSymplecticCoverGraphCons,
+    "as a vector graph with full automorphism group", true,
+    [IsVectorGraph and FullAutomorphismGroup, IsInt, IsInt, IsInt], 0,
+    function(filter, q, n, h)
+        local F, G, m;
+        F := GF(q);
+        if h = 0 then
+            return AdditiveSymplecticCoverGraphCons(IsVectorGraph, q, n, h);
+        elif h = Dimension(F) then
+            m := 2*n;
+            G := CompleteGraph(SymmetricGroup(q^m));
+            AssignVertexNames(G, Cartesian([F], F^m));
+            return G;
+        else
+            TryNextMethod();
+        fi;
+    end);
+
+InstallMethod(AdditiveSymplecticCoverGraphCons, "as a vector graph", true,
+    [IsVectorGraph, IsInt, IsInt, IsInt], 0, function(filter, q, n, h)
+        local B, F, G, K, M, X, m, r, dp;
+        F := GF(q);
+        m := 2*n;
+        G := Sp(m, q);
+        B := InvariantBilinearForm(G).matrix;
+        if h = 0 then
+            r := q;
+            K := [0*Z(q)];
+            M := FieldMultiplicationPermutationGroup(q);
+            X := FieldExponentiationPermutationGroup(q);
+        elif Dimension(F) mod h = 0 then
+            r := Characteristic(F)^h;
+            K := GF(r);
+            M := FieldMultiplicationPermutationGroup(r);
+            X := FieldExponentiationPermutationGroup(q);
+        else
+            r := q;
+            K := AdditiveGroup(BasisVectors(Basis(F)){[1..h]});
+            M := Group(());
+            X := M;
+        fi;
+        dp := DirectProduct(Concatenation([G, M, M, X],
+            ListWithIdenticalEntries(m+1, FieldAdditionPermutationGroup(q))));
+        return Graph(dp, Cartesian(Unique(List(F, x -> x+K)), F^m),
+            OnAdditiveSymplecticCover(q, r, m, B, K, dp),
+            function(x, y)
+                return x <> y and x[2]*B*y[2]+y[1]-Elements(x[1])[1] = K;
+            end, true);
+    end);
+
+InstallMethod(AdditiveSymplecticCoverGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt, IsInt], 0, function(filter, q, n, h)
+        return AdditiveSymplecticCoverGraphCons(IsVectorGraph and
+                                                    FullAutomorphismGroup,
+                                                q, n, h);
+    end);
+
+InstallMethod(AdditiveSymplecticCoverGraphCons, "as a vector graph", true,
+    [IsObject, IsInt, IsInt, IsInt], 0, function(filter, q, n, h)
+        return AdditiveSymplecticCoverGraphCons(IsVectorGraph, q, n, h);
+    end);
+
 BindGlobal("AdditiveSymplecticCoverGraph", function(arg)
-    local B, F, G, K, M, V, X, h, m, q, r, dp;
-    if Length(arg) < 2 then
-        Error("at least two arguments expected");
-        return fail;
-    fi;
-    if Length(arg) > 2 then
-        h := arg[3];
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
     else
-        h := 0;
+        filt := IsObject;
+        j := 1;
     fi;
-    q := arg[1];
-    F := GF(q);
-    m := 2*arg[2];
-    G := Sp(m, q);
-    V := F^m;
-    B := InvariantBilinearForm(G).matrix;
-    if h = 0 then
-        r := q;
-        K := AdditiveGroup(0*Z(q));
-        M := FieldMultiplicationPermutationGroup(q);
-        X := FieldExponentiationPermutationGroup(q);
-    elif Dimension(F) mod h = 0 then
-        r := Characteristic(F)^h;
-        K := AdditiveGroup(BasisVectors(Basis(GF(r))));
-        M := FieldMultiplicationPermutationGroup(r);
-        X := FieldExponentiationPermutationGroup(q);
+    if Length(arg) = j+1 then
+        return AdditiveSymplecticCoverGraphCons(filt, arg[j], arg[j+1], 0);
+    elif Length(arg) = j+2 then
+        return AdditiveSymplecticCoverGraphCons(filt, arg[j], arg[j+1],
+                                                arg[j+2]);
     else
-        r := q;
-        K := AdditiveGroup(BasisVectors(Basis(F)){[1..h]});
-        M := Group(());
-        X := M;
+        Error("usage: AdditiveSymplecticCoverGraph( [<filter>, ]<int>, <int>[, <int>] )");
     fi;
-    dp := DirectProduct(Concatenation([G, M, M, X],
-        ListWithIdenticalEntries(m+1, FieldAdditionPermutationGroup(q))));
-    return Graph(dp, Cartesian(Unique(List(F, x -> x+K)), V),
-        OnAdditiveSymplecticCover(q, r, m, B, K, dp),
-        function(x, y)
-            return x <> y and x[2]*B*y[2]+y[1]-Elements(x[1])[1] = K;
-        end, true);
 end);
 
 # The multiplicative symplectic cover of the complete graph on q+1 vertices.

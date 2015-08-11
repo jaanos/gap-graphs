@@ -33,6 +33,8 @@ DeclareConstructor("FoldedCubeGraphCons", [IsObject, IsInt]);
 DeclareConstructor("FoldedHalvedCubeGraphCons", [IsObject, IsInt]);
 DeclareConstructor("BrouwerGraphCons", [IsObject, IsInt]);
 DeclareConstructor("PasechnikGraphCons", [IsObject, IsInt]);
+DeclareConstructor("AdditiveSymplecticCoverGraphCons",
+                    [IsObject, IsInt, IsInt, IsInt]);
 
 # Named graphs
 DeclareConstructor("ShrikhandeGraphCons", [IsObject]);
