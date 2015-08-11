@@ -452,23 +452,68 @@ end);
 
 # The multiplicative symplectic cover of the complete graph on q+1 vertices.
 # It is distance-regular when m divides q-1 and either q or m is even.
-BindGlobal("MultiplicativeSymplecticCoverGraph", function(q, m)
-    local B, F, G, K, N, dp;
-    F := GF(q);
-    K := Group(Z(q)^((q-1)/m));
-    G := Sp(2, q);
-    B := InvariantBilinearForm(G).matrix;
-    if q mod 2 = 0 or m mod 2 = 0 then
-        N := Group((1,2));
+InstallMethod(MultiplicativeSymplecticCoverGraphCons,
+    "as a vector graph with full automorphism group", true,
+    [IsVectorGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
+    function(filter, q, m)
+        local G;
+        if m = q-1 then
+            G := CompleteGraph(SymmetricGroup(q+1));
+            AssignVertexNames(G, List(Subspaces(GF(q)^2, 1),
+                                s -> Set(Filtered(s, v -> not IsZero(v)))));
+            return G;
+        else
+            return MultiplicativeSymplecticCoverGraphCons(IsVectorGraph, q, m);
+        fi;
+    end);
+
+InstallMethod(MultiplicativeSymplecticCoverGraphCons, "as a vector graph",
+    true, [IsVectorGraph, IsInt, IsInt], 0, function(filter, q, m)
+        local B, F, G, K, N, dp;
+        F := GF(q);
+        K := Group(Z(q)^((q-1)/m));
+        G := Sp(2, q);
+        B := InvariantBilinearForm(G).matrix;
+        if q mod 2 = 0 or m mod 2 = 0 then
+            N := Group((1,2));
+        else
+            N := Group(());
+        fi;
+        dp := DirectProduct(G, N, K, FieldExponentiationPermutationGroup(q));
+        return Graph(dp, Unique(List(Filtered(F^2, x -> x <> Zero(F^2)),
+                                v -> Set(List(K, g -> List(v, x -> g*x))))),
+                     OnMultiplicativeSymplecticCover(q, dp), function(x, y)
+                        return x <> y and x[1]*B*y[1] in K;
+                     end, true);
+    end);
+
+InstallMethod(MultiplicativeSymplecticCoverGraphCons,
+    "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt], 0, function(filter, q, m)
+        return MultiplicativeSymplecticCoverGraphCons(IsVectorGraph and
+                                                        FullAutomorphismGroup,
+                                                        q, m);
+    end);
+
+InstallMethod(MultiplicativeSymplecticCoverGraphCons, "as a vector graph",
+    true, [IsObject, IsInt, IsInt], 0, function(filter, q, m)
+        return MultiplicativeSymplecticCoverGraphCons(IsVectorGraph, q, m);
+    end);
+
+BindGlobal("MultiplicativeSymplecticCoverGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
     else
-        N := Group(());
+        filt := IsObject;
+        j := 1;
     fi;
-    dp := DirectProduct(G, N, K, FieldExponentiationPermutationGroup(q));
-    return Graph(dp, Unique(List(Filtered(F^2, x -> x <> Zero(F^2)),
-                                 v -> Set(List(K, g -> List(v, x -> g*x))))),
-                 OnMultiplicativeSymplecticCover(q, dp), function(x, y)
-                    return x <> y and x[1]*B*y[1] in K;
-                 end, true);
+    if Length(arg) = j+1 then
+        return MultiplicativeSymplecticCoverGraphCons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: MultiplicativeSymplecticCoverGraph( [<filter>, ]<int>, <int> )");
+    fi;
 end);
 
 # The affine polar graph VO^{(+/-)}(d, q)

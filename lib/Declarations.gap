@@ -35,6 +35,8 @@ DeclareConstructor("BrouwerGraphCons", [IsObject, IsInt]);
 DeclareConstructor("PasechnikGraphCons", [IsObject, IsInt]);
 DeclareConstructor("AdditiveSymplecticCoverGraphCons",
                     [IsObject, IsInt, IsInt, IsInt]);
+DeclareConstructor("MultiplicativeSymplecticCoverGraphCons",
+                    [IsObject, IsInt, IsInt]);
 
 # Named graphs
 DeclareConstructor("ShrikhandeGraphCons", [IsObject]);
