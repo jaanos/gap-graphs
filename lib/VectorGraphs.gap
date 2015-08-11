@@ -533,7 +533,7 @@ BindGlobal("AffinePolarGraphVO", function(arg)
         q := arg[3];
     fi;
     G := GO(e, d, q);
-    dp := DirectProduct(Concatenation([G],
+    dp := DirectProduct(Concatenation([G, Group(Z(q))],
             ListWithIdenticalEntries(d, FieldAdditionPermutationGroup(q))));
     Q := InvariantQuadraticForm(G).matrix;
     return Graph(dp, Elements(GF(q)^d), OnAffine(q, d, dp), function(x, y)
@@ -558,7 +558,7 @@ BindGlobal("AffinePolarGraphVNO", function(arg)
         q := arg[3];
     fi;
     G := GO(e, d, q);
-    dp := DirectProduct(Concatenation([G],
+    dp := DirectProduct(Concatenation([G, Group(Z(q))],
             ListWithIdenticalEntries(d, FieldAdditionPermutationGroup(q))));
     Q := InvariantQuadraticForm(G).matrix;
     return Graph(dp, Elements(GF(q)^d), OnAffine(q, d, dp),

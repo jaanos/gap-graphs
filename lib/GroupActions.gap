@@ -263,11 +263,12 @@ end);
 
 # Action on the vertices of affine polar graphs.
 BindGlobal("OnAffine", function(q, d, dp)
-    local p1, pr;
+    local p1, p2, pr;
     p1 := Projection(dp, 1);
-    pr := List([1..d], i -> Projection(dp, i+1));
+    p2 := Projection(dp, 2);
+    pr := List([1..d], i -> Projection(dp, i+2));
     return function(v, g)
-        return v^Image(p1, g) + List([1..d],
+        return Image(p2, g) * v^Image(p1, g) + List([1..d],
                                         i -> IntToFFE(1^Image(pr[i], g), q));;
     end;
 end);
