@@ -453,13 +453,17 @@ end);
 # The multiplicative symplectic cover of the complete graph on q+1 vertices.
 # It is distance-regular when m divides q-1 and either q or m is even.
 BindGlobal("MultiplicativeSymplecticCoverGraph", function(q, m)
-    local B, F, G, K, dp;
+    local B, F, G, K, N, dp;
     F := GF(q);
     K := Group(Z(q)^((q-1)/m));
     G := Sp(2, q);
     B := InvariantBilinearForm(G).matrix;
-    dp := DirectProduct(G, Group((1,2)),
-                        FieldExponentiationPermutationGroup(q));
+    if q mod 2 = 0 or m mod 2 = 0 then
+        N := Group((1,2));
+    else
+        N := Group(());
+    fi;
+    dp := DirectProduct(G, N, K, FieldExponentiationPermutationGroup(q));
     return Graph(dp, Unique(List(Filtered(F^2, x -> x <> Zero(F^2)),
                                  v -> Set(List(K, g -> List(v, x -> g*x))))),
                  OnMultiplicativeSymplecticCover(q, dp), function(x, y)

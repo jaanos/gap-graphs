@@ -247,17 +247,19 @@ end);
 
 # Action on vertices of multiplicative symplectic covers of complete graphs.
 BindGlobal("OnMultiplicativeSymplecticCover", function(q, dp)
-    local F, p1, p2, p3;
+    local F, p1, p2, p3, p4;
     F := OnFFE(q);
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     p3 := Projection(dp, 3);
+    p4 := Projection(dp, 4);
     return function(s, g)
-        local g2, g3;
+        local g2, g3, g4;
         g2 := Image(p2, g);
         g3 := Image(p3, g);
-        return OnSets(Set(List(s, p -> List(Permuted([1,2], g2),
-                                            i -> F(p[i], g3)))),
+        g4 := Image(p4, g);
+        return OnSets(Set(List(List(s, p -> [g3*p[1], p[2]]),
+                            p -> List(Permuted(p, g2), x -> F(x, g4)))),
                       Image(p1, g));
     end;
 end);
