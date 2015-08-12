@@ -68,3 +68,47 @@ BindGlobal("HyperconicAutomorphismGroup", q -> Group([
      [ 0*Z(q), 0*Z(q),   Z(q)^0]],
     Z(q)*IdentityMat(3, GF(q))
 ]));
+
+BindGlobal("OrthogonalNegationGroup", function(arg)
+    local H, M, S, d, e, h, q, s, t;
+    if Length(arg) < 2 then
+        Error("at least two arguments expected");
+        return fail;
+    elif Length(arg) = 2 then
+        e := 0;
+        d := arg[1];
+        q := arg[2];
+    else
+        e := arg[1];
+        d := arg[2];
+        q := arg[3];
+    fi;
+    H := [[Z(q)^0, 0*Z(q)],
+          [0*Z(q), -Z(q)^0]];
+    if e = 0 or q mod 2 = 0 or (d = 2 and e = -1) then
+        M := IdentityMat(d, Z(q));
+    elif d = 2 then
+        M := H;
+    elif q mod 4 = 1 then
+        M := Z(q)^((q-1)/4) * IdentityMat(d, Z(q));
+        M[1][1] := Z(q)^0;
+        M[2][2] := -Z(q)^0;
+    else
+        t := AsSumOfSquares(-Z(q)^0, q);
+        h := d/2;
+        S := [[t[1], t[2]],
+              [t[2], -t[1]]];
+        if (e = 1) = (d mod 4 = 0) then
+            s := Z(q)^((q+1)/4);
+            M := BlockMatrix(Concatenation([[1, 1, H],
+                                            [2, 2, [[0*Z(q), s^-1],
+                                                    [s, 0*Z(q)]]]],
+                          List([3..h], i -> [i, i, S])), h, h);
+        else
+            t := AsSumOfSquares(-Z(q)^0, q);
+            M := BlockMatrix(Concatenation([[1, 1, H]],
+                          List([2..h], i -> [i, i, S])), h, h);
+        fi;
+    fi;
+    return Group(M);
+end);
