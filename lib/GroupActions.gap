@@ -168,6 +168,20 @@ BindGlobal("OnDoubledOdd", function(n, dp)
     end;
 end);
 
+# Action on the vertices of Grassmann graphs.
+BindGlobal("OnGrassmann", function(q, V, dp)
+    local F, p1, p2, p3;
+    F := [x -> x, OrthogonalSpaceInFullRowSpace];
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    p3 := Projection(dp, 3);
+    return function(S, g)
+        return F[1^Image(p2, g)](Subspace(V,
+            List(OnSubspacesByCanonicalBasis(Basis(S), Image(p1, g)),
+                v -> List(v, x -> IntToFFE(FFEToInt(x, q)^Image(p3, g), q)))));
+    end;
+end);
+
 # Action on the vertices of doubled Grassmann graphs.
 BindGlobal("OnDoubledGrassmann", function(V, dp)
     local A, F, p1, p2;

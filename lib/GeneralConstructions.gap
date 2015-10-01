@@ -422,7 +422,7 @@ end);
 # as the vertex set, acted upon by the matrix group G,
 # with two subspaces being adjacent iff their intersection has dimension d-1.
 BindGlobal("SubspaceGraph", function(arg)
-    local G, H, S, V, d, invt, vcs;
+    local A, G, H, S, V, d, invt, vcs;
     if Length(arg) < 4 then
         Error("at least four arguments expected");
         return fail;
@@ -431,17 +431,24 @@ BindGlobal("SubspaceGraph", function(arg)
     S := arg[2];
     V := arg[3];
     d := arg[4];
-    if Length(arg) > 4 then
-        invt := arg[5];
-    else
-        invt := true;
+    A := OnSubspaces(V);
+    invt := true;
+    if Length(arg) > 5 then
+        A := arg[5];
+        invt := arg[6];
+    elif Length(arg) > 4 then
+        if IsFunction(arg[5]) then
+            A := arg[5];
+        else
+            invt := arg[5];
+        fi;
     fi;
     if IsList(S) then
         vcs := S;
     else
         vcs := S(Subspaces(V, d));
     fi;
-    H := Graph(G, vcs, OnSubspaces(V), function(x,y)
+    H := Graph(G, vcs, A, function(x,y)
                     return Dimension(Intersection(x,y)) = d-1;
                 end, invt);
     H.duality := Intersection;

@@ -1,4 +1,30 @@
 # The Grassmann graph J_q(n, d) of d-dimensional subspaces of F_q^n.
+InstallMethod(GrassmannGraphCons,
+    "as a spaces graph with full automorphism group", true,
+    [IsSpacesGraph and FullAutomorphismGroup, IsInt, IsInt, IsInt], 0,
+    function(filter, q, n, d)
+        local G, V, m, dp, tr;
+        V := GF(q)^n;
+        if d in [1, n-1] then
+            m := (q^n-1)/(q-1);
+            G := CompleteGraph(SymmetricGroup(m), m);
+            AssignVertexNames(G, Elements(Subspaces(V, d)));
+        else
+            if n = 2*d then
+                tr := (1, 2);
+            else
+                tr := ();
+            fi;
+            dp := DirectProduct(GL(n, q), Group(tr),
+                                FieldExponentiationPermutationGroup(q));
+            G := SubspaceGraph(dp, Elements, V, d, OnGrassmann(q, V, dp),
+                                true);
+        fi;
+        G.duality := GrassmannDualityFunction;
+        G.primality := GrassmannDualityFunction;
+        return G;
+    end);
+
 InstallMethod(GrassmannGraphCons, "as a spaces graph", true,
     [IsSpacesGraph, IsInt, IsInt, IsInt], 0, function(filter, q, n, d)
         local G;
@@ -6,6 +32,12 @@ InstallMethod(GrassmannGraphCons, "as a spaces graph", true,
         G.duality := GrassmannDualityFunction;
         G.primality := GrassmannDualityFunction;
         return G;
+    end);
+
+InstallMethod(GrassmannGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt, IsInt], 0, function(filter, q, n, d)
+        return GrassmannGraphCons(IsSpacesGraph and FullAutomorphismGroup,
+                                    q, n, d);
     end);
 
 InstallMethod(GrassmannGraphCons, "default", true,
