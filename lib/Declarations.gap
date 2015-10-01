@@ -49,6 +49,7 @@ DeclareConstructor("HermiteanFormsGraphCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("GrassmannGraphCons", [IsObject, IsInt, IsInt, IsInt]);
 DeclareConstructor("DoubledGrassmannGraphCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("TwistedGrassmannGraphCons", [IsObject, IsInt, IsInt]);
+DeclareConstructor("PolarGraphOCons", [IsObject, IsInt, IsInt, IsInt]);
 
 # Named graphs
 DeclareConstructor("ShrikhandeGraphCons", [IsObject]);

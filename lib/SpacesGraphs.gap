@@ -158,31 +158,48 @@ end);
 
 # The polar graph O^{(+/-)}(d, q) of isotropic lines of F_q^d
 # with respect to a nondegenerate quadratic form.
-BindGlobal("PolarGraphO", function(arg)
-    local d, e, q, B, G, H, Q, V;
-    if Length(arg) < 2 then
-        Error("at least two arguments expected");
-        return fail;
-    elif Length(arg) = 2 then
-        e := 0;
-        d := arg[1];
-        q := arg[2];
-    else
-        e := arg[1];
-        d := arg[2];
-        q := arg[3];
-    fi;
-    G := GO(e, d, q);
-    Q := InvariantQuadraticForm(G).matrix;
-    B := Q + TransposedMat(Q);
-    V := GF(q)^d;
-    H := Graph(G, IsotropicSpacesQuadraticForm(Q)(Subspaces(V, 1)),
+InstallMethod(PolarGraphOCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt, IsInt, IsInt], 0, function(filter, e, d, q)
+        local B, G, H, Q, V;
+        G := GO(e, d, q);
+        Q := InvariantQuadraticForm(G).matrix;
+        B := Q + TransposedMat(Q);
+        V := GF(q)^d;
+        H := Graph(G, IsotropicSpacesQuadraticForm(Q)(Subspaces(V, 1)),
                 OnSubspaces(V), function(x, y)
                     return x <> y and IsZero(Elements(x)[2]*B*Elements(y)[2]);
                 end, true);
-    H.duality := Sum;
-    H.primality := Intersection;
-    return H;
+        H.duality := Sum;
+        H.primality := Intersection;
+        return H;
+    end);
+
+InstallMethod(PolarGraphOCons, "default", true,
+    [IsObject, IsInt, IsInt, IsInt], 0, function(filter, e, d, q)
+        return PolarGraphOCons(IsSpacesGraph, e, d, q);
+    end);
+
+BindGlobal("PolarGraphO", function(arg)
+    local d, e, j, q, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        e := 0;
+        d := arg[j];
+        q := arg[j+1];
+    elif Length(arg) = j+2 then
+        e := arg[j];
+        d := arg[j+1];
+        q := arg[j+2];
+    else
+        Error("usage: PolarGraphO( [<filter>, ][<int>, ]<int>, <int> )");
+    fi;
+    return PolarGraphOCons(filt, e, d, q);
 end);
 
 # The polar graph NO^{+/-}orth(d, q) of nonisotropic lines of F_q^d
