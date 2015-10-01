@@ -182,18 +182,6 @@ BindGlobal("OnGrassmann", function(q, V, dp)
     end;
 end);
 
-# Action on the vertices of doubled Grassmann graphs.
-BindGlobal("OnDoubledGrassmann", function(V, dp)
-    local A, F, p1, p2;
-    F := [x -> x, OrthogonalSpaceInFullRowSpace];
-    p1 := Projection(dp, 1);
-    p2 := Projection(dp, 2);
-    A := OnSubspaces(V);
-    return function(S, g)
-        return F[1^Image(p2, g)](A(S, Image(p1, g)));
-    end;
-end);
-
 # Action on the vertices of Paley graphs.
 BindGlobal("OnPaley", function(q, dp)
     local F, p1, p2, p3;

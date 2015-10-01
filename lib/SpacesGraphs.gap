@@ -63,16 +63,53 @@ end);
 
 # The doubled Grassmann graph 2J_q(2d+1, d) of d- and (d+1)-dimensional
 # subspaces of F_q^{2d+1}.
-BindGlobal("DoubledGrassmannGraph", function(q, d)
-    local n, G, V, dp;
-    n := 2*d+1;
-    V := GF(q)^n;
-    dp := DirectProduct(GL(n, q), Group((1, 2)));
-    G := Graph(dp, Union(Subspaces(V, d), Subspaces(V, d+1)),
-                OnDoubledGrassmann(V, dp), SymmetrizedInclusion, true);
-    G.halfDuality := GrassmannDualityFunction;
-    G.halfPrimality := GrassmannDualityFunction;
-    return G;
+InstallMethod(DoubledGrassmannGraphCons,
+    "as a spaces graph with full automorphism group", true,
+    [IsSpacesGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
+    function(filter, q, d)
+        local n, G, V, dp;
+        n := 2*d+1;
+        V := GF(q)^n;
+        dp := DirectProduct(GL(n, q), Group((1, 2)),
+                            FieldExponentiationPermutationGroup(q));
+        G := Graph(dp, Union(Subspaces(V, d), Subspaces(V, d+1)),
+                    OnGrassmann(q, V, dp), SymmetrizedInclusion, true);
+        G.halfDuality := GrassmannDualityFunction;
+        G.halfPrimality := GrassmannDualityFunction;
+        return G;
+    end);
+
+InstallMethod(DoubledGrassmannGraphCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt, IsInt], 0, function(filter, q, d)
+        return DoubledGrassmannGraphCons(IsSpacesGraph
+                                            and FullAutomorphismGroup, q, d);
+    end);
+
+InstallMethod(DoubledGrassmannGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt], 0, function(filter, q, d)
+        return DoubledGrassmannGraphCons(IsSpacesGraph
+                                            and FullAutomorphismGroup, q, d);
+    end);
+
+InstallMethod(DoubledGrassmannGraphCons, "default", true,
+    [IsObject, IsInt, IsInt], 0, function(filter, q, d)
+        return DoubledGrassmannGraphCons(IsSpacesGraph, q, d);
+    end);
+
+BindGlobal("DoubledGrassmannGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        return DoubledGrassmannGraphCons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: DoubledGrassmannGraph( [<filter>, ]<int>, <int>, <int> )");
+    fi;
 end);
 
 # The twisted Grassmann graph TG_d(q) of (d+1)-dimensional subspaces of
