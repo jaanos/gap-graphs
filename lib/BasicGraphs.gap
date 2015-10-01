@@ -197,3 +197,47 @@ BindGlobal("CompleteTaylorGraph", function(n)
     AssignVertexNames(G, Cartesian([1, 2], [1..n]));
     return G;
 end);
+
+# Haar graphs
+InstallMethod(HaarGraphCons, "", true, [IsObject, IsInt, IsList], 0,
+    function(filter, n, adj)
+        return Graph(Group([DirectProductElement([(),
+                                PermList(Concatenation([2..n], [1]))]),
+                            DirectProductElement([(1,2),
+                                PermList(Concatenation([1], [n,n-1..2]))])]),
+                    Cartesian([1,2], [1..n]), function(x, g)
+                        return [x[1]^g[1], x[2]^g[2]];
+                    end, function(x, y)
+                        return x[1] <> y[1] and
+                            ((-1)^x[1] * (x[2]-y[2])) mod n in adj;
+                    end, true);
+    end);
+
+BindGlobal("HaarGraph", function(arg)
+    local j, m, n, adj, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        n := 0;
+        adj := [];
+        m := arg[j];
+        while m <> 0 do
+            if m mod 2 = 1 then
+                Add(adj, n);
+            fi;
+            m := Int(m/2);
+            n := n+1;
+        od;
+    elif Length(arg) = j+1 then
+        n := arg[j];
+        adj := arg[j+1];
+    else
+        Error("usage: HaarGraph( [<filter>, ]<int>[, <list> ])");
+    fi;
+    return HaarGraphCons(filt, n, adj);
+end);

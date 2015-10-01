@@ -17,6 +17,7 @@ DeclareConstructor("IncidenceGraphCons", [IsObject, IsRecord, IsList]);
 # Basic graphs
 DeclareConstructor("CompleteMultipartiteGraphCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("LatinSquareGraphCons", [IsObject, IsObject, IsBool]);
+DeclareConstructor("HaarGraphCons", [IsObject, IsInt, IsList]);
 
 # Set graphs
 DeclareConstructor("KneserGraphCons", [IsObject, IsInt, IsInt, IsBool]);

@@ -89,6 +89,7 @@ The following graphs are currently supported:
   * the graph with v = 210, k = 99, λ = 48, μ = 45 constructed by M. Klin
 * Other graphs:
   * Complete multipartite graphs
+  * Haar graphs
   * Kneser graphs Kn(n, k)
 * Graph derivation:
   * Box (Cartesian) product and power
