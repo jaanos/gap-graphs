@@ -48,6 +48,7 @@ DeclareConstructor("HermiteanFormsGraphCons", [IsObject, IsInt, IsInt]);
 # Spaces graphs
 DeclareConstructor("GrassmannGraphCons", [IsObject, IsInt, IsInt, IsInt]);
 DeclareConstructor("DoubledGrassmannGraphCons", [IsObject, IsInt, IsInt]);
+DeclareConstructor("TwistedGrassmannGraphCons", [IsObject, IsInt, IsInt]);
 
 # Named graphs
 DeclareConstructor("ShrikhandeGraphCons", [IsObject]);

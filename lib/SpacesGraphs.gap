@@ -115,23 +115,45 @@ end);
 # The twisted Grassmann graph TG_d(q) of (d+1)-dimensional subspaces of
 # F_q^{2d+1} which are not subspaces of a hyperplane H, and (d-1)-dimensional
 # subspaces of H.
-BindGlobal("TwistedGrassmannGraph", function(d, q)
-    local F, H, S, V, n;
-    n := 2*d+1;
-    F := GF(q)^n;
-    H := Subspace(F, CanonicalBasis(F){[1..n-1]}, "basis");
-    V := Union(Filtered(Subspaces(F, d+1), x -> not IsSubset(H, x)),
-            Subspaces(H, d-1));
-    S := OnSubspaces(F);
-    return Graph(Stabilizer(GL(n, q), H, S), V, S, function(x, y)
-        local dx;
-        dx := Dimension(x);
-        if dx = Dimension(y) then
-            return Dimension(Intersection(x, y)) = dx-1;
-        else
-            return IsSubset(x, y) or IsSubset(y, x);
-        fi;
-    end, true);
+InstallMethod(TwistedGrassmannGraphCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt, IsInt], 0, function(filter, d, q)
+        local F, H, S, V, n;
+        n := 2*d+1;
+        F := GF(q)^n;
+        H := Subspace(F, CanonicalBasis(F){[1..n-1]}, "basis");
+        V := Union(Filtered(Subspaces(F, d+1), x -> not IsSubset(H, x)),
+                Subspaces(H, d-1));
+        S := OnSubspaces(F);
+        return Graph(Stabilizer(GL(n, q), H, S), V, S, function(x, y)
+            local dx;
+            dx := Dimension(x);
+            if dx = Dimension(y) then
+                return Dimension(Intersection(x, y)) = dx-1;
+            else
+                return IsSubset(x, y) or IsSubset(y, x);
+            fi;
+        end, true);
+    end);
+
+InstallMethod(TwistedGrassmannGraphCons, "default", true,
+    [IsObject, IsInt, IsInt], 0, function(filter, d, q)
+        return TwistedGrassmannGraphCons(IsSpacesGraph, d, q);
+    end);
+
+BindGlobal("TwistedGrassmannGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        return TwistedGrassmannGraphCons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: TwistedGrassmannGraph( [<filter>, ]<int>, <int> )");
+    fi;
 end);
 
 # The polar graph O^{(+/-)}(d, q) of isotropic lines of F_q^d
