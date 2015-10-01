@@ -1,10 +1,32 @@
 # The Grassmann graph J_q(n, d) of d-dimensional subspaces of F_q^n.
-BindGlobal("GrassmannGraph", function(q, n, d)
-    local G;
-    G := SubspaceGraph(GL(n, q), Elements, GF(q)^n, d, true);
-    G.duality := GrassmannDualityFunction;
-    G.primality := GrassmannDualityFunction;
-    return G;
+InstallMethod(GrassmannGraphCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt, IsInt, IsInt], 0, function(filter, q, n, d)
+        local G;
+        G := SubspaceGraph(GL(n, q), Elements, GF(q)^n, d, true);
+        G.duality := GrassmannDualityFunction;
+        G.primality := GrassmannDualityFunction;
+        return G;
+    end);
+
+InstallMethod(GrassmannGraphCons, "default", true,
+    [IsObject, IsInt, IsInt, IsInt], 0, function(filter, q, n, d)
+        return GrassmannGraphCons(IsSpacesGraph, q, n, d);
+    end);
+
+BindGlobal("GrassmannGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+2 then
+        return GrassmannGraphCons(filt, arg[j], arg[j+1], arg[j+2]);
+    else
+        Error("usage: GrassmannGraph( [<filter>, ]<int>, <int>, <int> )");
+    fi;
 end);
 
 # The doubled Grassmann graph 2J_q(2d+1, d) of d- and (d+1)-dimensional
