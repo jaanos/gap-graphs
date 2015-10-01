@@ -42,6 +42,7 @@ DeclareConstructor("MultiplicativeSymplecticCoverGraphCons",
 
 # Forms graphs
 DeclareConstructor("BilinearFormsGraphCons", [IsObject, IsInt, IsInt, IsInt]);
+DeclareConstructor("HermiteanFormsGraphCons", [IsObject, IsInt, IsInt]);
 
 # Named graphs
 DeclareConstructor("ShrikhandeGraphCons", [IsObject]);
