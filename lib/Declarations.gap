@@ -3,6 +3,7 @@ DeclareFilter("NoVertexNames");
 DeclareFilter("FullAutomorphismGroup");
 DeclareFilter("IsSetGraph");
 DeclareFilter("IsVectorGraph");
+DeclareFilter("IsFormsGraph");
 DeclareFilter("IsConjugacyClassGraph");
 
 # General constructions
@@ -38,6 +39,9 @@ DeclareConstructor("AdditiveSymplecticCoverGraphCons",
                     [IsObject, IsInt, IsInt, IsInt]);
 DeclareConstructor("MultiplicativeSymplecticCoverGraphCons",
                     [IsObject, IsInt, IsInt]);
+
+# Forms graphs
+DeclareConstructor("BilinearFormsGraphCons", [IsObject, IsInt, IsInt, IsInt]);
 
 # Named graphs
 DeclareConstructor("ShrikhandeGraphCons", [IsObject]);

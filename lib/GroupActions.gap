@@ -113,12 +113,14 @@ end);
 
 # Action on matrices over a field.
 BindGlobal("OnMatrices", function(q, d, e, dp)
-    local p1, p2, pm;
+    local F, p1, p2, p3, pm;
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
-    pm := List([0..d-1], i -> List([1..e], j -> Projection(dp, e*i+j+2)));
+    p3 := Projection(dp, 3);
+    pm := List([0..d-1], i -> List([1..e], j -> Projection(dp, e*i+j+3)));
+    F := [x -> x, TransposedMat];
     return function(M, g)
-        return Image(p1, g)*M*Image(p2, g) +
+        return Image(p2, g)*F[1^Image(p1, g)](M)*Image(p3, g) +
             List(pm, r -> List(r, p -> IntToFFE(1^Image(p, g), q)));
     end;
 end);
