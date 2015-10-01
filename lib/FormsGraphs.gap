@@ -44,7 +44,7 @@ BindGlobal("BilinearFormsGraph", function(arg)
     if Length(arg) = j+2 then
         return BilinearFormsGraphCons(filt, arg[j], arg[j+1], arg[j+2]);
     else
-        Error("usage: BilinearFormsGraphCons( [<filter>, ]<int>, <int>, <int> )");
+        Error("usage: BilinearFormsGraph( [<filter>, ]<int>, <int>, <int> )");
     fi;
 end);
 
@@ -75,6 +75,6 @@ BindGlobal("HermiteanFormsGraph", function(arg)
     if Length(arg) = j+1 then
         return HermiteanFormsGraphCons(filt, arg[j], arg[j+1]);
     else
-        Error("usage: HermiteanFormsGraphCons( [<filter>, ]<int>, <int> )");
+        Error("usage: HermiteanFormsGraph( [<filter>, ]<int>, <int> )");
     fi;
 end);
