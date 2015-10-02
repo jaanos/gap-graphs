@@ -250,18 +250,40 @@ end);
 
 # The polar graph Sp(d, q) of isotropic lines of F_q^d
 # with respect to a nondegenerate symplectic form.
-BindGlobal("PolarGraphSp", function(d, q)
-    local G, H, Q, V;
-    G := Sp(d, q);
-    Q := InvariantBilinearForm(G).matrix;
-    V := GF(q)^d;
-    H := Graph(G, IsotropicSpacesQuadraticForm(Q)(Subspaces(V, 1)),
+InstallMethod(PolarGraphSpCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt, IsInt], 0, function(filter, d, q)
+        local G, H, Q, V;
+        G := Sp(d, q);
+        Q := InvariantBilinearForm(G).matrix;
+        V := GF(q)^d;
+        H := Graph(G, IsotropicSpacesQuadraticForm(Q)(Subspaces(V, 1)),
                 OnSubspaces(V), function(x, y)
                     return x <> y and IsZero(Elements(x)[2]*Q*Elements(y)[2]);
                 end, true);
-    H.duality := Sum;
-    H.primality := Intersection;
-    return H;
+        H.duality := Sum;
+        H.primality := Intersection;
+        return H;
+    end);
+
+InstallMethod(PolarGraphSpCons, "default", true,
+    [IsObject, IsInt, IsInt], 0, function(filter, d, q)
+        return PolarGraphSpCons(IsSpacesGraph, d, q);
+    end);
+
+BindGlobal("PolarGraphSp", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        return PolarGraphSpCons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: PolarGraphSp( [<filter>, ]<int>, <int> )");
+    fi;
 end);
 
 # The polar graph U(d, r) of isotropic lines of F_{r^2}^d
