@@ -28,7 +28,9 @@ BindGlobal("IsotropicSpacesQuadraticForm",
 # of the collection V for which the quadratic form evaluates to the same
 # quadratic residue class as z.
 BindGlobal("NonisotropicSpacesQuadraticForm", function(Q, z)
-    return V -> Filtered(V, y -> ForAny(y, x -> x*Q*x = z));
+    return V -> Filtered(V, y -> ForAny(y, x -> x*Q*x = z) and
+                        not ForAll(y, x -> IsZero((Q + TransposedMat(Q))*x)));
+
 end);
 
 # The subset of isotropic spaces with respect to the bilinear form Q

@@ -204,26 +204,48 @@ end);
 
 # The polar graph NO^{+/-}orth(d, q) of nonisotropic lines of F_q^d
 # with respect to a nondegenerate quadratic form.
-BindGlobal("PolarGraphNOorth", function(e, d, q)
-    local f, z, B, G, H, Q, V;
-    if d mod 2 = 1 then
-        f := 0;
-        if q mod 4 = 3 and d mod 4 = 1 then
-            e := -e;
+InstallMethod(PolarGraphNOorthCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt, IsInt, IsInt], 0, function(filter, e, d, q)
+        local f, z, B, G, H, Q, V;
+        if d mod 2 = 1 then
+            f := 0;
+            if q mod 4 = 3 and d mod 4 = 1 then
+                e := -e;
+            fi;
+        else
+            f := e;
         fi;
-    else
-        f := e;
-    fi;
-    G := GO(f, d, q);
-    Q := InvariantQuadraticForm(G).matrix;
-    B := Q + TransposedMat(Q);
-    V := GF(q)^d;
-    z := Z(q)^((1-e)/2);
-    H := Graph(G, NonisotropicSpacesQuadraticForm(Q, z)(Subspaces(V, 1)),
+        G := GO(f, d, q);
+        Q := InvariantQuadraticForm(G).matrix;
+        B := Q + TransposedMat(Q);
+        V := GF(q)^d;
+        z := Z(q)^((1-e)/2);
+        H := Graph(G, NonisotropicSpacesQuadraticForm(Q, z)(Subspaces(V, 1)),
                 OnSubspaces(V), function(x, y)
                     return x <> y and IsZero(Elements(x)[2]*B*Elements(y)[2]);
                 end, true);
-    return H;
+        return H;
+    end);
+
+InstallMethod(PolarGraphNOorthCons, "default", true,
+    [IsObject, IsInt, IsInt, IsInt], 0, function(filter, e, d, q)
+        return PolarGraphNOorthCons(IsSpacesGraph, e, d, q);
+    end);
+
+BindGlobal("PolarGraphNOorth", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+2 then
+        return PolarGraphNOorthCons(filt, arg[j], arg[j+1], arg[j+2]);
+    else
+        Error("usage: PolarGraphNOorth( [<filter>, ]<int>, <int>, <int> )");
+    fi;
 end);
 
 # The polar graph Sp(d, q) of isotropic lines of F_q^d
