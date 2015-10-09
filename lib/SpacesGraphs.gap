@@ -288,21 +288,43 @@ end);
 
 # The polar graph U(d, r) of isotropic lines of F_{r^2}^d
 # with respect to a nondegenerate Hermitean form.
-BindGlobal("PolarGraphU", function(d, r)
-    local c, B, F, G, H, Q, V;
-    G := GU(d, r);
-    Q := InvariantSesquilinearForm(G).matrix;
-    V := GF(r^2)^d;
-    B := Elements(CanonicalBasis(V));
-    c := Conjugates(GF(r^2), GF(r), Z(r^2));
-    F := x -> List(x, y -> y^r);
-    H := Graph(G, IsotropicSpacesSesquilinearForm(Q, r)(Subspaces(V, 1)),
+InstallMethod(PolarGraphUCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt, IsInt], 0, function(filter, d, r)
+        local c, B, F, G, H, Q, V;
+        G := GU(d, r);
+        Q := InvariantSesquilinearForm(G).matrix;
+        V := GF(r^2)^d;
+        B := Elements(CanonicalBasis(V));
+        c := Conjugates(GF(r^2), GF(r), Z(r^2));
+        F := x -> List(x, y -> y^r);
+        H := Graph(G, IsotropicSpacesSesquilinearForm(Q, r)(Subspaces(V, 1)),
             OnSubspaces(V), function(x, y)
                 return x <> y and IsZero(Elements(x)[2]*Q*F(Elements(y)[2]));
             end, true);
-    H.duality := Sum;
-    H.primality := Intersection;
-    return H;
+        H.duality := Sum;
+        H.primality := Intersection;
+        return H;
+    end);
+
+InstallMethod(PolarGraphUCons, "default", true,
+    [IsObject, IsInt, IsInt], 0, function(filter, d, r)
+        return PolarGraphUCons(IsSpacesGraph, d, r);
+    end);
+
+BindGlobal("PolarGraphU", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        return PolarGraphUCons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: PolarGraphU( [<filter>, ]<int>, <int> )");
+    fi;
 end);
 
 # The dual polar graph B_d(q) of isotropic d-dimensional subspaces of
