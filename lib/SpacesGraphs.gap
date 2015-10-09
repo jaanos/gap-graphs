@@ -343,6 +343,8 @@ InstallMethod(DualPolarGraphBCons,
             if d = 1 then
                 H := CompleteGraph(SymmetricGroup(q+1), q+1);
                 AssignVertexNames(H, S(Subspaces(V, 1)));
+                H.duality := Intersection;
+                H.primality := Sum;
                 return H;
             fi;
             invt := true;
@@ -411,6 +413,8 @@ InstallMethod(DualPolarGraphCCons,
             AssignVertexNames(H,
                 IsotropicSpacesBilinearForm(InvariantBilinearForm(G).matrix)
                                             (Subspaces(V, 1)));
+            H.duality := Intersection;
+            H.primality := Sum;
             return H;
         fi;
         dp := DirectProduct(G, FieldExponentiationPermutationGroup(q));
