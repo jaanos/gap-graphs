@@ -333,17 +333,22 @@ InstallMethod(DualPolarGraphBCons,
     "as a spaces graph with full automorphism group", true,
     [IsSpacesGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
     function(filter, d, q)
-        local G, S, V, e, z, dp, invt;
+        local G, H, S, V, e, z, dp, invt;
         e := 2*d+1;
         V := GF(q)^e;
         G := GO(e, q);
         dp := DirectProduct(G, FieldExponentiationPermutationGroup(q));
-        if q mod 2 = 1 then
-            invt := true;
+        if d = 1 or q mod 2 = 1 then
             S := IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix);
+            if d = 1 then
+                H := CompleteGraph(SymmetricGroup(q+1), q+1);
+                AssignVertexNames(H, S(Subspaces(V, 1)));
+                return H;
+            fi;
+            invt := true;
         else
-            invt := false;
             S := [Subspace(V, Elements(CanonicalBasis(V)){[2..d+1]}, "basis")];
+            invt := false;
         fi;
         return SubspaceGraph(dp, S, V, d, OnDualPolar(q, V, dp), invt);
     end);
@@ -355,11 +360,11 @@ InstallMethod(DualPolarGraphBCons, "as a spaces graph", true,
         V := GF(q)^e;
         G := GO(e, q);
         if q mod 2 = 1 then
-            invt := true;
             S := IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix);
+            invt := true;
         else
-            invt := false;
             S := [Subspace(V, Elements(CanonicalBasis(V)){[2..d+1]}, "basis")];
+            invt := false;
         fi;
         return SubspaceGraph(G, S, V, d, invt);
     end);
@@ -397,10 +402,18 @@ InstallMethod(DualPolarGraphCCons,
     "as a spaces graph with full automorphism group", true,
     [IsSpacesGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
     function(filter, d, q)
-        local V, e, dp;
+        local G, H, V, e, dp;
         e := 2*d;
         V := GF(q)^e;
-        dp := DirectProduct(Sp(e, q), FieldExponentiationPermutationGroup(q));
+        G := Sp(e, q);
+        if d = 1 then
+            H := CompleteGraph(SymmetricGroup(q+1), q+1);
+            AssignVertexNames(H,
+                IsotropicSpacesBilinearForm(InvariantBilinearForm(G).matrix)
+                                            (Subspaces(V, 1)));
+            return H;
+        fi;
+        dp := DirectProduct(G, FieldExponentiationPermutationGroup(q));
         return SubspaceGraph(dp,
             [Subspace(V, Elements(CanonicalBasis(V)){[1..d]}, "basis")],
             V, d, OnDualPolar(q, V, dp), false);
