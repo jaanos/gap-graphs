@@ -393,13 +393,54 @@ end);
 
 # The dual polar graph C_d(q) of isotropic d-dimensional subspaces of
 # F_q^{2d} with respect to a nondegenerate symplectic form.
-BindGlobal("DualPolarGraphC", function(d, q)
-    local F, e;
-    e := 2*d;
-    F := GF(q)^e;
-    return SubspaceGraph(Sp(e, q),
-        [Subspace(F, Elements(CanonicalBasis(F)){[1..d]}, "basis")],
-        F, d, false);
+InstallMethod(DualPolarGraphCCons,
+    "as a spaces graph with full automorphism group", true,
+    [IsSpacesGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
+    function(filter, d, q)
+        local V, e, dp;
+        e := 2*d;
+        V := GF(q)^e;
+        dp := DirectProduct(Sp(e, q), FieldExponentiationPermutationGroup(q));
+        return SubspaceGraph(dp,
+            [Subspace(V, Elements(CanonicalBasis(V)){[1..d]}, "basis")],
+            V, d, OnDualPolar(q, V, dp), false);
+    end);
+
+InstallMethod(DualPolarGraphCCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt, IsInt], 0, function(filter, d, q)
+        local V, e;
+        e := 2*d;
+        V := GF(q)^e;
+        return SubspaceGraph(Sp(e, q),
+            [Subspace(V, Elements(CanonicalBasis(V)){[1..d]}, "basis")],
+            V, d, false);
+    end);
+
+InstallMethod(DualPolarGraphCCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt], 0, function(filter, d, q)
+        return DualPolarGraphCCons(IsSpacesGraph and FullAutomorphismGroup,
+                                    d, q);
+    end);
+
+InstallMethod(DualPolarGraphCCons, "default", true,
+    [IsObject, IsInt, IsInt], 0, function(filter, d, q)
+        return DualPolarGraphCCons(IsSpacesGraph, d, q);
+    end);
+
+BindGlobal("DualPolarGraphC", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        return DualPolarGraphCCons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: DualPolarGraphC( [<filter>, ]<int>, <int> )");
+    fi;
 end);
 
 # The dual polar graph D_d(q) of isotropic d-dimensional subspaces of
