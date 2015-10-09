@@ -182,6 +182,18 @@ BindGlobal("OnGrassmann", function(q, V, dp)
     end;
 end);
 
+# Action on the vertices of dual polar graphs.
+BindGlobal("OnDualPolar", function(q, V, dp)
+    local F, p1, p2;
+    p1 := Projection(dp, 1);
+    p2 := Projection(dp, 2);
+    return function(S, g)
+        return Subspace(V,
+            List(OnSubspacesByCanonicalBasis(Basis(S), Image(p1, g)),
+                v -> List(v, x -> IntToFFE(FFEToInt(x, q)^Image(p2, g), q))));
+    end;
+end);
+
 # Action on the vertices of Paley graphs.
 BindGlobal("OnPaley", function(q, dp)
     local F, p1, p2, p3;

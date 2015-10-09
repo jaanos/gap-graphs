@@ -329,19 +329,66 @@ end);
 
 # The dual polar graph B_d(q) of isotropic d-dimensional subspaces of
 # F_q^{2d+1} with respect to a nondegenerate quadratic form.
-BindGlobal("DualPolarGraphB", function(d, q)
-    local F, G, S, e, z, invt;
-    e := 2*d+1;
-    F := GF(q)^e;
-    G := GO(e, q);
-    if q mod 2 = 1 then
-        invt := true;
-        S := IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix);
+InstallMethod(DualPolarGraphBCons,
+    "as a spaces graph with full automorphism group", true,
+    [IsSpacesGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
+    function(filter, d, q)
+        local G, S, V, e, z, dp, invt;
+        e := 2*d+1;
+        V := GF(q)^e;
+        G := GO(e, q);
+        dp := DirectProduct(G, FieldExponentiationPermutationGroup(q));
+        if q mod 2 = 1 then
+            invt := true;
+            S := IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix);
+        else
+            invt := false;
+            S := [Subspace(V, Elements(CanonicalBasis(V)){[2..d+1]}, "basis")];
+        fi;
+        return SubspaceGraph(dp, S, V, d, OnDualPolar(q, V, dp), invt);
+    end);
+
+InstallMethod(DualPolarGraphBCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt, IsInt], 0, function(filter, d, q)
+        local G, S, V, e, z, invt;
+        e := 2*d+1;
+        V := GF(q)^e;
+        G := GO(e, q);
+        if q mod 2 = 1 then
+            invt := true;
+            S := IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix);
+        else
+            invt := false;
+            S := [Subspace(V, Elements(CanonicalBasis(V)){[2..d+1]}, "basis")];
+        fi;
+        return SubspaceGraph(G, S, V, d, invt);
+    end);
+
+InstallMethod(DualPolarGraphBCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt], 0, function(filter, d, q)
+        return DualPolarGraphBCons(IsSpacesGraph and FullAutomorphismGroup,
+                                    d, q);
+    end);
+
+InstallMethod(DualPolarGraphBCons, "default", true,
+    [IsObject, IsInt, IsInt], 0, function(filter, d, q)
+        return DualPolarGraphBCons(IsSpacesGraph, d, q);
+    end);
+
+BindGlobal("DualPolarGraphB", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
     else
-        invt := false;
-        S := [Subspace(F, Elements(CanonicalBasis(F)){[2..d+1]}, "basis")];
+        filt := IsObject;
+        j := 1;
     fi;
-    return SubspaceGraph(G, S, F, d, invt);
+    if Length(arg) = j+1 then
+        return DualPolarGraphBCons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: DualPolarGraphB( [<filter>, ]<int>, <int> )");
+    fi;
 end);
 
 # The dual polar graph C_d(q) of isotropic d-dimensional subspaces of
