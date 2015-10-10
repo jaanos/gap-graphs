@@ -184,7 +184,7 @@ BindGlobal("LatinSquareGraph", function(arg)
     elif Length(arg) = j+1 then
         return LatinSquareGraphCons(filt, arg[j], arg[j+1]);
     else
-        Error("usage: LatinSquareGraph( [<filter>, ]{<mat> |<grp> }[, <bool> ])");
+        Error("usage: LatinSquareGraph( [<filter>, ]{<mat>|<grp>}[, <bool>] )");
     fi;
 end);
 
