@@ -569,7 +569,7 @@ InstallMethod(DualPolarGraph2DCons, "as a spaces graph", true,
         G := GO(-1, e, q);
         return SubspaceGraph(G,
             IsotropicSpacesQuadraticForm(InvariantQuadraticForm(G).matrix),
-            GF(q)^e, d, true);
+                                GF(q)^e, d, true);
     end);
 
 InstallMethod(DualPolarGraph2DCons, "with full automorphism group", true,
@@ -601,15 +601,69 @@ end);
 
 # The dual polar graph ^2A_{e-1}(r) of isotropic [e/2]-dimensional
 # subspaces of F_{r^2}^e with respect to a nondegenerate Hermitean form.
-BindGlobal("DualPolarGraph2A", function(e, r)
-    local B, F, c, d;
-    F := GF(r^2)^e;
-    B := Elements(CanonicalBasis(F));
-    c := Conjugates(GF(r^2), GF(r), Z(r^2));
-    d := Int(e/2);
-    return SubspaceGraph(GU(e, r),
-        [Subspace(F, B{[1..d]} + (c[1]-c[2])*B{e+1-[1..d]}, "basis")],
-        F, d, false);
+InstallMethod(DualPolarGraph2ACons,
+    "as a spaces graph with full automorphism group", true,
+    [IsSpacesGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
+    function(filter, e, r)
+        local B, G, H, V, c, d, n, dp;
+        V := GF(r^2)^e;
+        B := Elements(CanonicalBasis(V));
+        c := Conjugates(GF(r^2), GF(r), Z(r^2));
+        d := Int(e/2);
+        G := GU(e, r);
+        dp := DirectProduct(G, FieldExponentiationPermutationGroup(r^2));
+        if e in [2, 3] then
+            n := r^(2*e-3) + 1;
+            H := CompleteGraph(SymmetricGroup(n), n);
+            AssignVertexNames(H,
+        IsotropicSpacesSesquilinearForm(InvariantSesquilinearForm(G).matrix, r)
+                                        (Subspaces(V, 1)));
+            H.duality := Intersection;
+            H.primality := Sum;
+            return H;
+        fi;
+        return SubspaceGraph(dp,
+            [Subspace(V, B{[1..d]} + (c[1]-c[2])*B{e+1-[1..d]}, "basis")],
+                                V, d, OnDualPolar(r^2, V, dp), false);
+    end);
+
+InstallMethod(DualPolarGraph2ACons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt, IsInt], 0, function(filter, e, r)
+        local B, V, c, d;
+        V := GF(r^2)^e;
+        B := Elements(CanonicalBasis(V));
+        c := Conjugates(GF(r^2), GF(r), Z(r^2));
+        d := Int(e/2);
+        return SubspaceGraph(GU(e, r),
+            [Subspace(V, B{[1..d]} + (c[1]-c[2])*B{e+1-[1..d]}, "basis")],
+                                V, d, false);
+    end);
+
+InstallMethod(DualPolarGraph2ACons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt], 0, function(filter, e, r)
+        return DualPolarGraph2ACons(IsSpacesGraph and FullAutomorphismGroup,
+                                    e, r);
+    end);
+
+InstallMethod(DualPolarGraph2ACons, "default", true,
+    [IsObject, IsInt, IsInt], 0, function(filter, e, r)
+        return DualPolarGraph2ACons(IsSpacesGraph, e, r);
+    end);
+
+BindGlobal("DualPolarGraph2A", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j+1 then
+        return DualPolarGraph2ACons(filt, arg[j], arg[j+1]);
+    else
+        Error("usage: DualPolarGraph2A( [<filter>, ]<int>, <int> )");
+    fi;
 end);
 
 # The Doro graph of nonisotropic 1-dimensional subspaces of F_q^4 with respect
