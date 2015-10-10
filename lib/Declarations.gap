@@ -58,6 +58,7 @@ DeclareConstructor("DualPolarGraphCCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("DualPolarGraphDCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("DualPolarGraph2DCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("DualPolarGraph2ACons", [IsObject, IsInt, IsInt]);
+DeclareConstructor("DoroGraphCons", [IsObject, IsInt]);
 
 # Named graphs
 DeclareConstructor("ShrikhandeGraphCons", [IsObject]);

@@ -71,7 +71,7 @@ BindGlobal("CycleGraph", n -> Graph(DihedralGroup(IsPermGroup, 2*n), [1..n],
 
 # Cocktail party graphs.
 BindGlobal("CocktailPartyGraph",
-    n -> CompleteMultipartiteGraph(n, 2)
+    n -> CompleteMultipartiteGraphCons(FullAutomorphismGroup, n, 2)
 );
 
 # Paley graphs.

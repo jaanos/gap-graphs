@@ -668,12 +668,64 @@ end);
 
 # The Doro graph of nonisotropic 1-dimensional subspaces of F_q^4 with respect
 # to a nondegenerate quadratic form. It is distance-regular for q = 4, 5.
-BindGlobal("DoroGraph", function(q)
-    local G, V;
-    V := GF(q)^4;
-    G := GO(-1, 4, q);
-    return Graph(G, [Subspace(V, BasisVectors(Basis(V)){[4]}, "basis")],
-        OnSubspaces(V), IsHyperbolic(InvariantQuadraticForm(G).matrix));
+InstallMethod(DoroGraphCons,
+    "as a spaces graph with full automorphism group", true,
+    [IsSpacesGraph and FullAutomorphismGroup, IsInt], 0, function(filter, q)
+        local F, G, H, P, Q, V, dp;
+        F := GF(q);
+        V := F^4;
+        G := GO(-1, 4, q);
+        Q := InvariantQuadraticForm(G).matrix;
+        dp := DirectProduct(G, FieldExponentiationPermutationGroup(q));
+        if q <= 3 then
+            H := NullGraph(SymmetricGroup(5*q));
+            if q = 2 then
+                AddEdgeOrbit(H, [1, 1]);
+            fi;
+            AssignVertexNames(H, NonisotropicSpacesQuadraticForm(Q,
+                                                    Z(q)^0)(Subspaces(V, 1)));
+            return H;
+        elif LogInt(q, Characteristic(F)) mod 2 = 1 then
+            return Graph(dp, [Subspace(V, BasisVectors(Basis(V)){[4]},
+                            "basis")], OnDualPolar(q, V, dp), IsHyperbolic(Q));
+        else
+            TryNextMethod();
+        fi;
+    end);
+
+InstallMethod(DoroGraphCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt], 0, function(filter, q)
+        local G, V;
+        V := GF(q)^4;
+        G := GO(-1, 4, q);
+        return Graph(G, [Subspace(V, BasisVectors(Basis(V)){[4]}, "basis")],
+            OnSubspaces(V), IsHyperbolic(InvariantQuadraticForm(G).matrix));
+    end);
+
+InstallMethod(DoroGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt], 0, function(filter, q)
+        return DoroGraphCons(IsSpacesGraph and FullAutomorphismGroup, q);
+    end);
+
+InstallMethod(DoroGraphCons, "default", true, [IsObject, IsInt], 0,
+    function(filter, q)
+        return DoroGraphCons(IsSpacesGraph, q);
+    end);
+
+BindGlobal("DoroGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return DoroGraphCons(filt, arg[j]);
+    else
+        Error("usage: DoroGraph( [<filter>, ]<int> )");
+    fi;
 end);
 
 # The unitary nonisotropics graph of 1-dimensional subspaces of F_(r^2)^3 with
