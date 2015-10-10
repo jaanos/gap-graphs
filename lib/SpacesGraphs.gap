@@ -730,10 +730,33 @@ end);
 
 # The unitary nonisotropics graph of 1-dimensional subspaces of F_(r^2)^3 with
 # respect to a nondegenerate sesquilinear form.
-BindGlobal("UnitaryNonisotropicsGraph", function(r)
-    local G, V;
-    V := GF(r^2)^3;
-    G := GU(3, r);
-    return Graph(G, [Subspace(V, BasisVectors(Basis(V)){[2]}, "basis")],
-        OnSubspaces(V), IsOrthogonal(InvariantSesquilinearForm(G).matrix, r));
+InstallMethod(UnitaryNonisotropicsGraphCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt], 0, function(filter, r)
+        local G, V;
+        V := GF(r^2)^3;
+        G := GU(3, r);
+        return Graph(G, [Subspace(V, BasisVectors(Basis(V)){[2]}, "basis")],
+                        OnSubspaces(V),
+                        IsOrthogonal(InvariantSesquilinearForm(G).matrix, r));
+    end);
+
+InstallMethod(UnitaryNonisotropicsGraphCons, "default", true,
+    [IsObject, IsInt], 0, function(filter, r)
+        return UnitaryNonisotropicsGraphCons(IsSpacesGraph, r);
+    end);
+
+BindGlobal("UnitaryNonisotropicsGraph", function(arg)
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
+    else
+        filt := IsObject;
+        j := 1;
+    fi;
+    if Length(arg) = j then
+        return UnitaryNonisotropicsGraphCons(filt, arg[j]);
+    else
+        Error("usage: UnitaryNonisotropicsGraph( [<filter>, ]<int> )");
+    fi;
 end);
