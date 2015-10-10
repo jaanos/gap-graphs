@@ -108,7 +108,7 @@ BindGlobal("DoubledGrassmannGraph", function(arg)
     if Length(arg) = j+1 then
         return DoubledGrassmannGraphCons(filt, arg[j], arg[j+1]);
     else
-        Error("usage: DoubledGrassmannGraph( [<filter>, ]<int>, <int>, <int> )");
+        Error("usage: DoubledGrassmannGraph( [<filter>, ]<int>, <int> )");
     fi;
 end);
 
