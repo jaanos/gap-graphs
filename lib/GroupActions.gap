@@ -170,27 +170,29 @@ end);
 
 # Action on the vertices of Grassmann graphs.
 BindGlobal("OnGrassmann", function(q, V, dp)
-    local F, p1, p2, p3;
-    F := [x -> x, OrthogonalSpaceInFullRowSpace];
+    local C, F, p1, p2, p3;
+    C := [x -> x, OrthogonalSpaceInFullRowSpace];
+    F := OnFFE(q);
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     p3 := Projection(dp, 3);
     return function(S, g)
-        return F[1^Image(p2, g)](Subspace(V,
+        return C[1^Image(p2, g)](Subspace(V,
             List(OnSubspacesByCanonicalBasis(Basis(S), Image(p1, g)),
-                v -> List(v, x -> IntToFFE(FFEToInt(x, q)^Image(p3, g), q)))));
+                    v -> List(v, x -> F(x, Image(p3, g))))));
     end;
 end);
 
 # Action on the vertices of dual polar graphs.
 BindGlobal("OnDualPolar", function(q, V, dp)
     local F, p1, p2;
+    F := OnFFE(q);
     p1 := Projection(dp, 1);
     p2 := Projection(dp, 2);
     return function(S, g)
         return Subspace(V,
             List(OnSubspacesByCanonicalBasis(Basis(S), Image(p1, g)),
-                v -> List(v, x -> IntToFFE(FFEToInt(x, q)^Image(p2, g), q))));
+                    v -> List(v, x -> F(x, Image(p2, g)))));
     end;
 end);
 
