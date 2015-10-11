@@ -5,6 +5,7 @@ DeclareFilter("IsSetGraph");
 DeclareFilter("IsVectorGraph");
 DeclareFilter("IsFormsGraph");
 DeclareFilter("IsSpacesGraph");
+DeclareFilter("IsCodeGraph");
 DeclareFilter("IsConjugacyClassGraph");
 
 # General constructions
@@ -60,6 +61,9 @@ DeclareConstructor("DualPolarGraph2DCons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("DualPolarGraph2ACons", [IsObject, IsInt, IsInt]);
 DeclareConstructor("DoroGraphCons", [IsObject, IsInt]);
 DeclareConstructor("UnitaryNonisotropicsGraphCons", [IsObject, IsInt]);
+
+# Code graphs
+DeclareConstructor("PreparataGraphCons", [IsObject, IsInt, IsInt]);
 
 # Named graphs
 DeclareConstructor("ShrikhandeGraphCons", [IsObject]);

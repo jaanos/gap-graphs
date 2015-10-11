@@ -1,27 +1,63 @@
 # De Caen, Mathon and Moorhouse's Preparata graph Pr(t, e)
+InstallMethod(PreparataGraphCons,
+    "as a spaces graph with full automorphism group", true,
+    [IsSpacesGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
+    function(filter, t, e)
+        local H;
+        if t = 1 then
+            H := HypercubeGraph(IsVectorGraph and FullAutomorphismGroup, 3);
+            AssignVertexNames(H, List(H.names,
+                                t -> ([t[1]+t[3], t[2]+t[3], t[3]-1])*Z(2)^0));
+            return H;
+        elif e mod t = 0 or t = 2 then
+            TryNextMethod();
+        else
+            return PreparataGraphCons(IsSpacesGraph, t, e);
+        fi;
+    end);
+
+InstallMethod(PreparataGraphCons, "as a spaces graph", true,
+    [IsSpacesGraph, IsInt, IsInt], 0, function(filter, t, e)
+        local q, s, F, K, dp;
+        q := 2^(2*t-1);
+        s := 2^e;
+        F := GF(q);
+        dp := DirectProduct(Group(Z(q)), FieldAdditionPermutationGroup(2),
+                            FieldAdditionPermutationGroup(q),
+                            FieldExponentiationPermutationGroup(q));
+        return Graph(dp, Cartesian(F, GF(2), F), OnPreparata(q, s, dp),
+                        CrookedAdjacency(GoldFunction(s)), true);
+    end);
+
+InstallMethod(PreparataGraphCons, "with full automorphism group", true,
+    [FullAutomorphismGroup, IsInt, IsInt], 0, function(filter, t, e)
+        return PreparataGraphCons(IsSpacesGraph
+                                            and FullAutomorphismGroup, t, e);
+    end);
+
+InstallMethod(PreparataGraphCons, "default", true,
+    [IsObject, IsInt, IsInt], 0, function(filter, t, e)
+        return PreparataGraphCons(IsSpacesGraph, t, e);
+    end);
+
 BindGlobal("PreparataGraph", function(arg)
-    local t, e, q, s, F, K, dp;
-    if Length(arg) < 1 then
-        Error("at least one argument expected");
-        return fail;
-    fi;
-    t := arg[1];
-    if Length(arg) > 1 then
-        e := arg[2];
+    local j, filt;
+    if IsAFilter(arg[1]) then
+        filt := arg[1];
+        j := 2;
     else
-        e := 1;
+        filt := IsObject;
+        j := 1;
     fi;
-    q := 2^(2*t-1);
-    s := 2^e;
-    F := GF(q);
-    dp := DirectProduct(Group(Z(q)), FieldAdditionPermutationGroup(2),
-                        FieldAdditionPermutationGroup(q),
-                        FieldExponentiationPermutationGroup(q));
-    return Graph(dp, Cartesian(F, GF(2), F), OnPreparata(q, s, dp),
-        function(x,y)
-            return x <> y
-                and x[3]+y[3] = x[1]^s * y[1] + x[1] * y[1]^s + (x[2]+y[2])*(x[1]^(s+1) + y[1]^(s+1));
-        end, true);
+    if Length(arg) = j then
+        return PreparataGraphCons(filt, arg[j], 1);
+    elif Length(arg) = j+1 then
+        return PreparataGraphCons(filt, arg[j], arg[j+1]);
+    elif Length(arg) = j+2 then
+        return PreparataGraphCons(filt, arg[j], arg[j+1], arg[j+2]);
+    else
+        Error("usage: PreparataGraph( [<filter>, ]{<int>, <int>|<graph>}[, <int>] )");
+    fi;
 end);
 
 # Quotient graph of the Preparata graph

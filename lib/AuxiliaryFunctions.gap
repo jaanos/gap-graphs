@@ -41,6 +41,11 @@ BindGlobal("ToHermitean", function(A, r)
         i -> List([1..n], j -> Hermitize(i, j))));
 end);
 
+# The Gold function used in Preparata and Kasami codes.
+BindGlobal("GoldFunction", s -> x -> x^(s+1));
+
+# Converts a finite field element to a matrix
+# for exceptional near-field operations.
 BindGlobal("ToExceptionalMatrix", function(q, F, B)
     return x -> F[IntVecFFE(Coefficients(B, x))*[q, 1] + 1];
 end);

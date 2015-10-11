@@ -63,3 +63,10 @@ BindGlobal("ListAdjacency",
 BindGlobal("PointLineIncidence", function(x, y)
     return x in y or y in x;
 end);
+
+# Adjacency for crooked graphy
+BindGlobal("CrookedAdjacency",
+    f -> function(x, y)
+            return x <> y and x[3]+y[3] = f(x[1]+y[1])
+                                    + (x[2]+y[2]+Z(2)^0)*(f(x[1]) + f(y[1]));
+    end);
