@@ -406,7 +406,7 @@ InstallMethod(AdditiveSymplecticCoverGraphCons, "as a vector graph", true,
             X := FieldExponentiationPermutationGroup(q);
         else
             r := q;
-            K := AdditiveGroup(BasisVectors(Basis(F)){[1..h]});
+            K := Subspace(F, BasisVectors(Basis(F)){[1..h]}, "basis");
             M := Group(Z(q)^0);
             X := Group(());
         fi;
