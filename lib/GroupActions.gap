@@ -3,6 +3,11 @@ BindGlobal("OnFFE", q -> function(x, g)
     return IntToFFE(FFEToInt(x, q)^g, q);
 end);
 
+# Action of a matrix on a finite field element as a vector for a given basis.
+BindGlobal("OnFFEByBasis", B -> function(x, M)
+    return Coefficients(B, x)*M*B;
+end);
+
 # Action of a group on a signed point.
 BindGlobal("OnSignedPoints", function(dp, signs)
     local p1, p2;

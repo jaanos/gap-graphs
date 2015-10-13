@@ -3,14 +3,48 @@ InstallMethod(PreparataGraphCons,
     "as a spaces graph with full automorphism group", true,
     [IsSpacesGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
     function(filter, t, e)
-        local H;
+        local B, C, F, H, K, s, dp, p1, p2, p3, p4, pi, rho;
         if t = 1 then
             H := HypercubeGraph(IsVectorGraph and FullAutomorphismGroup, 3);
             AssignVertexNames(H, List(H.names,
                                 t -> ([t[1]+t[3], t[2]+t[3], t[3]-1])*Z(2)^0));
             return H;
-        elif e mod t = 0 or t = 2 then
+        elif e mod (2*t-1) = 0 then
             TryNextMethod();
+        elif t = 2 then
+            s := 2^e;
+            F := OnFFE(8);
+            dp := DirectProduct(Group(Z(8)), FieldAdditionPermutationGroup(2),
+                                FieldExponentiationPermutationGroup(8),
+                                Group((1, 2)));
+            p1 := Projection(dp, 1);
+            p2 := Projection(dp, 2);
+            p3 := Projection(dp, 3);
+            p4 := Projection(dp, 4);
+            pi := [[Z(2)^0, 0*Z(2), 0*Z(2)],
+                   [0*Z(2), 0*Z(2), Z(2)^0],
+                   [0*Z(2), Z(2)^0, 0*Z(2)]];
+            rho := [[Z(2)^0, 0*Z(2), 0*Z(2)],
+                    [0*Z(2), Z(2)^0, 0*Z(2)],
+                    [0*Z(2), Z(2)^0, Z(2)^0]];
+            if e mod 3 = 2 then
+                rho := TransposedMat(rho);
+            fi;
+            B := OnFFEByBasis(Basis(GF(8)));
+            C := [t -> t, function(t)
+                            local r;
+                            r := B(t[1], rho);
+                            return [r + Z(2)^0, t[2], B(t[3], pi) + r + r^s];
+                        end];
+            return Graph(dp, Cartesian(GF(8), GF(2), GF(8)),
+                function(t, g)
+                    local g1;
+                    g1 := Image(p1, g);
+                    return C[2^Image(p4, g)](List([g1*t[1],
+                                                    t[2] + 2^Image(p2, g),
+                                                    t[3]*g1^(s+1)],
+                                                x -> F(x, Image(p3, g))));
+                end, CrookedAdjacency(GoldFunction(s)), true);
         else
             return PreparataGraphCons(IsSpacesGraph, t, e);
         fi;
