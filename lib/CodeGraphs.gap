@@ -1,7 +1,7 @@
 # De Caen, Mathon and Moorhouse's Preparata graph Pr(t, e)
 InstallMethod(PreparataGraphCons,
-    "as a spaces graph with full automorphism group", true,
-    [IsSpacesGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
+    "as a code graph with full automorphism group", true,
+    [IsCodeGraph and FullAutomorphismGroup, IsInt, IsInt], 0,
     function(filter, t, e)
         local B, C, F, H, K, s, dp, p1, p2, p3, p4, pi, rho;
         if t = 1 then
@@ -46,12 +46,12 @@ InstallMethod(PreparataGraphCons,
                                                 x -> F(x, Image(p3, g))));
                 end, CrookedAdjacency(GoldFunction(s)), true);
         else
-            return PreparataGraphCons(IsSpacesGraph, t, e);
+            return PreparataGraphCons(IsCodeGraph, t, e);
         fi;
     end);
 
-InstallMethod(PreparataGraphCons, "as a spaces graph", true,
-    [IsSpacesGraph, IsInt, IsInt], 0, function(filter, t, e)
+InstallMethod(PreparataGraphCons, "as a code graph", true,
+    [IsCodeGraph, IsInt, IsInt], 0, function(filter, t, e)
         local q, s, F, K, dp;
         q := 2^(2*t-1);
         s := 2^e;
@@ -65,13 +65,59 @@ InstallMethod(PreparataGraphCons, "as a spaces graph", true,
 
 InstallMethod(PreparataGraphCons, "with full automorphism group", true,
     [FullAutomorphismGroup, IsInt, IsInt], 0, function(filter, t, e)
-        return PreparataGraphCons(IsSpacesGraph
+        return PreparataGraphCons(IsCodeGraph
                                             and FullAutomorphismGroup, t, e);
     end);
 
 InstallMethod(PreparataGraphCons, "default", true,
     [IsObject, IsInt, IsInt], 0, function(filter, t, e)
-        return PreparataGraphCons(IsSpacesGraph, t, e);
+        return PreparataGraphCons(IsCodeGraph, t, e);
+    end);
+
+InstallOtherMethod(PreparataGraphCons,
+    "as a code graph for quotients given a graph", true,
+    [IsCodeGraph, IsRecord, IsInt], 0, function(filter, G, h)
+        local s, t, B, H, K, T, V;
+        if not IsGraph(G) then
+            TryNextMethod();
+        fi;
+        if IsFFE(G.names[1][3]) then
+            s := 1;
+        else
+            s := Size(G.names[1][3]);
+        fi;
+        t := Log2Int(2*s*G.order)/4;
+        B := BasisVectors(Basis(GF(2^(2*t-1))));
+        if IsFFE(G.names[1][3]) then
+            K := AdditiveGroup(B{[1..h]});
+            V := List(G.names, x -> [x[1], x[2], x[3]+K]);
+        else
+            K := AdditiveGroup(B{[1..h+Log2Int(s)]});
+            V := List(G.names, x -> [x[1], x[2], Elements(x[3])[1]+K]);
+        fi;
+        T := Set(List(V, x -> Positions(V, x)));
+        H := Graph(Stabilizer(G.group, T, OnSetsSets), T, OnSets, function(x,y)
+            return IsSubset(DistanceSet(G, 1, x), y);
+        end, true);
+        AssignVertexNames(H, List(T, x -> V[x[1]]));
+        return H;
+    end);
+
+InstallOtherMethod(PreparataGraphCons,
+    "as a code graph for quotients given parameters", true,
+    [IsCodeGraph, IsInt, IsInt, IsInt], 0, function(filter, t, e, h)
+        return PreparataGraphCons(IsCodeGraph,
+                                  PreparataGraphCons(IsCodeGraph, t, e), h);
+    end);
+
+InstallOtherMethod(PreparataGraphCons, "for quotients given a graph", true,
+    [IsObject, IsRecord, IsInt], 0, function(filter, G, h)
+        return PreparataGraphCons(IsCodeGraph, G, h);
+    end);
+
+InstallOtherMethod(PreparataGraphCons, "for quotients given parameters", true,
+    [IsObject, IsInt, IsInt, IsInt], 0, function(filter, t, e, h)
+        return PreparataGraphCons(IsCodeGraph, t, e, h);
     end);
 
 BindGlobal("PreparataGraph", function(arg)
@@ -92,47 +138,6 @@ BindGlobal("PreparataGraph", function(arg)
     else
         Error("usage: PreparataGraph( [<filter>, ]{<int>, <int>|<graph>}[, <int>] )");
     fi;
-end);
-
-# Quotient graph of the Preparata graph
-BindGlobal("PreparataQuotientGraph", function(arg)
-    local h, s, t, e, B, G, H, K, T, V;
-    if Length(arg) < 2 then
-        Error("at least two arguments expected");
-        return fail;
-    fi;
-    h := arg[1];
-    if IsGraph(arg[2]) then
-        G := arg[2];
-        if IsFFE(G.names[1][3]) then
-            s := 1;
-        else
-            s := Size(G.names[1][3]);
-        fi;
-        t := Log2Int(2*s*G.order)/4;
-    else
-        t := arg[2];
-        if Length(arg) > 2 then
-            e := arg[3];
-        else
-            e := 1;
-        fi;
-        G := PreparataGraph(t, e);
-    fi;
-    B := BasisVectors(Basis(GF(2^(2*t-1))));
-    if IsFFE(G.names[1][3]) then
-        K := AdditiveGroup(B{[1..h]});
-        V := List(G.names, x -> [x[1], x[2], x[3]+K]);
-    else
-        K := AdditiveGroup(B{[1..h+Log2Int(s)]});
-        V := List(G.names, x -> [x[1], x[2], Elements(x[3])[1]+K]);
-    fi;
-    T := Set(List(V, x -> Positions(V, x)));
-    H := Graph(Stabilizer(G.group, T, OnSetsSets), T, OnSets, function(x,y)
-        return IsSubset(DistanceSet(G, 1, x), y);
-    end, true);
-    AssignVertexNames(H, List(T, x -> V[x[1]]));
-    return H;
 end);
 
 # The coset graph of a Kasami code over an odd power extension
