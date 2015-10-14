@@ -77,7 +77,7 @@ InstallMethod(PreparataGraphCons, "default", true,
 InstallOtherMethod(PreparataGraphCons,
     "as a code graph for quotients given a graph", true,
     [IsCodeGraph, IsRecord, IsInt], 0, function(filter, G, h)
-        local r, s, t, B, C, F, H, K, T, V;
+        local s, t, A, F, H, K, T, V;
         if not IsGraph(G) then
             TryNextMethod();
         fi;
@@ -88,26 +88,20 @@ InstallOtherMethod(PreparataGraphCons,
         fi;
         t := Log2Int(2*s*G.order)/4;
         F := GF(2^(2*t-1));
-        B := MutableCopyMat(Basis(F));
         if IsFFE(G.names[1][3]) then
             if (2*t-1) mod h = 0 then
                 K := GF(2^h);
             else
-                K := Subspace(F, B{[1..h]}, "basis");
+                K := Subspace(F, Elements(Basis(F)){[1..h]}, "basis");
             fi;
             V := List(G.names, x -> [x[1], x[2], x[3]+K]);
         else
-            r := h + Log2Int(s);
-            C := MutableCopyMat(Basis(AdditivelyActingDomain(G.names[1][3])));
-            K := Subspace(F, C, "basis");
-            while Size(C) < r do
-                if not B[1] in K then
-                    Add(C, B[1]);
-                    K := Subspace(F, C, "basis");
-                fi;
-                Remove(B, 1);
-            od;
-            V := List(G.names, x -> [x[1], x[2], Elements(x[3])[1]+K]);
+            A := AdditivelyActingDomain(G.names[1][1]);
+            K := A + Subspace(F,
+                                Elements(Basis(OrthogonalSpaceInFullRowSpace(A,
+                                                                F))){[1..h]},
+                                "basis");
+            V := List(G.names, x -> [x[1], x[2], Representative(x[3])+K]);
         fi;
         T := Set(List(V, x -> Positions(V, x)));
         H := Graph(Stabilizer(G.group, T, OnSetsSets), T, OnSets, function(x,y)

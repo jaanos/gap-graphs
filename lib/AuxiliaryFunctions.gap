@@ -23,6 +23,18 @@ BindGlobal("IntToFFE", function(x, q)
     fi;
 end);
 
+# The complement of a vector subspace of a finite field.
+InstallOtherMethod(OrthogonalSpaceInFullRowSpace, "for finite fields",
+    [IsVectorSpace, IsField], 0, function(V, F)
+        local B;
+        B := Basis(F);
+        return Subspace(F,
+            List(Basis(OrthogonalSpaceInFullRowSpace(Subspace(
+                        LeftActingDomain(F)^Dimension(F),
+                        List(Basis(V), b -> Coefficients(B, b)), "basis"))),
+                    b -> b*B));
+    end);
+
 # Transforms a matrix over GF(r) to a Hermitean matrix over GF(r^2).
 BindGlobal("ToHermitean", function(A, r)
     local c, n, Hermitize;

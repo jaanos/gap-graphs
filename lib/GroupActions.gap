@@ -260,7 +260,8 @@ BindGlobal("OnAdditiveSymplecticCover", function(q, m, B, K, dp)
         z := List([1..m], i -> IntToFFE(1^Image(pr[i], g), q));
         y := List(Concatenation(g3*p[2]{[1..m/2]}, p[2]{[m/2+1..m]}),
                     x -> F(x, g4));
-        return [K + g2^2 * (F(g3*Elements(p[1])[1], g4*Image(p5, g)) + y*B*z),
+        return [K + g2^2 * (F(g3*Representative(p[1]),
+                                g4*Image(p5, g)) + y*B*z),
                 g2 * (y*Image(p1, g) + z)];
     end;
 end);

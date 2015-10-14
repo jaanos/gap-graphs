@@ -415,7 +415,7 @@ InstallMethod(AdditiveSymplecticCoverGraphCons, "as a vector graph", true,
         return Graph(dp, Cartesian(Unique(List(F, x -> x+K)), F^m),
             OnAdditiveSymplecticCover(q, m, B, K, dp),
             function(x, y)
-                return x <> y and x[2]*B*y[2]+y[1]-Elements(x[1])[1] = K;
+                return x <> y and x[2]*B*y[2]+y[1]-Representative(x[1]) = K;
             end, true);
     end);
 
@@ -426,9 +426,48 @@ InstallMethod(AdditiveSymplecticCoverGraphCons, "with full automorphism group", 
                                                 q, n, h);
     end);
 
-InstallMethod(AdditiveSymplecticCoverGraphCons, "as a vector graph", true,
+InstallMethod(AdditiveSymplecticCoverGraphCons, "default", true,
     [IsObject, IsInt, IsInt, IsInt], 0, function(filter, q, n, h)
         return AdditiveSymplecticCoverGraphCons(IsVectorGraph, q, n, h);
+    end);
+
+InstallOtherMethod(AdditiveSymplecticCoverGraphCons,
+    "as a code graph for quotients given a graph", true,
+    [IsVectorGraph, IsRecord, IsInt], 0, function(filter, G, h)
+        local p, t, A, F, H, K, T, V;
+        if not IsGraph(G) then
+            TryNextMethod();
+        fi;
+        p := Characteristic(GF(G.order));
+        t := LogInt(G.order*Size(G.names[1][1]), p)/(Size(G.names[1][2])+1);
+        F := GF(p^t);
+        if IsList(G.names[1][1]) then
+            if t mod h = 0 then
+                K := GF(p^h);
+            else
+                K := Subspace(F, Elements(Basis(F)){[1..h]}, "basis");
+            fi;
+            V := List(G.names, x -> [x[1][1]+K, x[2]]);
+        else
+            A := AdditivelyActingDomain(G.names[1][1]);
+            K := A + Subspace(F,
+                                Elements(Basis(OrthogonalSpaceInFullRowSpace(A,
+                                                                F))){[1..h]},
+                                "basis");
+            V := List(G.names, x -> [Representative(x[1])+K, x[2]]);
+        fi;
+        T := Set(List(V, x -> Positions(V, x)));
+        H := Graph(Stabilizer(G.group, T, OnSetsSets), T, OnSets, function(x,y)
+            return IsSubset(DistanceSet(G, 1, x), y);
+        end, true);
+        AssignVertexNames(H, List(T, x -> V[x[1]]));
+        return H;
+    end);
+
+InstallOtherMethod(AdditiveSymplecticCoverGraphCons,
+    "for quotients given a graph", true, [IsObject, IsRecord, IsInt], 0,
+    function(filter, G, h)
+        return AdditiveSymplecticCoverGraphCons(IsVectorGraph, G, h);
     end);
 
 BindGlobal("AdditiveSymplecticCoverGraph", function(arg)
@@ -440,14 +479,23 @@ BindGlobal("AdditiveSymplecticCoverGraph", function(arg)
         filt := IsObject;
         j := 1;
     fi;
-    if Length(arg) = j+1 then
-        return AdditiveSymplecticCoverGraphCons(filt, arg[j], arg[j+1], 0);
-    elif Length(arg) = j+2 then
+    if Length(arg) = j+2 then
         return AdditiveSymplecticCoverGraphCons(filt, arg[j], arg[j+1],
                                                 arg[j+2]);
+    elif IsGraph(arg[j]) then
+        if Length(arg) = j then
+            return AdditiveSymplecticCoverGraphCons(filt, arg[j], 1);
+        elif Length(arg) = j+1 then
+            return AdditiveSymplecticCoverGraphCons(filt, arg[j], arg[j+1]);
+        fi;
     else
-        Error("usage: AdditiveSymplecticCoverGraph( [<filter>, ]<int>, <int>[, <int>] )");
+        if Length(arg) = j then
+            return AdditiveSymplecticCoverGraphCons(filt, arg[j], 1, 0);
+        elif Length(arg) = j+1 then
+            return AdditiveSymplecticCoverGraphCons(filt, arg[j], arg[j+1], 0);
+        fi;
     fi;
+    Error("usage: AdditiveSymplecticCoverGraph( [<filter>, ]{<int>, <int>[, <int>] |<graph>, <int> })");
 end);
 
 # The multiplicative symplectic cover of the complete graph on q+1 vertices.
