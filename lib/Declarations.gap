@@ -68,4 +68,5 @@ DeclareConstructor("PreparataGraphCons", [IsObject, IsInt, IsInt]);
 # Named graphs
 DeclareConstructor("ShrikhandeGraphCons", [IsObject]);
 DeclareConstructor("PerkelGraphCons", [IsObject]);
+DeclareConstructor("UnitalGraphCons", [IsObject]);
 DeclareConstructor("BiggsSmithGraphCons", [IsObject]);

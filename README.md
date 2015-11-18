@@ -72,6 +72,7 @@ The following graphs are currently supported:
   * the bipartite graph associated to Higman's design with intersection array {50, 49, 36; 1, 14, 50}
   * the Coxeter graph with intersection array {3, 2, 2, 1; 1, 1, 1, 2}
   * the doubly truncated Witt graph with intersection array {7, 6, 4, 4; 1, 1, 1, 6}
+  * the graph of unitals in PG(2, 4) with intersection array {9, 8, 6, 3; 1, 1, 3, 8}
   * the skeleton of the dodecahedron with intersection array {3, 2, 1, 1, 1; 1, 1, 1, 2, 3}
   * the Desargues graph with intersection array {3, 2, 2, 1, 1; 1, 1, 2, 2, 3}
   * the Biggs-Smith graph with intersection array {3, 2, 2, 2, 1, 1, 1; 1, 1, 1, 1, 1, 1, 3}

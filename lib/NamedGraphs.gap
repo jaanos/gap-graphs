@@ -142,6 +142,28 @@ BindGlobal("CoxeterGraph", PolarGraphNOorth(1, 3, 7));
 BindGlobal("Witt22Graph", Graph(MathieuGroup(22), [[1,2,3,4,5,10,18,21]],
                                 OnSets, DisjointSets));
 
+# The unital graph of AG(2,3) subplanes in PG(2,4)
+# with intersection array {9,8,6,3; 1,1,3,8}
+InstallMethod(UnitalGraphCons, "as a spaces graph", true, [IsSpacesGraph], 0,
+    function(filter)
+        local A, U, V;
+        A := SetIntersection(1);
+        V := GF(4)^3;
+        U := [[0*Z(2), Z(2)^0, Z(2)^0],
+              [Z(2)^0, 0*Z(2), 0*Z(2)],
+              [Z(2)^0, 0*Z(2), Z(2)^0],
+              [Z(2)^0, 0*Z(2), Z(4)],
+              [Z(2)^0, Z(2)^0, 0*Z(2)],
+              [Z(2)^0, Z(2)^0, Z(2)^0],
+              [Z(2)^0, Z(2)^0, Z(4)^2],
+              [Z(2)^0, Z(4), Z(2)^0],
+              [Z(2)^0, Z(4)^2, 0*Z(2)]];
+        return Graph(GL(3, 4), [Set(Filtered(Subspaces(V, 1), x -> A(x, U)))],
+                     OnSetsSubspaces(V), A);
+    end);
+
+BindGlobal("UnitalGraph", UnitalGraphCons(IsSpacesGraph));
+
 # The dodecahedron with intersection array {3,2,1,1,1; 1,1,1,2,3}.
 BindGlobal("DodecahedronGraph", List([function()
         local G, O, act, dp, p1, p2, u, v;
