@@ -1,6 +1,6 @@
 # Checks whether a graph is an antipodal cover.
 BindGlobal("IsAntipodalCover", function(G)
-    local d, k, ia, i, ci, cj;
+    local d, k, m, ia, i, ci, cj;
     if not IsSimpleGraph(G) then
         Error("not a simple graph");
         return fail;
@@ -10,20 +10,17 @@ BindGlobal("IsAntipodalCover", function(G)
         return fail;
     fi;
     d := Diameter(G);
-    ia := GlobalParameters(G);
-    k := ia[1][3];
-    if k = -1 or ia[d+1][1] <> k then
+    if d < 2 then
+        return true;
+    elif d = 2 then
         return false;
     fi;
-    for i in [1..Length(G.representatives)] do
-        ci := DistanceSet(G, 1, DistanceSet(G, [0, d], G.representatives[i]));
-        cj := Union(List(Adjacency(G, G.representatives[i]),
-                x -> DistanceSet(G, [0, d], x)));
-        if ci <> cj then
-            return false;
-        fi;
-    od;
-    return true;
+    m := Int(d/2);
+    ia := GlobalParameters(G);
+    if -1 in Union(ia) or not IsInt(ia[m+1][3]/ia[d-m+1][1]) then
+        return false;
+    fi;
+    return ForAll([0..d], i -> i = m or ia[i+1][3] = ia[d-i+1][1]);
 end);
 
 # Covering index of an antipodal cover.
